@@ -1,0 +1,12 @@
+[package]
+name = "pd_server"
+version = "0.1.0"
+authors = ["Ben Brunton <ben.brunton@infinityworks.com>"]
+
+[dependencies.iron]
+version = "*"
+
+[dependencies]
+router = "*"
+
+
