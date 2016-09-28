@@ -6,7 +6,10 @@ authors = ["Ben Brunton <ben.brunton@infinityworks.com>"]
 [dependencies.iron]
 version = "*"
 
+[dependencies.url]
+git = "https://github.com/servo/rust-url"
+
 [dependencies]
 router = "*"
-
-
+toml = "0.2"
+hyper = "0.9.10"
