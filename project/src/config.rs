@@ -30,7 +30,11 @@ impl Config {
     pub fn get(&self, key: &'static str) -> Option<String> {
 
         match self.store.get(key){
-            Some(val) => Some(val.clone().to_string()),
+            Some(val) => {
+                let new_str = val.to_string();
+                let trimmed_str = new_str.trim_matches('"').to_string();
+                Some(trimmed_str)
+            },
             None => None
         }
 

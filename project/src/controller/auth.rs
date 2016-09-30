@@ -1,65 +1,83 @@
 use iron::prelude::*;
 use iron::status;
-use url::Url;
-use std::io::prelude::*;
-use std::fs::File;
-use std::string::String;
 use hyper::client::Client;
-use toml;
+use config::Config;
+use iron::middleware::Handler;
 
-pub fn callback(req: &mut Request) -> IronResult<Response> {
+use query;
+use logger;
 
-    let fb_secret = get_fb_secret();
-
-    let client = Client::new();
-    let client_id = "637941239713409";
-    let redirect = "http://localhost/auth";
-
-
-    let url_str = req.url.to_string();
-    let url = Url::parse(&url_str).unwrap();
-
-    let mut pairs = url.query_pairs();
-    let qs = pairs.find(|&(ref key, _)| { 
-        key == "code"
-    });
-    
-
-    let code = match qs {
-        Some((_,code_cow)) => {
-            code_cow.into_owned()
-        },
-        None => "invalid_code".to_string()
-    };
-
-
-    let fb_token_url = format!("https://graph.facebook.com/v2.7/oauth/access_token?client_id={}&redirect_uri={}&client_secret={}&code={}", client_id, redirect, fb_secret, code);
-
-    println!("{:?}", fb_token_url);
-    println!("{}", fb_token_url);
-
-    // todo - handle the network error
-    let res = client.get(&fb_token_url).send().unwrap();
-
-    println!("{:?}", res);
-
-
-    Ok(Response::with((status::Ok, "ok")))
+pub struct AuthController{
+    config: Config
 }
 
-fn get_fb_secret() -> String{
+impl AuthController {
+    
+    pub fn new(config: Config) -> AuthController {
+        AuthController{
+            config: config   
+        }
+    }
 
-    let mut f = File::open("config/app_config.toml").unwrap();
-    let mut s = String::new();
-    let _ = f.read_to_string(&mut s);
+    fn success(&self) -> IronResult<Response> {
 
-    let mut parser = toml::Parser::new(&s);
-    let toml = parser.parse().unwrap();
-    let fb_secret = toml.get("fb_secret").unwrap().clone().to_string();
+        Ok(Response::with((status::Ok, "ok")))
+    }
 
-    println!("{:?}", fb_secret);
-    println!("{}", fb_secret);
+    fn facebook_error(&self) -> IronResult<Response>{
 
-    fb_secret
+        Ok(Response::with((status::Ok, "ok")))
+    }
+
+    fn invalid_query_param(&self) -> IronResult<Response>{
+        Ok(Response::with((status::Ok, "ok")))
+    }
+
+}
+
+impl Handler for AuthController {
+
+    fn handle(&self, req: &mut Request) -> IronResult<Response> {
+        
+        logger::info("AuthController handler");
+
+        let fb_secret = self.config.get("fb_secret").unwrap();
+        let client_id = self.config.get("fb_app_id").unwrap();
+        let redirect = "http://localhost:3000/auth";
+
+        let code = query::get(req.url.to_string(), "code");
+
+        if code == None {
+            logger::warn("invalid_query_param - no code");
+            return self.invalid_query_param();
+        }
+
+        let code = code.unwrap();
+
+        let fb_token_url = format!("https://graph.facebook.com/v2.7/oauth/access_token?client_id={}&redirect_uri={}&client_secret={}&code={}", client_id, redirect, fb_secret, code);
+
+
+        logger::info("requesting token from Facebook");
+        let client = Client::new();
+        let res = client.get(&fb_token_url).send();
+
+        let response = match res {
+            Ok(r) => {
+                logger::info(
+                    format!("{:?}", r)
+                );
+                self.success()
+            },
+            Err(e) => {
+                logger::warn(
+                    format!("{:?}", e)
+                );
+                self.facebook_error()
+            }
+        };
+
+        response
+    }
+
 }
 
