@@ -1,22 +1,54 @@
 use iron::prelude::*;
 use iron::status;
+use iron::middleware::Handler;
 use hyper::client::Client;
 use config::Config;
-use iron::middleware::Handler;
+use std::io::Read;
+use rustc_serialize::json::Json;
 
 use query;
 use logger;
 
 pub struct AuthController{
-    config: Config
+    fb_secret: String,
+    fb_app_id: String
 }
 
 impl AuthController {
     
     pub fn new(config: Config) -> AuthController {
+        let fb_secret = config.get("fb_secret").unwrap();
+        let fb_app_id = config.get("fb_app_id").unwrap();
+
         AuthController{
-            config: config   
+            fb_secret: fb_secret,
+            fb_app_id: fb_app_id
         }
+    }
+
+    fn get_access_token(&self) -> Result<String, String> {
+
+        let fb_app_access_token_url = format!("https://graph.facebook.com/v2.7//oauth/access_token?client_id={}&client_secret={}&grant_type=client_credentials", self.fb_app_id, self.fb_secret);
+        
+        let client = Client::new();
+        let res = client.get(&fb_app_access_token_url).send();
+
+        let response = match res {
+            Ok(mut r) => {
+                let mut buffer = String::new();
+                let _ = r.read_to_string(&mut buffer);
+                Ok(buffer)
+            },
+            Err(e) => {
+                let err = format!("{:?}", e);
+                logger::warn(
+                    &err
+                );
+                Err(err)
+            }
+        };
+
+        response
     }
 
     fn success(&self) -> IronResult<Response> {
@@ -26,11 +58,11 @@ impl AuthController {
 
     fn facebook_error(&self) -> IronResult<Response>{
 
-        Ok(Response::with((status::Ok, "ok")))
+        Ok(Response::with((status::Ok, "there was an error with facebook")))
     }
 
     fn invalid_query_param(&self) -> IronResult<Response>{
-        Ok(Response::with((status::Ok, "ok")))
+        Ok(Response::with((status::Ok, "not ok")))
     }
 
 }
@@ -41,8 +73,8 @@ impl Handler for AuthController {
         
         logger::info("AuthController handler");
 
-        let fb_secret = self.config.get("fb_secret").unwrap();
-        let client_id = self.config.get("fb_app_id").unwrap();
+        let fb_secret = self.fb_secret.clone();
+        let client_id = self.fb_app_id.clone();
         let redirect = "http://localhost:3000/auth";
 
         let code = query::get(req.url.to_string(), "code");
@@ -54,6 +86,8 @@ impl Handler for AuthController {
 
         let code = code.unwrap();
 
+        let app_access_token = self.get_access_token();
+
         let fb_token_url = format!("https://graph.facebook.com/v2.7/oauth/access_token?client_id={}&redirect_uri={}&client_secret={}&code={}", client_id, redirect, fb_secret, code);
 
 
@@ -61,22 +95,33 @@ impl Handler for AuthController {
         let client = Client::new();
         let res = client.get(&fb_token_url).send();
 
-        let response = match res {
-            Ok(r) => {
-                logger::info(
-                    format!("{:?}", r)
-                );
-                self.success()
-            },
+        match res {
             Err(e) => {
                 logger::warn(
                     format!("{:?}", e)
                 );
-                self.facebook_error()
-            }
-        };
+                return self.facebook_error();
+            },
+            _ => ()
+        }
 
-        response
+        let mut r = res.unwrap();
+
+        let mut buffer = String::new();
+        let _ = r.read_to_string(&mut buffer);
+        logger::info(
+            format!("response from fb access token request: {}", buffer)
+        );
+
+        let data = Json::from_str(&buffer).unwrap();
+        let obj = data.as_object().unwrap();
+
+        let access_token = obj.get("access_token").unwrap();
+
+        logger::info(format!("got access token: {} ", access_token));
+
+        self.success()
+
     }
 
 }
