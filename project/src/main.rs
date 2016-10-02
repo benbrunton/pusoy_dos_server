@@ -11,7 +11,7 @@ mod controller;
 mod query;
 mod logger;
 
-use controller::{home_page, auth};
+use controller::{home_page, auth, game_list};
 use config::Config;
 
 use iron::prelude::*;
@@ -23,11 +23,13 @@ fn main() {
     let mut router = Router::new();
     let config = Config::new();
     let auth_controller = auth::AuthController::new(config);
+    let game_list_controller = game_list::GameList;
 
     router.get("/", home_page::handler, "index");
     router.get("/test", home_page::test_handler, "test");
 
     router.get("/auth", auth_controller, "auth_callback");
+    router.get("/games", game_list_controller, "game_list");
 
     let (logger_before, logger_after) = Logger::new(None);
     let mut chain = Chain::new(router);

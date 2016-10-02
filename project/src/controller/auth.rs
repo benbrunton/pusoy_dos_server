@@ -1,5 +1,5 @@
 use iron::prelude::*;
-use iron::status;
+use iron::{status, modifiers, Url};
 use iron::middleware::Handler;
 use hyper::client::Client;
 use config::Config;
@@ -11,7 +11,7 @@ use logger;
 
 pub struct AuthController{
     fb_secret: String,
-    fb_app_id: String
+    fb_app_id: String,
     hostname: String
 }
 
@@ -24,13 +24,17 @@ impl AuthController {
 
         AuthController{
             fb_secret: fb_secret,
-            fb_app_id: fb_app_id
+            fb_app_id: fb_app_id,
+            hostname: hostname
         }
     }
 
     fn success(&self) -> IronResult<Response> {
 
-        Ok(Response::with((status::Ok, "ok")))
+        let full_url = format!("{}/games", self.hostname);
+        let url =  Url::parse(&full_url).unwrap();
+
+        Ok(Response::with((status::Found, modifiers::Redirect(url))))
     }
 
     fn facebook_error(&self) -> IronResult<Response>{
@@ -53,7 +57,7 @@ impl Handler for AuthController {
         let fb_secret = self.fb_secret.clone();
         let client_id = self.fb_app_id.clone();
         let hostname = self.hostname.clone();
-        let redirect = format!("{}/auth", hostname));
+        let redirect = format!("{}/auth", hostname);
 
         let code = query::get(req.url.to_string(), "code");
 
