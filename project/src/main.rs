@@ -4,6 +4,7 @@ extern crate toml;
 extern crate hyper;
 extern crate url;
 extern crate rustc_serialize;
+extern crate logger as iron_logger;
 
 mod config;
 mod controller;
@@ -15,6 +16,7 @@ use config::Config;
 
 use iron::prelude::*;
 use router::Router;
+use iron_logger::Logger;
 
 
 fn main() {
@@ -27,7 +29,13 @@ fn main() {
 
     router.get("/auth", auth_controller, "auth_callback");
 
-    Iron::new(router).http("0.0.0.0:3000").unwrap();
+    let (logger_before, logger_after) = Logger::new(None);
+    let mut chain = Chain::new(router);
+
+    chain.link_before(logger_before);
+    chain.link_after(logger_after);
+
+    Iron::new(chain).http("0.0.0.0:3000").unwrap();
 
 }
 

@@ -9,6 +9,9 @@ version = "*"
 [dependencies.url]
 git = "https://github.com/servo/rust-url"
 
+[dependencies.logger]
+git = "https://github.com/iron/logger.git"
+
 [dependencies]
 router = "*"
 toml = "0.2"
