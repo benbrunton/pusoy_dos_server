@@ -17,4 +17,4 @@ RUN curl -sSf https://static.rust-lang.org/rustup.sh | sh -s -- -y
 
 WORKDIR /project
 
-CMD ["cargo", "run"]
+CMD ["sh", "init.sh"]
