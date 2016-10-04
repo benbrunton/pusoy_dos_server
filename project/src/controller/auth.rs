@@ -5,19 +5,22 @@ use hyper::client::Client;
 use config::Config;
 use std::io::Read;
 use rustc_serialize::json::Json;
+use std::collections::BTreeMap;
+use mysql;
 
 use query;
 use logger;
 
-pub struct AuthController{
+pub struct AuthController {
     fb_secret: String,
     fb_app_id: String,
-    hostname: String
+    hostname: String,
+    pool: mysql::Pool
 }
 
 impl AuthController {
     
-    pub fn new(config: Config) -> AuthController {
+    pub fn new(config: Config, pool: mysql::Pool) -> AuthController {
         let fb_secret = config.get("fb_secret").unwrap();
         let fb_app_id = config.get("fb_app_id").unwrap();
         let hostname = config.get("hostname").unwrap();
@@ -25,8 +28,93 @@ impl AuthController {
         AuthController{
             fb_secret: fb_secret,
             fb_app_id: fb_app_id,
-            hostname: hostname
+            hostname: hostname,
+            pool: pool
         }
+    }
+    
+    fn fetch_json(&self, url:String) -> Result<BTreeMap<String, Json>, String>{
+
+        let client = Client::new();
+
+        logger::info(format!("requesting json from : {:?}", url));
+
+        let res = client.get(&url).send();
+
+        match res {
+            Err(e) => {
+                let err = format!("Error requesting json: {:?}", e);
+                logger::warn(&err);
+                return Err(err.clone())
+            },
+            _ => ()
+        }
+
+        let mut r = res.unwrap();
+        let mut buffer = String::new();
+        let _ = r.read_to_string(&mut buffer);
+
+        let data = Json::from_str(&buffer).unwrap();
+
+        Ok(data.as_object().unwrap().clone())
+
+    }
+
+    fn get_access_token(&self, req: &mut Request) -> Result<String, Result<Response, IronError>> {
+
+        let fb_secret = self.fb_secret.clone();
+        let client_id = self.fb_app_id.clone();
+        let hostname = self.hostname.clone();
+        let redirect = format!("{}/auth", hostname);
+        let code = query::get(req.url.to_string(), "code");
+
+        if code == None {
+            logger::warn("invalid_query_param - no code");
+            return Err(self.invalid_query_param());
+        }
+
+        let code = code.unwrap();
+
+        let fb_token_url = format!("https://graph.facebook.com/v2.7/oauth/access_token?client_id={}&redirect_uri={}&client_secret={}&code={}", client_id, redirect, fb_secret, code);
+
+        logger::info("requesting token from Facebook");
+
+        let fb_token = self.fetch_json(fb_token_url);
+
+        match fb_token {
+            Err(_) => {
+                return Err(self.facebook_error());
+            },
+            _ => ()
+        }
+
+        let fb_t = fb_token.unwrap();
+        let access_token = fb_t.get("access_token")
+                                .unwrap()
+                                .as_string()
+                                .unwrap();
+        
+        logger::info("got access token");
+
+        Ok(String::from(access_token))
+    }
+
+    fn get_profile(&self, access_token: String) -> Result<BTreeMap<String, Json>, Result<Response, IronError>> {
+
+
+        let profile_url = format!("https://graph.facebook.com/v2.7/me?access_token={}&fields=id,name", access_token);
+
+        let profile_response = self.fetch_json(profile_url);
+
+        match profile_response {
+            Err(_) => {
+                return Err(self.facebook_error());
+            },
+            _ => ()
+        }
+
+        Ok(profile_response.unwrap())
+
     }
 
     fn success(&self) -> IronResult<Response> {
@@ -54,78 +142,44 @@ impl Handler for AuthController {
         
         logger::info("AuthController handler");
 
-        let fb_secret = self.fb_secret.clone();
-        let client_id = self.fb_app_id.clone();
-        let hostname = self.hostname.clone();
-        let redirect = format!("{}/auth", hostname);
+        let access_token_response = self.get_access_token(req);
+        logger::info(format!("{:?}", access_token_response));
 
-        let code = query::get(req.url.to_string(), "code");
-
-        if code == None {
-            logger::warn("invalid_query_param - no code");
-            return self.invalid_query_param();
-        }
-
-        let code = code.unwrap();
-
-        let fb_token_url = format!("https://graph.facebook.com/v2.7/oauth/access_token?client_id={}&redirect_uri={}&client_secret={}&code={}", client_id, redirect, fb_secret, code);
-
-
-        logger::info("requesting token from Facebook");
-        let client = Client::new();
-        let res = client.get(&fb_token_url).send();
-
-        match res {
-            Err(e) => {
-                logger::warn(
-                    format!("{:?}", e)
-                );
-                return self.facebook_error();
-            },
+        match access_token_response {
+            Err(x) => return x,
             _ => ()
         }
 
-        let mut r = res.unwrap();
+        let access_token = access_token_response.unwrap();
 
-        let mut buffer = String::new();
-        let _ = r.read_to_string(&mut buffer);
-
-        let data = Json::from_str(&buffer).unwrap();
-        let obj = data.as_object().unwrap();
-
-        let access_token = obj.get("access_token").unwrap().as_string().unwrap();
-
-        logger::info("got access token");
         logger::info("loading profile");
-                
-
-        let profile_url = format!("https://graph.facebook.com/v2.7/me?access_token={}&fields=id,name", access_token);
-
-        let res = client.get(&profile_url).send();
-
-
-        match res {
-            Err(e) => {
-                logger::warn(
-                    format!("{:?}", e)
-                );
-                return self.facebook_error();
-            },
-            _ => ()
+        
+        let profile_response = self.get_profile(access_token);
+        
+        match profile_response {
+            Err(x) => return x,
+            _ => ()    
         }
 
+        let profile = profile_response.unwrap();
 
-        let mut r = res.unwrap();
+        let id = profile.get("id").unwrap();
+        let name = profile.get("name").unwrap();
 
-        let mut buffer = String::new();
-        let _ = r.read_to_string(&mut buffer);
+        logger::info(format!("{}", id));
+        logger::info(format!("{}", name));
 
-        logger::info(buffer);
-
+        self.pool.prep_exec(r"INSERT INTO pusoy_dos.user
+                            ( name, provider_id, provider_type)
+                        VALUES
+                            (:name, :id, 'facebook')",
+                        params!{
+                            "name" => name.as_string(),
+                            "id" => id.as_string()
+                        }).unwrap();
 
         self.success()
 
     }
 
 }
-

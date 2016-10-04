@@ -5,6 +5,8 @@ extern crate hyper;
 extern crate url;
 extern crate rustc_serialize;
 extern crate logger as iron_logger;
+#[macro_use]
+extern crate mysql;
 
 mod config;
 mod controller;
@@ -20,9 +22,12 @@ use iron_logger::Logger;
 
 
 fn main() {
+    
+    let pool = mysql::Pool::new("mysql://root@localhost").unwrap();
+
     let mut router = Router::new();
     let config = Config::new();
-    let auth_controller = auth::AuthController::new(config);
+    let auth_controller = auth::AuthController::new(config, pool);
     let game_list_controller = game_list::GameList;
 
     router.get("/", home_page::handler, "index");

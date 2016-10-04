@@ -8,6 +8,7 @@ pub fn warn<S: Display>(msg: S){
     println!("[WARN] {}", msg);
 }
 
+#[allow(dead_code)]
 pub fn error<S: Display>(msg: S){
     println!("[ERR] {}", msg );
 }
