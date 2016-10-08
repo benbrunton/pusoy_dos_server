@@ -12,8 +12,10 @@ mod config;
 mod controller;
 mod query;
 mod logger;
+mod model;
+mod data_access;
 
-use controller::{home_page, auth, game_list};
+use controller::{home_page, auth, game_list, test_auth};
 use config::Config;
 
 use iron::prelude::*;
@@ -24,14 +26,21 @@ use iron_logger::Logger;
 fn main() {
     
     let pool = mysql::Pool::new("mysql://root@localhost").unwrap();
+    let user_data = data_access::user::User::new(pool.clone());
 
     let mut router = Router::new();
     let config = Config::new();
-    let auth_controller = auth::AuthController::new(config, pool);
+
+    let auth_controller = auth::AuthController::new(&config, user_data.clone());
+    let test_auth_controller = test_auth::TestAuthController::new(&config, user_data.clone());
+
     let game_list_controller = game_list::GameList;
 
     router.get("/", home_page::handler, "index");
     router.get("/test", home_page::test_handler, "test");
+    
+    // todo - put behind a feature flag
+    router.get("/test_auth", test_auth_controller, "test_auth");
 
     router.get("/auth", auth_controller, "auth_callback");
     router.get("/games", game_list_controller, "game_list");

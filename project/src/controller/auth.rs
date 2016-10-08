@@ -6,21 +6,22 @@ use config::Config;
 use std::io::Read;
 use rustc_serialize::json::Json;
 use std::collections::BTreeMap;
-use mysql;
 
 use query;
 use logger;
+use data_access::user::User as UserData;
+use model::user::PartUser;
 
 pub struct AuthController {
     fb_secret: String,
     fb_app_id: String,
     hostname: String,
-    pool: mysql::Pool
+    user_data: UserData
 }
 
 impl AuthController {
     
-    pub fn new(config: Config, pool: mysql::Pool) -> AuthController {
+    pub fn new(config: &Config, user_data: UserData) -> AuthController {
         let fb_secret = config.get("fb_secret").unwrap();
         let fb_app_id = config.get("fb_app_id").unwrap();
         let hostname = config.get("hostname").unwrap();
@@ -29,7 +30,7 @@ impl AuthController {
             fb_secret: fb_secret,
             fb_app_id: fb_app_id,
             hostname: hostname,
-            pool: pool
+            user_data: user_data
         }
     }
     
@@ -163,23 +164,21 @@ impl Handler for AuthController {
 
         let profile = profile_response.unwrap();
 
-        let id = profile.get("id").unwrap();
-        let name = profile.get("name").unwrap();
+        let id = profile.get("id").unwrap().as_string().unwrap();
+        let name = profile.get("name").unwrap().as_string().unwrap();
 
         logger::info(format!("{}", id));
         logger::info(format!("{}", name));
 
-        self.pool.prep_exec(r"INSERT INTO pusoy_dos.user
-                            ( name, provider_id, provider_type)
-                        VALUES
-                            (:name, :id, 'facebook')",
-                        params!{
-                            "name" => name.as_string(),
-                            "id" => id.as_string()
-                        }).unwrap();
+        let user = PartUser{
+            name: String::from(name),
+            provider_id: String::from(id),
+            provider_type: String::from("facebook") 
+        };
+
+        self.user_data.create_if_new(user);
 
         self.success()
-
     }
 
 }
