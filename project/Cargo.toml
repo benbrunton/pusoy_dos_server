@@ -18,3 +18,5 @@ toml = "0.2"
 hyper = "0.9.10"
 rustc-serialize = "0.3"
 mysql = "*"
+cookie = "0.2"
+uuid = { version = "0.2", features = ["v4"] }

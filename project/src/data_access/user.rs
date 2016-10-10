@@ -1,6 +1,7 @@
 
 use model::user::{PartUser, User as UserModel};
 use mysql;
+use logger;
 
 #[derive(Clone)]
 pub struct User{
@@ -28,6 +29,7 @@ impl User {
     }
 
     fn insert_user(&self, user:PartUser) -> UserModel {
+        logger::info(format!("Creating new user : {}", user.name));
         let query_result = self.pool.prep_exec(r"INSERT INTO pusoy_dos.user
                 ( name, provider_id, provider_type)
             VALUES
@@ -56,27 +58,36 @@ impl User {
                                                     provider_id, 
                                                     provider_type
                                 FROM pusoy_dos.user
-                                WHERE id = :id",
+                                WHERE provider_id = :id
+                                AND provider_type = :type",
                             params!{
                                 "id" => user.provider_id,
                                 "type" => user.provider_type
                             }).unwrap();
 
-        match user_record.next() {
+        let retrieved_user = match user_record.next() {
             Some(result) => {
 
                 let mut row = result.unwrap();
+                let id = row.take("id").unwrap();
+                logger::info(format!("User found with id : {}", id));
+
                 Some(UserModel{
-                    id: row.take("id").unwrap(),
+                    id: id,
                     name: row.take("name").unwrap(),
-                    creation_date: row.take("creation_date").unwrap(),
+                    creation_date: String::from(""), //row.take("creation_date").unwrap(),
                     provider_id: row.take("provider_id").unwrap(),
                     provider_type: row.take("provider_type").unwrap()
                 })
 
             },
 
-            _ => None
-        }
+            _ => {
+                logger::info(format!("No user found for {}", user.name));
+                None
+            }
+        };
+
+        retrieved_user
     }
 }
