@@ -11,6 +11,7 @@ use query;
 use logger;
 use data_access::user::User as UserData;
 use model::user::PartUser;
+use util::session::Session;
 
 pub struct AuthController {
     fb_secret: String,
@@ -176,7 +177,9 @@ impl Handler for AuthController {
             provider_type: String::from("facebook") 
         };
 
-        self.user_data.create_if_new(user);
+        let new_user = self.user_data.create_if_new(user);
+        let mut session = req.extensions.get::<Session>();
+        session.set_user(new_user.id);
 
         self.success()
     }

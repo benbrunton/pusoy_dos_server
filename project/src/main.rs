@@ -20,7 +20,7 @@ mod data_access;
 
 use controller::{home_page, auth, game_list, test_auth};
 use config::Config;
-use util::session::Session;
+use util::session::SessionMiddleware;
 
 use iron::prelude::*;
 use router::Router;
@@ -54,8 +54,9 @@ fn main() {
     chain.link_after(logger_after);
 
 
-    let session = Session::new();
-    chain.link_before(session);
+    let session = SessionMiddleware;
+    chain.link_before(session.clone());
+	chain.link_after(session.clone());
 
     Iron::new(chain).http("0.0.0.0:3000").unwrap();
 
