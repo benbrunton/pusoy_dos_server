@@ -54,7 +54,13 @@ impl <'a> SessionMiddleware{
     // creates a session from key
     // returning from db or inserting new
     fn build_session(&self, key:Uuid) -> Session{
-        Session::new(key, None)
+        let session_key = format!("{}", key);
+        let result = self.store.get_session(&session_key);
+
+        match result {
+            Some(s) => s,
+            None    => Session::new(key, None)
+        }
     }
 
     fn get_cookie(req: &'a mut Request) -> Option<&'a Cookie>{
