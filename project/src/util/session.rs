@@ -4,40 +4,52 @@
 
 use iron::{BeforeMiddleware, AfterMiddleware, IronResult, IronError, Request, Response};
 use iron::typemap::Key;
-use hyper::header::{Cookie, Headers, SetCookie};
+use hyper::header::{Cookie, SetCookie};
 use cookie::Cookie as CookiePair;
 use uuid::Uuid;
 
 use logger;
+use data_access::session::Session as SessionStore;
 
 pub struct SessionKey{ val: Uuid }
 impl Key for SessionKey { type Value = Uuid; }
 
 #[derive(Debug)]
 pub struct Session{
-    key: Uuid,
-    userId: Option<u64>
+    pub key: Uuid,
+    pub user_id: Option<u64>
 }
 
 impl Session {
 
-    pub fn new(key: Uuid, userId:Option<u64>) -> Session{
+    pub fn new(key: Uuid, user_id:Option<u64>) -> Session{
         Session{
             key: key,
-            user_id: None 
+            user_id: user_id 
         }
     }
 
-    pub fn set_user(&mut self, id: u64){
-        self.user_id = Some(id);
+    pub fn set_user(&self, id: u64) -> Session{
+        Session{
+            key: self.key,
+            user_id: Some(id)
+        }
     }
 }
 
 impl Key for Session {type Value = Session;}
 
 #[derive(Clone)]
-pub struct SessionMiddleware;
+pub struct SessionMiddleware{
+    store: SessionStore    
+}
 impl <'a> SessionMiddleware{
+
+    pub fn new(store: SessionStore) -> SessionMiddleware {
+        SessionMiddleware{
+            store: store
+        }
+    }
 
     // creates a session from key
     // returning from db or inserting new
@@ -93,6 +105,9 @@ impl AfterMiddleware for SessionMiddleware {
 
 	fn after(&self, req: &mut Request, r: Response) -> IronResult<Response> {
 		let key = req.extensions.get::<SessionKey>().unwrap();
+        let session = req.extensions.get::<Session>().unwrap();
+
+        self.store.store_session(session);
 		let str_key = format!("{}", key);
 		let cookie = CookiePair::new("pd_session".to_owned(), str_key);
 		let mut res = Response::new();
@@ -108,7 +123,7 @@ impl AfterMiddleware for SessionMiddleware {
         Ok(res)
     }
 
-    fn catch(&self, req: &mut Request, err: IronError) -> IronResult<Response> {
+    fn catch(&self, /* req */ _: &mut Request, err: IronError) -> IronResult<Response> {
         //try!(self.log(req, &err.response));
         Err(err)
     }

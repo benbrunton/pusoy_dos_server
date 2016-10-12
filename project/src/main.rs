@@ -31,6 +31,7 @@ fn main() {
     
     let pool = mysql::Pool::new("mysql://root@localhost").unwrap();
     let user_data = data_access::user::User::new(pool.clone());
+    let session_store = data_access::session::Session::new(pool.clone());
 
     let mut router = Router::new();
     let config = Config::new();
@@ -54,7 +55,7 @@ fn main() {
     chain.link_after(logger_after);
 
 
-    let session = SessionMiddleware;
+    let session = SessionMiddleware::new(session_store);
     chain.link_before(session.clone());
 	chain.link_after(session.clone());
 

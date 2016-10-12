@@ -1,5 +1,5 @@
 use mysql;
-use logger;
+use util::session::Session as SessionModel;
 
 #[derive(Clone)]
 pub struct Session{
@@ -14,14 +14,15 @@ impl Session {
         }
     }
 
-    pub fn store_session(session: SessionModel) {
+    pub fn store_session(&self, session: &SessionModel) {
         self.pool.prep_exec(r"INSERT INTO pusoy_dos.session
                 ( id, user_id)
             VALUES
                 (:id, :user_id)",
             params!{
-                "id" => user.provider_id.clone(),
+                "id" => format!("{}", session.key.clone()),
                 "user_id" => session.user_id.clone()
             }).unwrap();
 
     }
+}

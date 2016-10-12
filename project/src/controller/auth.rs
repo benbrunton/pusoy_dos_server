@@ -136,6 +136,12 @@ impl AuthController {
         Ok(Response::with((status::Ok, "not ok")))
     }
 
+    fn get_new_session(&self, req: &mut Request, user_id:u64) -> Session{
+        let session = req.extensions.get::<Session>().unwrap();
+        let new_session = session.set_user(user_id);
+        new_session
+    }
+
 }
 
 impl Handler for AuthController {
@@ -178,8 +184,8 @@ impl Handler for AuthController {
         };
 
         let new_user = self.user_data.create_if_new(user);
-        let mut session = req.extensions.get::<Session>();
-        session.set_user(new_user.id);
+        let session = self.get_new_session(req, new_user.id);
+        req.extensions.insert::<Session>(session);
 
         self.success()
     }
