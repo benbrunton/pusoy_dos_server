@@ -37,11 +37,12 @@ fn main() {
     let config = Config::new();
 
     let auth_controller = auth::AuthController::new(&config, user_data.clone());
+    let home_page_controller = home_page::HomePageController::new(&config);
 
     let game_list_controller = game_list::GameList;
 
 
-    router.get("/", home_page::handler, "index");
+    router.get("/", home_page_controller, "index");
    
     router.get("/auth", auth_controller, "auth_callback");
     router.get("/games", game_list_controller, "game_list");
