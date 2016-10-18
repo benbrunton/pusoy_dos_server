@@ -6,8 +6,7 @@ use config::Config;
 use logger;
 use data_access::user::User as UserData;
 use model::user::PartUser;
-
-
+use util::session::Session;
 
 pub struct TestAuthController {
     hostname: String,
@@ -34,11 +33,18 @@ impl TestAuthController {
         Ok(Response::with((status::Found, modifiers::Redirect(url))))
     }
 
+    fn get_new_session(&self, req: &mut Request, user_id:u64) -> Session{
+        let session = req.extensions.get::<Session>().unwrap();
+        let new_session = session.set_user(user_id);
+        new_session
+    }
+
+
 }
 
 impl Handler for TestAuthController {
 
-    fn handle(&self, _: &mut Request) -> IronResult<Response> { 
+    fn handle(&self, req: &mut Request) -> IronResult<Response> { 
 
         logger::info("TestAuthController handler");
 
@@ -51,7 +57,9 @@ impl Handler for TestAuthController {
             provider_type: String::from("test") 
         };
 
-        self.user_data.create_if_new(user);
+        let new_user = self.user_data.create_if_new(user);
+        let session = self.get_new_session(req, new_user.id);
+        req.extensions.insert::<Session>(session);
 
         self.success()
 

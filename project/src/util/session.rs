@@ -14,6 +14,14 @@ use data_access::session::Session as SessionStore;
 pub struct SessionKey{ val: Uuid }
 impl Key for SessionKey { type Value = Uuid; }
 
+pub enum SessionInstruction {
+    STORE,
+    DELETE,
+    NONE
+}
+
+impl Key for SessionInstruction { type Value = SessionInstruction; }
+
 #[derive(Debug)]
 pub struct Session{
     pub key: Uuid,
@@ -23,6 +31,7 @@ pub struct Session{
 impl Session {
 
     pub fn new(key: Uuid, user_id:Option<u64>) -> Session{
+
         Session{
             key: key,
             user_id: user_id 
@@ -54,6 +63,7 @@ impl <'a> SessionMiddleware{
     // creates a session from key
     // returning from db or inserting new
     fn build_session(&self, key:Uuid) -> Session{
+        logger::info(format!("building session from key: {}", key));
         let session_key = format!("{}", key);
         let result = self.store.get_session(&session_key);
 
@@ -83,11 +93,44 @@ impl <'a> SessionMiddleware{
     fn find_session_cookie(cookies: &Vec<CookiePair>) -> SessionKey {
 		for pair in cookies {
 			if pair.name == "pd_session" {
-                return SessionKey{ val: Uuid::parse_str(&pair.value).unwrap() };
+                return SessionKey{ val: Uuid::parse_str(&pair.value).unwrap_or(Uuid::new_v4()) };
             }
 		}
 
 		SessionMiddleware::generate_session_key()
+    }
+
+    fn store_session(&self, session: &Session, key: &Uuid, r: Response) -> Response {
+        self.store.store_session(session);
+		let str_key = format!("{}", key);
+		let cookie = CookiePair::new("pd_session".to_owned(), str_key);
+		let mut res = Response::new();
+		res.status = r.status;
+		res.body = r.body;
+		res.headers = r.headers;
+		res.headers.set(
+			SetCookie(vec![
+				cookie
+			])
+		);
+
+        res
+    }
+
+    fn delete_session(&self, r:Response) -> Response {
+        let cookie = CookiePair::new("pd_session".to_owned(), String::from(""));
+		let mut res = Response::new();
+		res.status = r.status;
+		res.body = r.body;
+		res.headers = r.headers;
+		res.headers.set(
+			SetCookie(vec![
+				cookie
+			])
+		);
+
+        res
+
     }
 
 }
@@ -96,8 +139,12 @@ impl BeforeMiddleware for SessionMiddleware {
     fn before(&self, req: &mut Request) -> IronResult<()> {
         let key = SessionMiddleware::get_session_key(req);
         let session = self.build_session(key.val);
+        let instruction = SessionInstruction::STORE;
+
+        logger::info("inserting session data into request");
         req.extensions.insert::<SessionKey>(key.val);
         req.extensions.insert::<Session>(session);
+        req.extensions.insert::<SessionInstruction>(instruction);
         Ok(())
     }
 
@@ -112,19 +159,13 @@ impl AfterMiddleware for SessionMiddleware {
 	fn after(&self, req: &mut Request, r: Response) -> IronResult<Response> {
 		let key = req.extensions.get::<SessionKey>().unwrap();
         let session = req.extensions.get::<Session>().unwrap();
+        let instruction = req.extensions.get::<SessionInstruction>().unwrap();
 
-        self.store.store_session(session);
-		let str_key = format!("{}", key);
-		let cookie = CookiePair::new("pd_session".to_owned(), str_key);
-		let mut res = Response::new();
-		res.status = r.status;
-		res.body = r.body;
-		res.headers = r.headers;
-		res.headers.set(
-			SetCookie(vec![
-				cookie
-			])
-		);
+        let res = match *instruction {
+            SessionInstruction::STORE => self.store_session(session, key, r),
+            SessionInstruction::DELETE => self.delete_session(r),
+            _   => r
+        };
 
         Ok(res)
     }

@@ -33,6 +33,7 @@ impl HomePageController {
     }
 
     fn not_logged_in(&self) -> IronResult<Response> {
+        logger::info("user not logged in");
         Ok(Response::with((get_content_type(), status::Ok, get_homepage())))
     }
 
@@ -43,8 +44,13 @@ impl Handler for HomePageController {
 
     fn handle(&self, req: &mut Request) -> IronResult<Response> {
 
-        let session = req.extensions.get::<Session>().unwrap();
-        match session.user_id {
+        logger::info("retrieving session from request");
+        let session_user_id = match req.extensions.get::<Session>() {
+            Some(session) => session.user_id,
+            _             => None
+        };
+
+        match session_user_id {
             Some(_) => self.logged_in(),
             _ => self.not_logged_in()        
         }

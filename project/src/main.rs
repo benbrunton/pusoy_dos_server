@@ -18,7 +18,7 @@ mod logger;
 mod model;
 mod data_access;
 
-use controller::{home_page, auth, game_list, test_auth};
+use controller::{home_page, auth, game_list, test_auth, logout};
 use config::Config;
 use util::session::SessionMiddleware;
 
@@ -38,14 +38,14 @@ fn main() {
 
     let auth_controller = auth::AuthController::new(&config, user_data.clone());
     let home_page_controller = home_page::HomePageController::new(&config);
-
     let game_list_controller = game_list::GameList;
+    let logout_controller = logout::LogoutController::new(&config);
 
 
     router.get("/", home_page_controller, "index");
-   
     router.get("/auth", auth_controller, "auth_callback");
     router.get("/games", game_list_controller, "game_list");
+    router.get("/logout", logout_controller, "log_out");
  
     dev_mode(&config, &mut router, user_data.clone());
 
