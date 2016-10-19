@@ -1,24 +1,26 @@
-use std::fs;
 use iron::prelude::*;
 use iron::{status, modifiers, Url};
 use iron::middleware::Handler;
 use iron::mime::Mime;
+use tera::{Tera, Context, TeraResult};
 
 use util::session::Session;
 use config::Config;
 use logger;
 
 pub struct HomePageController {
-    hostname: String
+    hostname: String,
+    tera: Tera
 }
 
 impl HomePageController {
     
-    pub fn new(config: &Config) -> HomePageController {
+    pub fn new(config: &Config, tera: Tera) -> HomePageController {
 
         let hostname = config.get("hostname").unwrap();
         HomePageController {
-            hostname: hostname
+            hostname: hostname,
+            tera: tera
         }
     }
 
@@ -34,13 +36,21 @@ impl HomePageController {
 
     fn not_logged_in(&self) -> IronResult<Response> {
         logger::info("user not logged in");
-        Ok(Response::with((get_content_type(), status::Ok, get_homepage())))
+        let content_type = "text/html".parse::<Mime>().unwrap();
+        let homepage = self.get_homepage().unwrap();
+        Ok(Response::with((content_type, status::Ok, homepage)))
     }
 
+    fn get_homepage(&self) -> TeraResult<String> {
+        let fb = "https://www.facebook.com/v2.7/dialog/oauth?client_id=637941239713409&redirect_uri=http://localhost:3000/auth";
+        let mut data = Context::new(); 
+        data.add("fb_login", &fb);
+        self.tera.render("index.html", data)
+    }
 }
 
 
-impl Handler for HomePageController {
+impl  Handler for HomePageController {
 
     fn handle(&self, req: &mut Request) -> IronResult<Response> {
 
@@ -57,10 +67,3 @@ impl Handler for HomePageController {
     }
 }
 
-fn get_homepage() -> fs::File {
-    fs::File::open("templates/index.html").ok().unwrap()
-}
-
-fn get_content_type() -> Mime {
-    "text/html".parse::<Mime>().unwrap()
-}

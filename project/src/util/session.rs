@@ -16,8 +16,7 @@ impl Key for SessionKey { type Value = Uuid; }
 
 pub enum SessionInstruction {
     STORE,
-    DELETE,
-    NONE
+    DELETE
 }
 
 impl Key for SessionInstruction { type Value = SessionInstruction; }
