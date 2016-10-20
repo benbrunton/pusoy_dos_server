@@ -51,7 +51,7 @@ fn main() {
     let home_page_controller = home_page::HomePageController::new(&config, &TERA);
     let game_list_controller = game_list::GameList::new(&TERA);
     let logout_controller = logout::LogoutController::new(&config);
-    let game_create_controller = game_create::GameCreate::new(&TERA);
+    let game_create_controller = game_create::GameCreate::new(&config);
     let new_game_controller = new_game::NewGame::new(&TERA);
 
 

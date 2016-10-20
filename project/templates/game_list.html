@@ -7,9 +7,14 @@
     <div class="game-panel">
         <a href="/new-game">Create Game</a>
 
-       <!-- if games -->
+        <div>
+            {% if num_games > 0  %}
+                <table></table>
+            {% else %}
+                <p>No available games</p>
+            {% endif %}
+        </div>
 
-       <!-- else empty list --> 
     </div>
 {% endblock content %}
 

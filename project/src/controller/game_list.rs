@@ -18,6 +18,8 @@ impl <'a> GameList {
 
     fn get_page(&self) -> TeraResult<String> {
         let mut data = Context::new(); 
+        let num_games = 0;
+        data.add("num_games", &num_games);
         self.tera.render("game_list.html", data)
     }
 }

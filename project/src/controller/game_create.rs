@@ -1,24 +1,18 @@
 use iron::prelude::*;
-use iron::{status};
+use iron::{status, modifiers, Url};
 use iron::middleware::Handler;
-use iron::mime::Mime;
-use tera::{Tera, Context, TeraResult};
 
 use logger;
-use util::session::Session;
+use config::Config;
 
 pub struct GameCreate {
-    tera: &'static Tera
+    hostname: String
 }
 
-impl <'a> GameCreate {
-    pub fn new(tera:&'static Tera) -> GameCreate {
-        GameCreate{ tera: tera }
-    }
-
-    fn get_page(&self) -> TeraResult<String> {
-        let mut data = Context::new(); 
-        self.tera.render("create_success.html", data)
+impl GameCreate {
+    pub fn new(config:&Config) -> GameCreate {
+        let hostname = config.get("hostname").unwrap();
+        GameCreate{ hostname: hostname }
     }
 }
 
@@ -26,9 +20,11 @@ impl Handler for GameCreate {
 
     fn handle(&self, req: &mut Request) -> IronResult<Response> {
 
-        logger::info(format!("{:?}", req.extensions.get::<Session>())); 
-        let content_type = "text/html".parse::<Mime>().unwrap();
-        Ok(Response::with((content_type, status::Ok, self.get_page().unwrap())))
+        let full_url = format!("{}/games?success=true", self.hostname);
+        let url =  Url::parse(&full_url).unwrap();
+
+        Ok(Response::with((status::Found, modifiers::Redirect(url))))
+
     }
 
 }
