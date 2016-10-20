@@ -21,7 +21,7 @@ mod logger;
 mod model;
 mod data_access;
 
-use controller::{home_page, auth, game_list, test_auth, logout};
+use controller::{home_page, auth, game_list, game_create, new_game, test_auth, logout};
 use config::Config;
 use util::session::SessionMiddleware;
 
@@ -51,12 +51,16 @@ fn main() {
     let home_page_controller = home_page::HomePageController::new(&config, &TERA);
     let game_list_controller = game_list::GameList::new(&TERA);
     let logout_controller = logout::LogoutController::new(&config);
+    let game_create_controller = game_create::GameCreate::new(&TERA);
+    let new_game_controller = new_game::NewGame::new(&TERA);
 
 
     router.get("/", home_page_controller, "index");
     router.get("/auth", auth_controller, "auth_callback");
     router.get("/games", game_list_controller, "game_list");
     router.get("/logout", logout_controller, "log_out");
+    router.get("/new-game", new_game_controller, "new_game");
+    router.post("/new-game", game_create_controller, "game_create");
  
     dev_mode(&config, &mut router, user_data.clone());
 

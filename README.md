@@ -12,7 +12,7 @@ A multiplayer Pusoy Dos server written in [Rust](https://www.rust-lang.org).
 
 ## Tech
 - rust
--- iron framework
+ - iron framework
 - mysql
 - docker
 - elm?
@@ -22,6 +22,7 @@ A multiplayer Pusoy Dos server written in [Rust](https://www.rust-lang.org).
 - [x] - log out
 - [ ] - create game
 - [ ] - play game
+- [ ] - Error pages
 - [ ] - interactive front end
 - [ ] - deployment
 - [ ] - profit?
