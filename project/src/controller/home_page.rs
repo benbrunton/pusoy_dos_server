@@ -10,17 +10,21 @@ use logger;
 
 pub struct HomePageController {
     hostname: String,
-    tera: Tera
+    tera: &'static Tera,
+    fb_app_id: String
 }
 
 impl HomePageController {
     
-    pub fn new(config: &Config, tera: Tera) -> HomePageController {
+    pub fn new(config: &Config, tera: &'static Tera) -> HomePageController {
 
         let hostname = config.get("hostname").unwrap();
+        let fb_app_id = config.get("fb_app_id").unwrap();
+
         HomePageController {
             hostname: hostname,
-            tera: tera
+            tera: tera,
+            fb_app_id: fb_app_id
         }
     }
 
@@ -42,7 +46,9 @@ impl HomePageController {
     }
 
     fn get_homepage(&self) -> TeraResult<String> {
-        let fb = "https://www.facebook.com/v2.7/dialog/oauth?client_id=637941239713409&redirect_uri=http://localhost:3000/auth";
+        let fb = format!("https://www.facebook.com/v2.7/dialog/oauth?client_id={}&redirect_uri={}/auth", 
+            self.fb_app_id, 
+            self.hostname);
         let mut data = Context::new(); 
         data.add("fb_login", &fb);
         self.tera.render("index.html", data)
@@ -50,7 +56,7 @@ impl HomePageController {
 }
 
 
-impl  Handler for HomePageController {
+impl Handler for HomePageController {
 
     fn handle(&self, req: &mut Request) -> IronResult<Response> {
 

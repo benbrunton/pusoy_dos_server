@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    {% block head %}
+    <title>{% block title %}{% endblock title %} - Pusoy Dos Online</title>
+    {% endblock head %}
+</head>
+<body>
+    <div id="content">{% block content %}{% endblock content %}</div>
+    <div id="footer">
+        {% block footer %}
+        &copy; Copyright 2016 <a href="http://benbru.com/">Ben Brunton</a>.
+        {% endblock footer %}
+    </div>
+</body>
+</html>

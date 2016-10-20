@@ -10,6 +10,8 @@ extern crate mysql;
 extern crate cookie;
 extern crate uuid;
 extern crate tera;
+#[macro_use]
+extern crate lazy_static;
 
 mod config;
 mod util;
@@ -28,6 +30,11 @@ use router::Router;
 use iron_logger::Logger;
 use tera::Tera;
 
+lazy_static!{
+
+    static ref TERA: Tera = Tera::new("templates/**/*");
+}
+
 
 fn main() {
     
@@ -35,15 +42,14 @@ fn main() {
     let user_data = data_access::user::User::new(pool.clone());
     let session_store = data_access::session::Session::new(pool.clone());
 
-    let tera = Tera::new("templates/**/*");
 
 
     let mut router = Router::new();
     let config = Config::new();
 
     let auth_controller = auth::AuthController::new(&config, user_data.clone());
-    let home_page_controller = home_page::HomePageController::new(&config, tera);
-    let game_list_controller = game_list::GameList;
+    let home_page_controller = home_page::HomePageController::new(&config, &TERA);
+    let game_list_controller = game_list::GameList::new(&TERA);
     let logout_controller = logout::LogoutController::new(&config);
 
 

@@ -18,7 +18,7 @@ A multiplayer Pusoy Dos server written in [Rust](https://www.rust-lang.org).
 - elm?
 
 #Todo
-- [ ] - html templates
+- [x] - html templates
 - [x] - log out
 - [ ] - create game
 - [ ] - play game

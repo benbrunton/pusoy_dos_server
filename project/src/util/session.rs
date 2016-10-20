@@ -162,8 +162,7 @@ impl AfterMiddleware for SessionMiddleware {
 
         let res = match *instruction {
             SessionInstruction::STORE => self.store_session(session, key, r),
-            SessionInstruction::DELETE => self.delete_session(r),
-            _   => r
+            SessionInstruction::DELETE => self.delete_session(r)
         };
 
         Ok(res)

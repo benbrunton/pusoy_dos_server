@@ -1,14 +1,9 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>Pusoy Dos</title>
-        <meta charset="utf-8">
-    </head>
+{% extends "base.html" %}
+{% block title %}Welcome{% endblock title %}
+{% block content %}
+    <h1>Pusoy Dos</h1>
 
-    <body>
-        <h1>Pusoy Dos</h1>
+    <p><a href="{{ fb_login  }}">Login with Facebook</a></p>
+    </p><a href="/test_auth">Offline Login</a></p>
+{% endblock content %}
 
-        <p><a href="{{ fb_login  }}">Login with Facebook</a></p>
-        </p><a href="/test_auth">Offline Login</a></p>
-    </body>
-</html>
