@@ -29,7 +29,8 @@ impl Game {
 
             GameModel{
                 id: query_result.last_insert_id(),
-                creator: user                
+                creator_id: user, 
+                creator_name: String::from("current user")
             }
     }
 
@@ -37,9 +38,11 @@ impl Game {
     pub fn get_valid_games(&self, user:u64) -> Vec<GameModel> {
         logger::info(format!("Getting games for user {}", user));
 
-        let mut games = self.pool.prep_exec(r"SELECT id, 
-                                                    creator
-                                FROM pusoy_dos.game
+        let mut games = self.pool.prep_exec(r"SELECT pusoy_dos.game.id, 
+                                                    creator,
+                                                    name
+                                    FROM pusoy_dos.game
+                                    JOIN pusoy_dos.user ON creator = user.id
                                 WHERE creator = :user",
                             params!{
                                 "user" => user
@@ -52,10 +55,11 @@ impl Game {
                 Ok(mut row) => {
                     GameModel{
                         id: row.take("id").unwrap(),
-                        creator: row.take("creator").unwrap()
+                        creator_id: row.take("creator").unwrap(),
+                        creator_name: row.take("name").unwrap()
                     }
                 },
-                _ => GameModel{ id: 0, creator:0 }
+                _ => GameModel{ id: 0, creator_id:0, creator_name:String::from("")}
             }
         }).collect()
 

@@ -9,7 +9,23 @@
 
         <div>
             {% if num_games > 0  %}
-                <table></table>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+							<th>Owner</th>
+                        </tr>
+                    </thead>
+
+					<tbody>
+					{% for game in games %}
+						<tr>
+							<td>{{ game.id }}</td>
+							<td>{{ game.creator_name }}</td>
+						</tr>
+				  	{% endfor %}	
+					</tbody>
+                </table>
             {% else %}
                 <p>No available games</p>
             {% endif %}

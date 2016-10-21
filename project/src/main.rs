@@ -12,6 +12,8 @@ extern crate uuid;
 extern crate tera;
 #[macro_use]
 extern crate lazy_static;
+#[macro_use]
+extern crate serde;
 
 mod config;
 mod util;
@@ -41,6 +43,7 @@ fn main() {
     let pool = mysql::Pool::new("mysql://root@localhost").unwrap();
     let user_data = data_access::user::User::new(pool.clone());
     let session_store = data_access::session::Session::new(pool.clone());
+    let game_data = data_access::game::Game::new(pool.clone());
 
 
 
@@ -49,9 +52,9 @@ fn main() {
 
     let auth_controller = auth::AuthController::new(&config, user_data.clone());
     let home_page_controller = home_page::HomePageController::new(&config, &TERA);
-    let game_list_controller = game_list::GameList::new(&TERA);
+    let game_list_controller = game_list::GameList::new(&TERA, game_data.clone());
     let logout_controller = logout::LogoutController::new(&config);
-    let game_create_controller = game_create::GameCreate::new(&config);
+    let game_create_controller = game_create::GameCreate::new(&config, game_data.clone());
     let new_game_controller = new_game::NewGame::new(&TERA);
 
 
