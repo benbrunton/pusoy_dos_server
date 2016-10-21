@@ -11,18 +11,22 @@ A multiplayer Pusoy Dos server written in [Rust](https://www.rust-lang.org).
 - `make docker-run`
 
 ## Tech
-- rust
- - iron framework
+- [rust](https://www.rust-lang.org)
+ - [iron framework](http://ironframework.io/)
+ - [tera templates](https://github.com/Keats/tera)
 - mysql
 - docker
 - elm?
 
 #Todo
+- [x] - log in
+- [x] - session
 - [x] - html templates
 - [x] - log out
-- [ ] - create game
+- [x] - create game
+- [ ] - join game
 - [ ] - play game
-- [ ] - Error pages
 - [ ] - interactive front end
 - [ ] - deployment
+- [ ] - error pages
 - [ ] - profit?
