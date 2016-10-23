@@ -5,15 +5,14 @@ extern crate hyper;
 extern crate url;
 extern crate rustc_serialize;
 extern crate logger as iron_logger;
-#[macro_use]
-extern crate mysql;
+#[macro_use] extern crate mysql;
 extern crate cookie;
 extern crate uuid;
 extern crate tera;
-#[macro_use]
-extern crate lazy_static;
-#[macro_use]
-extern crate serde;
+#[macro_use] extern crate lazy_static;
+#[macro_use] extern crate serde;
+#[macro_use] extern crate log;
+extern crate env_logger;
 
 mod config;
 mod util;
@@ -23,7 +22,7 @@ mod logger;
 mod model;
 mod data_access;
 
-use controller::{home_page, auth, game_list, game_create, new_game, test_auth, logout};
+use controller::{home_page, auth, game, game_list, game_create, new_game, test_auth, logout};
 use config::Config;
 use util::session::SessionMiddleware;
 
@@ -40,6 +39,8 @@ lazy_static!{
 
 fn main() {
     
+    env_logger::init().unwrap();
+
     let pool = mysql::Pool::new("mysql://root@localhost").unwrap();
     let user_data = data_access::user::User::new(pool.clone());
     let session_store = data_access::session::Session::new(pool.clone());
@@ -56,6 +57,7 @@ fn main() {
     let logout_controller = logout::LogoutController::new(&config);
     let game_create_controller = game_create::GameCreate::new(&config, game_data.clone());
     let new_game_controller = new_game::NewGame::new(&TERA);
+    let game_controller = game::Game::new(&config, &TERA);
 
 
     router.get("/", home_page_controller, "index");
@@ -64,6 +66,7 @@ fn main() {
     router.get("/logout", logout_controller, "log_out");
     router.get("/new-game", new_game_controller, "new_game");
     router.post("/new-game", game_create_controller, "game_create");
+    router.get("/game/:id", game_controller, "game");
  
     dev_mode(&config, &mut router, user_data.clone());
 
@@ -85,7 +88,7 @@ fn main() {
 // all bits and pieces to do with dev mode can go in here
 fn dev_mode(config: &Config, router: &mut Router, user_data: data_access::user::User){
 
-    logger::warn("DEV MODE ENABLED");
+    warn!("DEV MODE ENABLED");
     let test_auth_controller = test_auth::TestAuthController::new(config, user_data.clone());
     router.get("/test_auth", test_auth_controller, "test_auth");
 }

@@ -1,6 +1,7 @@
 
 pub mod home_page;
 pub mod auth;
+pub mod game;
 pub mod game_list;
 pub mod game_create;
 pub mod new_game;

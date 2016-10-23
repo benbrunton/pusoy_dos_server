@@ -27,23 +27,35 @@ impl Game {
                 "user" => user
             }).unwrap();
 
-            GameModel{
-                id: query_result.last_insert_id(),
-                creator_id: user, 
-                creator_name: String::from("current user")
-            }
+         let new_game = query_result.last_insert_id();
+
+         self.pool.prep_exec(r"INSERT INTO pusoy_dos.user_game
+                                    (game, user)
+                                VALUES
+                                    (:game, :user)",
+                                params!{
+                                    "game" => new_game,
+                                    "user" => user    
+                                }).unwrap();
+
+         GameModel{
+            id: new_game,
+            creator_id: user, 
+            creator_name: String::from("current user")
+         }
     }
 
     // todo: should be a linking table - not just games created by user
     pub fn get_valid_games(&self, user:u64) -> Vec<GameModel> {
         logger::info(format!("Getting games for user {}", user));
 
-        let mut games = self.pool.prep_exec(r"SELECT pusoy_dos.game.id, 
+        let games = self.pool.prep_exec(r"SELECT pusoy_dos.game.id, 
                                                     creator,
                                                     name
-                                    FROM pusoy_dos.game
+                                    FROM pusoy_dos.user_game
+                                    JOIN pusoy_dos.game ON pusoy_dos.game.id = game
                                     JOIN pusoy_dos.user ON creator = user.id
-                                WHERE creator = :user",
+                                WHERE user = :user",
                             params!{
                                 "user" => user
                             }).unwrap();

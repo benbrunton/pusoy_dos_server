@@ -43,4 +43,16 @@ ENGINE = InnoDB
 AUTO_INCREMENT = 4
 DEFAULT CHARACTER SET = utf8;
 
+-- user_game table
+DROP TABLE IF EXISTS `user_game`;
 
+CREATE TABLE IF NOT EXISTS `user_game` (
+    `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+    `game` INT(10) UNSIGNED NOT NULL,
+    `user` INT(10) UNSIGNED NOT NULL,
+    PRIMARY KEY (`id`),
+    INDEX `idx_game` (`game` ASC),
+    INDEX `idx_user` (`user` ASC))
+ENGINE = InnoDb
+AUTO_INCREMENT = 4
+DEFAULT CHARACTER SET = utf8;

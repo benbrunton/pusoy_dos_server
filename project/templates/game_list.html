@@ -7,13 +7,14 @@
     <div class="game-panel">
         <a href="/new-game">Create Game</a>
 
-        <div>
+        <div class="joined-games">
             {% if num_games > 0  %}
                 <table>
                     <thead>
                         <tr>
                             <th>#</th>
 							<th>Owner</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
 
@@ -22,6 +23,7 @@
 						<tr>
 							<td>{{ game.id }}</td>
 							<td>{{ game.creator_name }}</td>
+                            <td><a href="/game/{{ game.id }}">join</a></td>
 						</tr>
 				  	{% endfor %}	
 					</tbody>
@@ -29,6 +31,10 @@
             {% else %}
                 <p>No available games</p>
             {% endif %}
+        </div>
+
+        <div class="open-games">
+
         </div>
 
     </div>
