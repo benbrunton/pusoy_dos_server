@@ -1,3 +1,4 @@
+use serde::{Serialize, Serializer};
 
 #[derive(Clone)]
 pub struct PartUser{
@@ -13,4 +14,26 @@ pub struct User{
     pub provider_id: String,
     pub provider_type: String,
     pub creation_date: String
+}
+
+impl Serialize for User {
+
+	fn serialize<S>(&self, serializer: &mut S) -> Result<(), S::Error>
+        where S: Serializer
+    {
+        let mut state = try!(serializer.serialize_map(Some(2)));
+		try!(serializer.serialize_map_key(&mut state, "id"));
+		try!(serializer.serialize_map_value(&mut state, self.id));
+		try!(serializer.serialize_map_key(&mut state, "name"));
+		try!(serializer.serialize_map_value(&mut state, &self.name));
+		try!(serializer.serialize_map_key(&mut state, "provider_id"));
+		try!(serializer.serialize_map_value(&mut state, &self.provider_id));
+        try!(serializer.serialize_map_key(&mut state, "provider_type"));
+        try!(serializer.serialize_map_value(&mut state, &self.provider_type));
+        try!(serializer.serialize_map_key(&mut state, "creation_date"));
+        try!(serializer.serialize_map_value(&mut state, &self.creation_date));
+
+
+        serializer.serialize_map_end(state)
+    }
 }

@@ -2,7 +2,6 @@ use iron::prelude::*;
 use iron::{status, modifiers, Url};
 use iron::middleware::Handler;
 
-use logger;
 use config::Config;
 use data_access::game::Game as GameData;
 use util::session::Session;
@@ -37,7 +36,7 @@ impl Handler for GameCreate {
         let mut success = false;
         match session_user_id {
             Some(id) => { 
-                self.insert_new_game(id);
+                let _ = self.insert_new_game(id);
                 success = true;
             },
             _ => ()        

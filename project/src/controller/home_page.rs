@@ -6,7 +6,6 @@ use tera::{Tera, Context, TeraResult};
 
 use util::session::Session;
 use config::Config;
-use logger;
 
 pub struct HomePageController {
     hostname: String,
@@ -30,7 +29,7 @@ impl HomePageController {
 
     fn logged_in(&self) -> IronResult<Response> {
 
-        logger::info("user logged in - redirecting");
+        info!("user logged in - redirecting");
 
         let full_url = format!("{}/games", self.hostname);
         let url =  Url::parse(&full_url).unwrap();
@@ -39,7 +38,7 @@ impl HomePageController {
     }
 
     fn not_logged_in(&self) -> IronResult<Response> {
-        logger::info("user not logged in");
+        info!("user not logged in");
         let content_type = "text/html".parse::<Mime>().unwrap();
         let homepage = self.get_homepage().unwrap();
         Ok(Response::with((content_type, status::Ok, homepage)))
@@ -60,7 +59,7 @@ impl Handler for HomePageController {
 
     fn handle(&self, req: &mut Request) -> IronResult<Response> {
 
-        logger::info("retrieving session from request");
+        info!("retrieving session from request");
         let session_user_id = match req.extensions.get::<Session>() {
             Some(session) => session.user_id,
             _             => None

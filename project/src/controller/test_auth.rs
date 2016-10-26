@@ -3,7 +3,6 @@ use iron::{status, modifiers, Url};
 use iron::middleware::Handler;
 use config::Config;
 
-use logger;
 use data_access::user::User as UserData;
 use model::user::PartUser;
 use util::session::Session;
@@ -46,7 +45,7 @@ impl Handler for TestAuthController {
 
     fn handle(&self, req: &mut Request) -> IronResult<Response> { 
 
-        logger::info("TestAuthController handler");
+        info!("TestAuthController handler");
 
         let name = "Testy McTestface";
         let id = "12345678";

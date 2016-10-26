@@ -18,7 +18,6 @@ mod config;
 mod util;
 mod controller;
 mod query;
-mod logger;
 mod model;
 mod data_access;
 
@@ -57,7 +56,7 @@ fn main() {
     let logout_controller = logout::LogoutController::new(&config);
     let game_create_controller = game_create::GameCreate::new(&config, game_data.clone());
     let new_game_controller = new_game::NewGame::new(&TERA);
-    let game_controller = game::Game::new(&config, &TERA);
+    let game_controller = game::Game::new(&config, &TERA, game_data.clone(), user_data.clone());
 
 
     router.get("/", home_page_controller, "index");
@@ -81,6 +80,8 @@ fn main() {
     chain.link_before(session.clone());
 	chain.link_after(session.clone());
 
+    // todo - a little error checking around this
+    // will save a little debugging
     Iron::new(chain).http("0.0.0.0:3000").unwrap();
 
 }

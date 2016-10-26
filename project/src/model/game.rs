@@ -3,7 +3,7 @@ use serde::{Serialize, Serializer};
 pub struct Game{
     pub id: u64,
     pub creator_id: u64,
-	pub creator_name: String
+	pub creator_name: String,
 }
 
 impl Serialize for Game {
@@ -18,6 +18,7 @@ impl Serialize for Game {
 		try!(serializer.serialize_map_value(&mut state, self.creator_id));
 		try!(serializer.serialize_map_key(&mut state, "creator_name"));
 		try!(serializer.serialize_map_value(&mut state, &self.creator_name));
+        try!(serializer.serialize_map_key(&mut state, "joined"));
 
         serializer.serialize_map_end(state)
     }

@@ -8,7 +8,6 @@ use rustc_serialize::json::Json;
 use std::collections::BTreeMap;
 
 use query;
-use logger;
 use data_access::user::User as UserData;
 use model::user::PartUser;
 use util::session::Session;
@@ -39,14 +38,14 @@ impl AuthController {
 
         let client = Client::new();
 
-        logger::info(format!("requesting json from : {:?}", url));
+        info!("requesting json from : {:?}", url);
 
         let res = client.get(&url).send();
 
         match res {
             Err(e) => {
                 let err = format!("Error requesting json: {:?}", e);
-                logger::warn(&err);
+                warn!("{}", &err);
                 return Err(err.clone())
             },
             _ => ()
@@ -71,7 +70,7 @@ impl AuthController {
         let code = query::get(req.url.to_string(), "code");
 
         if code == None {
-            logger::warn("invalid_query_param - no code");
+            warn!("invalid_query_param - no code");
             return Err(self.invalid_query_param());
         }
 
@@ -79,7 +78,7 @@ impl AuthController {
 
         let fb_token_url = format!("https://graph.facebook.com/v2.7/oauth/access_token?client_id={}&redirect_uri={}&client_secret={}&code={}", client_id, redirect, fb_secret, code);
 
-        logger::info("requesting token from Facebook");
+        info!("requesting token from Facebook");
 
         let fb_token = self.fetch_json(fb_token_url);
 
@@ -96,7 +95,7 @@ impl AuthController {
                                 .as_string()
                                 .unwrap();
         
-        logger::info("got access token");
+        info!("got access token");
 
         Ok(String::from(access_token))
     }
@@ -148,10 +147,10 @@ impl Handler for AuthController {
 
     fn handle(&self, req: &mut Request) -> IronResult<Response> {
         
-        logger::info("AuthController handler");
+        info!("AuthController handler");
 
         let access_token_response = self.get_access_token(req);
-        logger::info(format!("{:?}", access_token_response));
+        info!("{:?}", access_token_response);
 
         match access_token_response {
             Err(x) => return x,
@@ -160,7 +159,7 @@ impl Handler for AuthController {
 
         let access_token = access_token_response.unwrap();
 
-        logger::info("loading profile");
+        info!("loading profile");
         
         let profile_response = self.get_profile(access_token);
         
@@ -174,8 +173,8 @@ impl Handler for AuthController {
         let id = profile.get("id").unwrap().as_string().unwrap();
         let name = profile.get("name").unwrap().as_string().unwrap();
 
-        logger::info(format!("{}", id));
-        logger::info(format!("{}", name));
+        info!("{}", id);
+        info!("{}", name);
 
         let user = PartUser{
             name: String::from(name),

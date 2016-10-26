@@ -1,6 +1,5 @@
 use mysql;
 use util::session::Session as SessionModel;
-use logger;
 use uuid::Uuid;
 
 #[derive(Clone)]
@@ -23,7 +22,7 @@ impl Session {
 
         match session.user_id {
             None => {
-                logger::info("user not logged in - not storing session");
+                info!("user not logged in - not storing session");
                 return;
             },
             _ => ()
@@ -32,7 +31,7 @@ impl Session {
         let user_id = session.user_id.clone().unwrap();
         
 
-        logger::info(format!("preparing to store session {}", session_key));
+        info!("preparing to store session {}", session_key);
 
         let session_result = self.pool.prep_exec(r"INSERT INTO pusoy_dos.session
                 ( id, user_id)
@@ -44,16 +43,16 @@ impl Session {
             });
 
         match session_result {
-            Err(e) => logger::warn(format!("{}", e)),
-            Ok(_) => logger::info(format!("session {} stored in db with user {}", 
-                &session_key, &user_id))
+            Err(e) => warn!("{}", e),
+            Ok(_) => info!("session {} stored in db with user {}", 
+                &session_key, &user_id)
         }
 
     }
 
     pub fn get_session(&self, session_key: &str) -> Option<SessionModel> {
 
-        logger::info(format!("preparing to GET session {}", session_key));
+        info!("preparing to GET session {}", session_key);
 
         let result = self.pool.prep_exec(r"SELECT id, user_id FROM pusoy_dos.session
                                 WHERE id = :id",
@@ -79,7 +78,7 @@ impl Session {
                 }
             },
             Err(e) => {
-                logger::warn(e);    
+                warn!("{}", e);    
                 None
             }
         }

@@ -4,10 +4,8 @@ use iron::middleware::Handler;
 use iron::mime::Mime;
 use tera::{Tera, Context, TeraResult};
 
-use logger;
 use util::session::Session;
 use data_access::game::Game as GameData;
-use model::game::Game as GameModel;
 
 pub struct GameList {
     tera: &'static Tera,
@@ -25,17 +23,22 @@ impl <'a> GameList {
     fn get_page(&self, id:Option<u64>) -> TeraResult<String> {
         let mut data = Context::new(); 
         let games = match id {
-            Some(x) => self.get_games(x),
+            Some(x) => self.game_data.get_valid_games(x),
             _       => vec!()
         };
         let num_games = games.len();
+        let open_games = match id {
+            Some(x) => self.game_data.get_open_games(x),
+            _       => vec!()
+        };
+        let num_open_games = open_games.len();
+
         data.add("games", &games);
         data.add("num_games", &num_games);
-        self.tera.render("game_list.html", data)
-    }
+        data.add("open_games", &open_games);
+        data.add("num_open_games", &num_open_games);
 
-    fn get_games(&self, id:u64) -> Vec<GameModel>{
-        self.game_data.get_valid_games(id)
+        self.tera.render("game_list.html", data)
     }
 }
 

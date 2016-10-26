@@ -1,7 +1,6 @@
 
 use model::user::{PartUser, User as UserModel};
 use mysql;
-use logger;
 
 #[derive(Clone)]
 pub struct User{
@@ -28,8 +27,36 @@ impl User {
         }
     }
 
+    pub fn get_users_by_game(&self, id:u64) -> Vec<UserModel> {
+        info!("getting users from game: {}", id);        
+        let result = self.pool.prep_exec(r"SELECT user.id, user.name, user.provider_type, user.provider_id, user.creation_date
+                                            FROM pusoy_dos.user_game
+                                            JOIN pusoy_dos.user on pusoy_dos.user_game.user = user.id
+                                            WHERE pusoy_dos.user_game.game = :id", params!{
+                                                "id" => id
+                                            }).unwrap();
+
+        result.map(|result|{
+
+            match result {
+
+                Ok(mut row) => {
+                    UserModel{
+                        id: row.take("id").unwrap(),
+                        provider_id: row.take("provider_id").unwrap(),
+                        provider_type: row.take("provider_type").unwrap(),
+                        name: row.take("name").unwrap(),
+                        creation_date: String::from("")
+                    }
+                },
+                _ => UserModel{ id: 0, provider_id:String::from(""), provider_type: String::from(""), name:String::from(""), creation_date: String::from("")}
+            }
+        }).collect()
+
+    }
+
     fn insert_user(&self, user:PartUser) -> UserModel {
-        logger::info(format!("Creating new user : {}", user.name));
+        info!("Creating new user : {}", user.name);
         let query_result = self.pool.prep_exec(r"INSERT INTO pusoy_dos.user
                 ( name, provider_id, provider_type)
             VALUES
@@ -70,7 +97,7 @@ impl User {
 
                 let mut row = result.unwrap();
                 let id = row.take("id").unwrap();
-                logger::info(format!("User found with id : {}", id));
+                info!("User found with id : {}", id);
 
                 Some(UserModel{
                     id: id,
@@ -83,7 +110,7 @@ impl User {
             },
 
             _ => {
-                logger::info(format!("No user found for {}", user.name));
+                info!("No user found for {}", user.name);
                 None
             }
         };

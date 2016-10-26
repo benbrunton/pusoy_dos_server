@@ -8,7 +8,6 @@ use hyper::header::{Cookie, SetCookie};
 use cookie::Cookie as CookiePair;
 use uuid::Uuid;
 
-use logger;
 use data_access::session::Session as SessionStore;
 
 pub struct SessionKey{ val: Uuid }
@@ -62,7 +61,7 @@ impl <'a> SessionMiddleware{
     // creates a session from key
     // returning from db or inserting new
     fn build_session(&self, key:Uuid) -> Session{
-        logger::info(format!("building session from key: {}", key));
+        info!("building session from key: {}", key);
         let session_key = format!("{}", key);
         let result = self.store.get_session(&session_key);
 
@@ -140,7 +139,7 @@ impl BeforeMiddleware for SessionMiddleware {
         let session = self.build_session(key.val);
         let instruction = SessionInstruction::STORE;
 
-        logger::info("inserting session data into request");
+        info!("inserting session data into request");
         req.extensions.insert::<SessionKey>(key.val);
         req.extensions.insert::<Session>(session);
         req.extensions.insert::<SessionInstruction>(instruction);
@@ -148,7 +147,7 @@ impl BeforeMiddleware for SessionMiddleware {
     }
 
     fn catch(&self, req: &mut Request, err: IronError) -> IronResult<()> {
-        logger::info(format!("{:?}", req.headers)); 
+        info!("{:?}", req.headers); 
         Err(err)
     }
 }

@@ -4,7 +4,6 @@ use iron::middleware::Handler;
 use iron::mime::Mime;
 use tera::{Tera, Context, TeraResult};
 
-use logger;
 use util::session::Session;
 
 pub struct NewGame {
@@ -17,7 +16,7 @@ impl <'a> NewGame {
     }
 
     fn get_page(&self) -> TeraResult<String> {
-        let mut data = Context::new(); 
+        let data = Context::new(); 
         self.tera.render("game_create.html", data)
     }
 }
@@ -26,7 +25,7 @@ impl Handler for NewGame {
 
     fn handle(&self, req: &mut Request) -> IronResult<Response> {
 
-        logger::info(format!("{:?}", req.extensions.get::<Session>())); 
+        info!("{:?}", req.extensions.get::<Session>());
         let content_type = "text/html".parse::<Mime>().unwrap();
         Ok(Response::with((content_type, status::Ok, self.get_page().unwrap())))
     }
