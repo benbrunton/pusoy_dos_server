@@ -68,6 +68,17 @@ impl Game {
 
          let new_game = query_result.last_insert_id();
 
+         self.join_game(user, new_game);
+
+         GameModel{
+            id: new_game,
+            creator_id: user, 
+            creator_name: String::from("current user")
+         }
+    }
+
+    pub fn join_game(&self, user:u64, new_game:u64) -> Result<(), String>{
+
          self.pool.prep_exec(r"INSERT INTO pusoy_dos.user_game
                                     (game, user)
                                 VALUES
@@ -77,11 +88,7 @@ impl Game {
                                     "user" => user    
                                 }).unwrap();
 
-         GameModel{
-            id: new_game,
-            creator_id: user, 
-            creator_name: String::from("current user")
-         }
+        Ok(())
     }
 
     pub fn get_valid_games(&self, user:u64) -> Vec<GameModel> {
@@ -104,7 +111,8 @@ impl Game {
                             name
                 FROM pusoy_dos.game
                 JOIN pusoy_dos.user ON creator = user.id
-                WHERE creator != :user", user)
+                LEFT JOIN pusoy_dos.user_game ON user_game.game = game.id AND user = :user
+                WHERE user_game.user IS NULL", user)
 
     }
 

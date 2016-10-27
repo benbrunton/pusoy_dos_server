@@ -101,7 +101,8 @@ impl <'a> SessionMiddleware{
     fn store_session(&self, session: &Session, key: &Uuid, r: Response) -> Response {
         self.store.store_session(session);
 		let str_key = format!("{}", key);
-		let cookie = CookiePair::new("pd_session".to_owned(), str_key);
+		let mut cookie = CookiePair::new("pd_session".to_owned(), str_key);
+        cookie.path = Some("/".to_owned());
 		let mut res = Response::new();
 		res.status = r.status;
 		res.body = r.body;

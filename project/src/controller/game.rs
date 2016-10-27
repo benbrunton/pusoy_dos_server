@@ -28,7 +28,7 @@ pub struct Game {
     user_data: UserData
 }
 
-impl <'a> Game {
+impl Game {
     pub fn new(config: &Config, tera:&'static Tera, game_data: GameData, user_data:UserData) -> Game {
         let hostname = config.get("hostname").unwrap();
         Game{ tera: tera, hostname: hostname, game_data: game_data, user_data: user_data }
@@ -54,19 +54,22 @@ impl <'a> Game {
     }
 
     fn render_page(&self, state: GameState, game: &Option<GameModel>) -> String {
-        let data = Context::new();
+        let mut data = Context::new();
         
         match *game {
-            Some(_) => {
+            Some(ref game_model) => {
                 info!("genuine game page being rendered");
+                data.add("id", &game_model.id);
             },
             None => ()
         };
 
         let template = match state {
-            GameState::NoGame => "no_game.html",
-            GameState::PregameOwner => "pregame_owned.html",
-            _                 => "game.html"
+            GameState::NoGame           => "no_game.html",
+            GameState::PregameOwner     => "pregame_owned.html",
+            GameState::PregameNotJoined => "pregame_not_joined.html",
+            GameState::PregameJoined    => "pregame_joined.html",
+            _                           => "game.html"
         };
 
         info!("using template {}", template);
@@ -78,8 +81,12 @@ impl <'a> Game {
         
         match *game {
             Some(ref game) => {
+                info!("game creator: {}", game.creator_id);
+                info!("current user {}", user);
                 if game.creator_id == user {
                     GameState::PregameOwner
+                } else if users.iter().any(|user_m| { user == user_m.id } ) {
+                    GameState::PregameJoined
                 } else {
                     GameState::PregameNotJoined
                 }
