@@ -4,7 +4,6 @@ use iron::middleware::Handler;
 use router::Router;
 
 use data_access::game::Game as GameData;
-use model::game::Game as GameModel;
 use util::session::Session;
 use config::Config;
 
@@ -29,7 +28,7 @@ impl GameJoin {
 
         // join game - if successful redirect to game page
         // else error?
-        self.game_data.join_game(user, game);
+        let _ = self.game_data.join_game(user, game);
         
         let game_url = format!("game/{}", game);
         self.redirect(&game_url)

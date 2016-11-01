@@ -1,36 +1,34 @@
 use iron::prelude::*;
-use iron::{status};
 use iron::middleware::Handler;
-use iron::mime::Mime;
 use tera::{Tera, Context, TeraResult};
 
-use util::session::Session;
 use data_access::game::Game as GameData;
+use config::Config;
+use helpers;
 
 pub struct GameList {
     tera: &'static Tera,
-    game_data: GameData
+    game_data: GameData,
+    hostname: String
 }
 
-impl <'a> GameList {
-    pub fn new(tera:&'static Tera, game_data: GameData) -> GameList {
+impl GameList {
+    pub fn new(config: &Config, tera:&'static Tera, game_data: GameData) -> GameList {
+
+        let hostname = config.get("hostname").unwrap();
+
         GameList{ 
             tera: tera,
-            game_data: game_data
+            game_data: game_data,
+            hostname: hostname
         }
     }
 
-    fn get_page(&self, id:Option<u64>) -> TeraResult<String> {
+    fn get_page(&self, id:u64) -> TeraResult<String> {
         let mut data = Context::new(); 
-        let games = match id {
-            Some(x) => self.game_data.get_valid_games(x),
-            _       => vec!()
-        };
+        let games = self.game_data.get_valid_games(id);
         let num_games = games.len();
-        let open_games = match id {
-            Some(x) => self.game_data.get_open_games(x),
-            _       => vec!()
-        };
+        let open_games = self.game_data.get_open_games(id);
         let num_open_games = open_games.len();
 
         data.add("games", &games);
@@ -46,14 +44,15 @@ impl Handler for GameList {
 
     fn handle(&self, req: &mut Request) -> IronResult<Response> {
 
+        let session_user_id = helpers::get_user_id(req);
+        let redirect_to_homepage = helpers::redirect(&self.hostname, "");
 
-        let session_user_id = match req.extensions.get::<Session>() {
-            Some(session) => session.user_id,
-            _             => None
+        let resp = match session_user_id {
+            Some(id) => helpers::render(self.get_page(id)),
+            _        => redirect_to_homepage
         };
 
-        let content_type = "text/html".parse::<Mime>().unwrap();
-        Ok(Response::with((content_type, status::Ok, self.get_page(session_user_id).unwrap())))
+        Ok(resp)
 
     }
 

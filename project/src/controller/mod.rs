@@ -7,6 +7,7 @@ pub mod game_create;
 pub mod game_join;
 pub mod new_game;
 pub mod logout;
+pub mod begin_game;
 
 pub mod test_auth;
 

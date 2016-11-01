@@ -5,12 +5,12 @@ use iron::mime::Mime;
 use tera::{Tera, Context};
 use router::Router;
 
-use util::session::Session;
 use config::Config;
 use data_access::game::Game as GameData;
 use model::game::Game as GameModel;
 use data_access::user::User as UserData;
 use model::user::User as UserModel;
+use helpers;
 
 enum GameState {
     PregameOwner,
@@ -49,17 +49,18 @@ impl Game {
         let game_state = self.determine_state(user, &game, &users);
 
         let content_type = "text/html".parse::<Mime>().unwrap();
-        let page = self.render_page(game_state, &game);
+        let page = self.render_page(game_state, &game, users);
         Response::with((content_type, status::Ok, page))
     }
 
-    fn render_page(&self, state: GameState, game: &Option<GameModel>) -> String {
+    fn render_page(&self, state: GameState, game: &Option<GameModel>, users: Vec<UserModel>) -> String {
         let mut data = Context::new();
         
         match *game {
             Some(ref game_model) => {
                 info!("genuine game page being rendered");
                 data.add("id", &game_model.id);
+                data.add("num_users", &users.len());
             },
             None => ()
         };
@@ -104,31 +105,18 @@ impl Handler for Game {
         let ref query = req.extensions.get::<Router>().unwrap().find("id");
         info!("rendering game page for id: {:?}", query);
 
-        let session_user_id = match req.extensions.get::<Session>() {
-            Some(session) => session.user_id,
-            _             => None
-        };
-
+        let session_user_id = helpers::get_user_id(req);
+        let redirect_to_homepage = helpers::redirect(&self.hostname, "games");
+        
         let resp = match session_user_id {
             Some(user_id) => {
                 match *query {
                     Some(id) => self.get_page_response(user_id, id.parse::<u64>().unwrap_or(0)),
-                    _ => {
-                        let full_url = format!("{}/games", self.hostname);
-                        let url =  Url::parse(&full_url).unwrap();
-
-                        Response::with((status::Found, modifiers::Redirect(url)))
-                    }
+                    _ => redirect_to_homepage
                 }
 
             },
-            _ => {
-                let full_url = format!("{}/games", self.hostname);
-                let url =  Url::parse(&full_url).unwrap();
-
-                Response::with((status::Found, modifiers::Redirect(url)))
-
-            }
+            _ => redirect_to_homepage
         };
 
         Ok(resp)

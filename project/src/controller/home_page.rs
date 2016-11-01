@@ -1,11 +1,11 @@
 use iron::prelude::*;
-use iron::{status, modifiers, Url};
+use iron::status;
 use iron::middleware::Handler;
 use iron::mime::Mime;
 use tera::{Tera, Context, TeraResult};
 
-use util::session::Session;
 use config::Config;
+use helpers;
 
 pub struct HomePageController {
     hostname: String,
@@ -30,11 +30,8 @@ impl HomePageController {
     fn logged_in(&self) -> IronResult<Response> {
 
         info!("user logged in - redirecting");
-
-        let full_url = format!("{}/games", self.hostname);
-        let url =  Url::parse(&full_url).unwrap();
-
-        Ok(Response::with((status::Found, modifiers::Redirect(url))))
+        let redirect = helpers::redirect(&self.hostname, "games");
+        Ok(redirect)
     }
 
     fn not_logged_in(&self) -> IronResult<Response> {
@@ -59,11 +56,7 @@ impl Handler for HomePageController {
 
     fn handle(&self, req: &mut Request) -> IronResult<Response> {
 
-        info!("retrieving session from request");
-        let session_user_id = match req.extensions.get::<Session>() {
-            Some(session) => session.user_id,
-            _             => None
-        };
+        let session_user_id = helpers::get_user_id(req);
 
         match session_user_id {
             Some(_) => self.logged_in(),

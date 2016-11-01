@@ -34,10 +34,12 @@ impl Game {
                 match row {
                     Some(game) => {
                         let mut game_data = game.unwrap();
+                        let started:u8 = game_data.get("started").unwrap();
                         Some(GameModel{
                             id: game_data.get("id").unwrap(),
                             creator_id: game_data.get("creator").unwrap(),
-                            creator_name: game_data.get("name").unwrap()
+                            creator_name: game_data.get("name").unwrap(),
+                            started: started == 1
                         })
                     },
                     _ => {
@@ -68,12 +70,13 @@ impl Game {
 
          let new_game = query_result.last_insert_id();
 
-         self.join_game(user, new_game);
+         let _ = self.join_game(user, new_game);
 
          GameModel{
             id: new_game,
             creator_id: user, 
-            creator_name: String::from("current user")
+            creator_name: String::from("current user"),
+            started: false
          }
     }
 
@@ -96,7 +99,8 @@ impl Game {
 
         self.get_game_list(r"SELECT pusoy_dos.game.id, 
                             creator,
-                            name
+                            name,
+                            started
                         FROM pusoy_dos.user_game
                         JOIN pusoy_dos.game ON pusoy_dos.game.id = game
                         JOIN pusoy_dos.user ON creator = user.id
@@ -108,11 +112,12 @@ impl Game {
         
         self.get_game_list(r"SELECT pusoy_dos.game.id, 
                             creator,
-                            name
-                FROM pusoy_dos.game
+                            name,
+                            started
+                FROM pusoy_dos.game 
                 JOIN pusoy_dos.user ON creator = user.id
                 LEFT JOIN pusoy_dos.user_game ON user_game.game = game.id AND user = :user
-                WHERE user_game.user IS NULL", user)
+                    WHERE user_game.user IS NULL", user)
 
     }
 
@@ -128,13 +133,15 @@ impl Game {
             match result {
 
                 Ok(mut row) => {
+                    let started:u8 = row.take("started").unwrap_or(0);
                     GameModel{
                         id: row.take("id").unwrap(),
                         creator_id: row.take("creator").unwrap(),
-                        creator_name: row.take("name").unwrap()
+                        creator_name: row.take("name").unwrap(),
+                        started: started == 1
                     }
                 },
-                _ => GameModel{ id: 0, creator_id:0, creator_name:String::from("")}
+                _ => GameModel{ id: 0, creator_id:0, creator_name:String::from(""), started: false }
             }
         }).collect()
 

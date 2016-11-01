@@ -38,6 +38,7 @@ DROP TABLE IF EXISTS `game` ;
 CREATE TABLE IF NOT EXISTS `game` (
   `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `creator` INT(10) UNSIGNED NOT NULL,
+  `started` INT(1) UNSIGNED NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB
 AUTO_INCREMENT = 4
@@ -56,3 +57,11 @@ CREATE TABLE IF NOT EXISTS `user_game` (
 ENGINE = InnoDb
 AUTO_INCREMENT = 4
 DEFAULT CHARACTER SET = utf8;
+
+-- game_moves table
+DROP TABLE IF EXISTS `game_move`;
+
+-- CREATE TABLE IF NOT EXISTS `game_move` (
+  --   `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  --  `game` INT(10) UNSIGNED NOT NULL,
+    -- some other fields...

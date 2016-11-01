@@ -20,8 +20,20 @@ mod controller;
 mod query;
 mod model;
 mod data_access;
+mod helpers;
 
-use controller::{home_page, auth, game, game_list, game_create, new_game, test_auth, logout, game_join};
+use controller::{
+        home_page, 
+        auth, 
+        game, 
+        game_list, 
+        game_create, 
+        new_game, 
+        test_auth, 
+        logout, 
+        game_join,
+        begin_game
+    };
 use config::Config;
 use util::session::SessionMiddleware;
 
@@ -52,12 +64,13 @@ fn main() {
 
     let auth_controller = auth::AuthController::new(&config, user_data.clone());
     let home_page_controller = home_page::HomePageController::new(&config, &TERA);
-    let game_list_controller = game_list::GameList::new(&TERA, game_data.clone());
+    let game_list_controller = game_list::GameList::new(&config, &TERA, game_data.clone());
     let logout_controller = logout::LogoutController::new(&config);
     let game_create_controller = game_create::GameCreate::new(&config, game_data.clone());
     let new_game_controller = new_game::NewGame::new(&TERA);
     let game_controller = game::Game::new(&config, &TERA, game_data.clone(), user_data.clone());
     let game_join = game_join::GameJoin::new(&config, game_data.clone());
+    let begin_game = begin_game::BeginGame::new(&config, game_data.clone());
 
 
     router.get("/", home_page_controller, "index");
@@ -68,6 +81,7 @@ fn main() {
     router.post("/new-game", game_create_controller, "game_create");
     router.get("/game/:id", game_controller, "game");
     router.post("/game/:id/join", game_join, "game_join");
+    router.post("/game/:id/begin", begin_game, "begin_game");
  
     dev_mode(&config, &mut router, user_data.clone());
 
