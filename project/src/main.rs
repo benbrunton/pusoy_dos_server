@@ -14,6 +14,8 @@ extern crate tera;
 #[macro_use] extern crate log;
 extern crate env_logger;
 
+#[macro_use] extern crate pusoy_dos;
+
 mod config;
 mod util;
 mod controller;
@@ -56,8 +58,7 @@ fn main() {
     let user_data = data_access::user::User::new(pool.clone());
     let session_store = data_access::session::Session::new(pool.clone());
     let game_data = data_access::game::Game::new(pool.clone());
-
-
+    let round_data = data_access::round::Round::new(pool.clone());
 
     let mut router = Router::new();
     let config = Config::new();
@@ -70,8 +71,7 @@ fn main() {
     let new_game_controller = new_game::NewGame::new(&TERA);
     let game_controller = game::Game::new(&config, &TERA, game_data.clone(), user_data.clone());
     let game_join = game_join::GameJoin::new(&config, game_data.clone());
-    let begin_game = begin_game::BeginGame::new(&config, game_data.clone());
-
+    let begin_game = begin_game::BeginGame::new(&config, game_data.clone(), round_data.clone());
 
     router.get("/", home_page_controller, "index");
     router.get("/auth", auth_controller, "auth_callback");

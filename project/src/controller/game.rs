@@ -1,5 +1,5 @@
 use iron::prelude::*;
-use iron::{status, modifiers, Url};
+use iron::status;
 use iron::middleware::Handler;
 use iron::mime::Mime;
 use tera::{Tera, Context};

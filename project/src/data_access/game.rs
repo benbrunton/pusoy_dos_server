@@ -34,7 +34,7 @@ impl Game {
                 match row {
                     Some(game) => {
                         let mut game_data = game.unwrap();
-                        let started:u8 = game_data.get("started").unwrap();
+                        let started:u8 = game_data.get("started").unwrap_or(0);
                         Some(GameModel{
                             id: game_data.get("id").unwrap(),
                             creator_id: game_data.get("creator").unwrap(),
@@ -119,6 +119,26 @@ impl Game {
                 LEFT JOIN pusoy_dos.user_game ON user_game.game = game.id AND user = :user
                     WHERE user_game.user IS NULL", user)
 
+    }
+
+    pub fn get_players(&self, id:u64) -> Vec<u64>{
+        info!("Getting users for game {}", id);
+
+        let result = self.pool.prep_exec(r"SELECT user
+                            FROM pusoy_dos.user_game
+                            WHERE game = :game",
+                            params!{
+                                "game" => id
+                            }).unwrap();
+
+        result.map(|player|{
+            player.unwrap().take("user").unwrap()
+        }).collect()
+
+    }
+
+    pub fn start_game(&self, id:u64) -> Result<(), &str>{
+        Ok(())
     }
 
     fn get_game_list(&self, query:&str, user:u64) -> Vec<GameModel> {

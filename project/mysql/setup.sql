@@ -61,7 +61,17 @@ DEFAULT CHARACTER SET = utf8;
 -- game_moves table
 DROP TABLE IF EXISTS `game_move`;
 
--- CREATE TABLE IF NOT EXISTS `game_move` (
-  --   `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-  --  `game` INT(10) UNSIGNED NOT NULL,
-    -- some other fields...
+CREATE TABLE IF NOT EXISTS `round` (
+  `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `game` INT(10) UNSIGNED NOT NULL,
+  `hands` BLOB NULL DEFAULT NULL,
+  `current_player` INT(10) UNSIGNED NOT NULL,
+  `last_move` BLOB NULL DEFAULT NULL,
+  `pass_count` INT(10) UNSIGNED NOT NULL DEFAULT 0,
+  `first_round` INT(1) UNSIGNED NOT NULL DEFAULT 1,
+  `winner` INT(10) UNSIGNED NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `idx_round_game` (`game` ASC))
+ENGINE = InnoDb
+AUTO_INCREMENT = 4
+DEFAULT CHARACTER SET = utf8;
