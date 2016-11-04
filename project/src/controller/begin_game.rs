@@ -1,7 +1,6 @@
 use iron::prelude::*;
 use iron::middleware::Handler;
 use router::Router;
-use rustc_serialize::json;
 
 use data_access::game::Game as GameData;
 use data_access::round::Round as RoundData;
@@ -12,6 +11,7 @@ use pusoy_dos::game::game::Game as CardGame;
 
 pub struct BeginGame{
     game_data: GameData,
+    round_data: RoundData,
     hostname: String
 }
 
@@ -20,6 +20,7 @@ impl BeginGame{
         let hostname = config.get("hostname").unwrap();
         BeginGame{
             game_data: game_data,
+            round_data: round_data,
             hostname: hostname
         }
     }
@@ -31,18 +32,8 @@ impl BeginGame{
         let users = self.game_data.get_players(game_id);
         // create a new game
         let new_game = CardGame::setup(users).unwrap();
-        info!("{:?}", new_game.round);
+        self.round_data.create_round(game_id, new_game);
 
-        // deal cards to peeps
-        for player in new_game.players.iter() {
-            info!("{:?}", player.get_id());
-            // todo - data adapter for storing hands
-            info!("{:?}", player.get_hand());
-        }
-
-        info!("{:?}", json::encode(&new_game.players));
-
-        // set move to first move
     }
 }
 
