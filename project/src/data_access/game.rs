@@ -18,7 +18,7 @@ impl Game {
     pub fn get_game(&self, id:u64) -> Option<GameModel> {
         info!("Retrieving game {}", id);
 
-        let result = self.pool.prep_exec(r"SELECT game.id, creator, name
+        let result = self.pool.prep_exec(r"SELECT game.id, creator, name, started
                                         FROM pusoy_dos.game
                                         JOIN pusoy_dos.user ON creator = user.id
                                         WHERE game.id = :id", 
@@ -34,7 +34,7 @@ impl Game {
                 match row {
                     Some(game) => {
                         let mut game_data = game.unwrap();
-                        let started:u8 = game_data.get("started").unwrap_or(0);
+                        let started:u8 = game_data.get("started").unwrap();
                         Some(GameModel{
                             id: game_data.get("id").unwrap(),
                             creator_id: game_data.get("creator").unwrap(),
@@ -50,7 +50,7 @@ impl Game {
                 }
             },
             _ => {
-                error!("Error from getting game : {}", id);
+                error!("Error while getting game : {}", id);
                 None
             }
         }
@@ -138,6 +138,8 @@ impl Game {
     }
 
     pub fn start_game(&self, id:u64) -> Result<(), &str>{
+        self.pool.prep_exec(r"UPDATE pusoy_dos.game SET started = 1 WHERE id = :id",
+            params!{ "id" => id });
         Ok(())
     }
 

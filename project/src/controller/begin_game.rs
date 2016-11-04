@@ -28,7 +28,7 @@ impl BeginGame{
     fn begin_game(&self, user:u64, game_id:u64) {
 
         // todo - validate that this user can begin the game
-        
+        self.game_data.start_game(game_id);        
         let users = self.game_data.get_players(game_id);
         // create a new game
         let new_game = CardGame::setup(users).unwrap();

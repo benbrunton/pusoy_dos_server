@@ -34,7 +34,8 @@ use controller::{
         test_auth, 
         logout, 
         game_join,
-        begin_game
+        begin_game,
+        inplay
     };
 use config::Config;
 use util::session::SessionMiddleware;
@@ -72,6 +73,7 @@ fn main() {
     let game_controller = game::Game::new(&config, &TERA, game_data.clone(), user_data.clone());
     let game_join = game_join::GameJoin::new(&config, game_data.clone());
     let begin_game = begin_game::BeginGame::new(&config, game_data.clone(), round_data.clone());
+    let inplay_controller = inplay::InPlay::new(&TERA, round_data.clone());
 
     router.get("/", home_page_controller, "index");
     router.get("/auth", auth_controller, "auth_callback");
@@ -82,6 +84,7 @@ fn main() {
     router.get("/game/:id", game_controller, "game");
     router.post("/game/:id/join", game_join, "game_join");
     router.post("/game/:id/begin", begin_game, "begin_game");
+    router.get("/play/:id", inplay_controller, "inplay");
  
     dev_mode(&config, &mut router, user_data.clone());
 

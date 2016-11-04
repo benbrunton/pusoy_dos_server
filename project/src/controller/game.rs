@@ -12,12 +12,12 @@ use data_access::user::User as UserData;
 use model::user::User as UserModel;
 use helpers;
 
+#[derive (PartialEq)]
 enum GameState {
     PregameOwner,
     PregameNotJoined,
     PregameJoined,
-    IngameUserMove,
-    IngameWaiting,
+    InGame,
     NoGame
 }
 
@@ -40,13 +40,16 @@ impl Game {
         // 1. pre game - game owner  - ( awaiting users / ready to play ) + start / delete
         // 2. pre game - not joined  - game info + join
         // 3. pre game - joined      - game info + leave game
-        // 4. in game  - user's move - make move + quit
-        // 5. in game  - waiting     - game info + quit 
+        // 4. in game  - redirect to /play/:id
 
         let game = self.game_data.get_game(id);
         let users = self.user_data.get_users_by_game(id);
 
         let game_state = self.determine_state(user, &game, &users);
+
+        if game_state == GameState::InGame {
+            return helpers::redirect(&self.hostname, format!("play/{}", id));
+        }
 
         let content_type = "text/html".parse::<Mime>().unwrap();
         let page = self.render_page(game_state, &game, users);
@@ -84,7 +87,9 @@ impl Game {
             Some(ref game) => {
                 info!("game creator: {}", game.creator_id);
                 info!("current user {}", user);
-                if game.creator_id == user {
+                if game.started {
+                    GameState::InGame
+                } else if game.creator_id == user {
                     GameState::PregameOwner
                 } else if users.iter().any(|user_m| { user == user_m.id } ) {
                     GameState::PregameJoined
