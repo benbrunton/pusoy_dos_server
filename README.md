@@ -24,8 +24,10 @@ A multiplayer Pusoy Dos server written in [Rust](https://www.rust-lang.org).
 - [x] - html templates
 - [x] - log out
 - [x] - create game
-- [ ] - join game
+- [x] - join game
 - [ ] - play game
+- [ ] - additional auth providers
+- [ ] - stylesheets
 - [ ] - interactive front end
 - [ ] - deployment
 - [ ] - error pages
