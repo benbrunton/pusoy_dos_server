@@ -9,6 +9,7 @@ pub mod new_game;
 pub mod logout;
 pub mod begin_game;
 pub mod inplay;
+pub mod game_move;
 
 pub mod test_auth;
 

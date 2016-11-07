@@ -5,12 +5,14 @@
     <h2>We are playing!</h2>
     {% if  your_turn  %}
         <h3>Your turn!</h3>
+    {% else %}
+        <h3>Waiting...</h3>
     {% endif %}
 
 
     <div>
         <h4>cards</h4>
-        <form class="cards">
+        <form class="cards" method="POST">
         {% for card in cards %}
             <div class="{{ card.suit }} {{ card.rank }}">
                 <label>
@@ -20,8 +22,20 @@
                 </label>
             </div>
         {% endfor %}
+
+         
+        {% if  your_turn  %}
+            <input type="submit" value="Play Cards"/>
+
         </form>	
+
+        <form class="pass" method="POST" action="/pass/{{id}}">
+            <input type="submit" value="Pass"/>
+
+        {% endif %}
+        </form>
 	
     </div>
+   
 </div>
 {% endblock content %}
