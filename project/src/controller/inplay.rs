@@ -60,6 +60,7 @@ impl InPlay {
 
         let last_move = round.clone().round.get_last_move();
         let display_last_move = format!("{:?}", last_move);
+        info!("last move : {}", display_last_move);
 
         data.add("your_turn", &current_user_turn);
         data.add("id", &game_id);

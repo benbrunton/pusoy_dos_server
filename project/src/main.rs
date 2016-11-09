@@ -92,9 +92,10 @@ fn main() {
  
     dev_mode(&config, &mut router, user_data.clone());
 
+    let (logger_before, logger_after) = Logger::new(None);
+
     let mut chain = Chain::new(router);
 
-    let (logger_before, logger_after) = Logger::new(None);
     chain.link_before(logger_before);
 
 
