@@ -57,6 +57,8 @@ fn main() {
     
     env_logger::init().unwrap();
 
+    let config = Config::new();
+
     let pool = mysql::Pool::new("mysql://root@localhost").unwrap();
     let user_data = data_access::user::User::new(pool.clone());
     let session_store = data_access::session::Session::new(pool.clone());
@@ -64,7 +66,6 @@ fn main() {
     let round_data = data_access::round::Round::new(pool.clone());
 
     let mut router = Router::new();
-    let config = Config::new();
 
     let auth_controller = auth::AuthController::new(&config, user_data.clone());
     let home_page_controller = home_page::HomePageController::new(&config, &TERA);
