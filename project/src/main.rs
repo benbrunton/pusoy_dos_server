@@ -96,13 +96,13 @@ fn main() {
 
     let (logger_before, logger_after) = Logger::new(None);
     chain.link_before(logger_before);
-    chain.link_after(logger_after);
 
 
     let session = SessionMiddleware::new(session_store);
     chain.link_before(session.clone());
 	chain.link_after(session.clone());
 
+    chain.link_after(logger_after);
     // todo - a little error checking around this
     // will save a little debugging
     Iron::new(chain).http("0.0.0.0:3000").unwrap();

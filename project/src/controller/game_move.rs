@@ -81,13 +81,14 @@ impl GameMove{
 
     fn get_card(&self, card:String) -> Card {
         let words = card.split(" ").collect::<Vec<&str>>();
-        let rank = self.get_rank(words[0]);
-        let suit = self.get_suit(words[1]);
+        let rank = self.get_rank(words[1]);
+        let suit = self.get_suit(words[0]);
             
         Card::new(rank, suit)
     }
 
     fn get_rank(&self, rank:&str) -> Rank {
+        info!("rank: {}", rank);
         match rank {
             "2"  => Rank::Two,
             "3"  => Rank::Three,
@@ -108,6 +109,7 @@ impl GameMove{
     }
 
     fn get_suit(&self, suit:&str) -> Suit {
+        info!("suit: {}", suit);
         match suit {
             "Clubs"    => Suit::Clubs,
             "Hearts"   => Suit::Hearts,
