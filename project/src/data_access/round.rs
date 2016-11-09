@@ -57,7 +57,7 @@ impl Round {
         let round_def = game_def.round.export();
         let game = Game::load(game_def.clone()).unwrap();
 
-        let query_result = self.pool.prep_exec(r"UPDATE pusoy_dos.round
+        let _ = self.pool.prep_exec(r"UPDATE pusoy_dos.round
             SET hands = :hands,
                 current_player = :current_player,
                 last_move = :last_move,

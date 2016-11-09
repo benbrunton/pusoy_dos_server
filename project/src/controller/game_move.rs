@@ -1,7 +1,5 @@
 use iron::prelude::*;
-use iron::status;
 use iron::middleware::Handler;
-use iron::mime::Mime;
 use router::Router;
 use urlencoded::UrlEncodedBody;
 use std::collections::HashMap;
@@ -25,7 +23,7 @@ impl GameMove{
         GameMove{ hostname: hostname, round_data: round_data }
     }
 
-    fn execute(&self, user_id:u64, game_id:u64) -> Response {
+    fn execute(&self, user_id:u64, game_id:u64, hand: Vec<Card>) -> Response {
         let round_result = self.round_data.get(game_id);
         match round_result {
             None => {
@@ -42,9 +40,14 @@ impl GameMove{
         info!("game loaded");
 
         let next_player = game.get_next_player().unwrap();
-        let current_user = game.get_player(user_id).unwrap();
+        info!("next player - {:?}", next_player);
 
-        let valid_move = game.player_move(user_id, vec!());
+        info!("user id : {}", user_id);
+        let current_user = game.get_player(user_id).unwrap();
+        info!("current user - {:?}", current_user);
+
+        info!("hand: {:?}", hand);
+        let valid_move = game.player_move(user_id, hand);
         info!("{:?}", valid_move);
 
         self.round_data.update_round(game_id, valid_move.unwrap());
@@ -85,11 +88,34 @@ impl GameMove{
     }
 
     fn get_rank(&self, rank:&str) -> Rank {
-        Rank::Three        
+        match rank {
+            "2"  => Rank::Two,
+            "3"  => Rank::Three,
+            "4"  => Rank::Four,
+            "5"  => Rank::Five,
+            "6"  => Rank::Six,
+            "7"  => Rank::Seven,
+            "8"  => Rank::Eight,
+            "9"  => Rank::Nine,
+            "10" => Rank::Ten,
+            "J"  => Rank::Jack,
+            "Q"  => Rank::Queen,
+            "K"  => Rank::King,
+            "A"  => Rank::Ace,
+            _    => panic!("invalid rank supplied in move")
+        }
+             
     }
 
     fn get_suit(&self, suit:&str) -> Suit {
-        Suit::Clubs
+        match suit {
+            "Clubs"    => Suit::Clubs,
+            "Hearts"   => Suit::Hearts,
+            "Diamonds" => Suit::Diamonds,
+            "Spades"   => Suit::Spades,
+            _          => panic!("invalid suit supplied in move")
+        }
+
     }
 
 }
@@ -103,6 +129,8 @@ impl Handler for GameMove {
 
         let ref query = req.extensions.get::<Router>().unwrap().find("id");
 
+        let hand = self.get_move(hashmap.to_owned());
+
         
         info!("{:?}", hashmap);
 
@@ -113,7 +141,7 @@ impl Handler for GameMove {
             Some(user_id) => {
                 match *query {
                     Some(id) => {
-                        self.execute(user_id, id.parse::<u64>().unwrap())
+                        self.execute(user_id, id.parse::<u64>().unwrap(), hand)
                     },
                     _ => redirect_to_homepage
                 }
