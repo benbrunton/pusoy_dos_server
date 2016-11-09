@@ -13,6 +13,7 @@ extern crate tera;
 #[macro_use] extern crate serde;
 #[macro_use] extern crate log;
 extern crate env_logger;
+extern crate urlencoded;
 
 #[macro_use] extern crate pusoy_dos;
 
@@ -76,7 +77,6 @@ fn main() {
     let begin_game = begin_game::BeginGame::new(&config, game_data.clone(), round_data.clone());
     let inplay_controller = inplay::InPlay::new(&config, &TERA, round_data.clone());
     let move_controller = game_move::GameMove::new(&config, round_data.clone());
-    let pass_controller = game_move::Pass::new(&config, round_data.clone());
 
     router.get("/", home_page_controller, "index");
     router.get("/auth", auth_controller, "auth_callback");
@@ -89,7 +89,6 @@ fn main() {
     router.post("/game/:id/begin", begin_game, "begin_game");
     router.get("/play/:id", inplay_controller, "inplay");
     router.post("/play/:id", move_controller, "move");
-    router.post("/pass/:id", pass_controller, "pass");
  
     dev_mode(&config, &mut router, user_data.clone());
 

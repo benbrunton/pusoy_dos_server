@@ -48,7 +48,7 @@ impl InPlay {
         let round = round_result.unwrap();
         info!("loading game: {}", game_id);
 
-        let game = Game::load(round).unwrap();
+        let game = Game::load(round.clone()).unwrap();
         info!("game loaded");
 
         let next_player = game.get_next_player().unwrap();
@@ -58,9 +58,13 @@ impl InPlay {
 
         let cards:Vec<DCard> = current_user.get_hand().iter().map(|&c|{ DCard(c.clone()) }).collect();
 
+        let last_move = round.clone().round.get_last_move();
+        let display_last_move = format!("{:?}", last_move);
+
         data.add("your_turn", &current_user_turn);
         data.add("id", &game_id);
         data.add("cards", &cards);
+        data.add("last_move", &display_last_move);
         let content_type = "text/html".parse::<Mime>().unwrap();
         let page = self.tera.render(template, data).unwrap();
         Response::with((content_type, status::Ok, page))

@@ -9,14 +9,22 @@
         <h3>Waiting...</h3>
     {% endif %}
 
+    <div class="last-move">
+        {{ last_move }}
+    </div>
+
 
     <div>
-        <h4>cards</h4>
+        <h4>your cards</h4>
         <form class="cards" method="POST">
         {% for card in cards %}
             <div class="{{ card.suit }} {{ card.rank }}">
                 <label>
-                    <input type="checkbox" name="{{card.suit}} {{card.rank}}">
+                    <input type="checkbox" name="{{card.suit}} {{card.rank}}"
+                        {% if your_turn == false %}
+                        disabled
+                        {% endif %}
+                    >
                     <span>{{card.rank}}</span>
                     <span>{{card.suit_display}}</span>
                 </label>
@@ -26,11 +34,6 @@
          
         {% if  your_turn  %}
             <input type="submit" value="Play Cards"/>
-
-        </form>	
-
-        <form class="pass" method="POST" action="/pass/{{id}}">
-            <input type="submit" value="Pass"/>
 
         {% endif %}
         </form>

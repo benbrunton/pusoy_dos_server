@@ -19,21 +19,11 @@ impl Round {
     }
 
     pub fn create_round(&self, id: u64, game_def:GameDefinition) {
-        /*
-         info!("{:?}", new_game.round);
-
-        // deal cards to peeps
-        for player in new_game.players.iter() {
-            info!("{:?}", player.get_id());
-            // todo - data adapter for storing hands
-            info!("{:?}", player.get_hand());
-        }
-
-        info!("{:?}", json::encode(&new_game.players)) */
+        
         let round_def = game_def.round.export();
         let game = Game::load(game_def.clone()).unwrap();
 
-        let query_result = self.pool.prep_exec(r"INSERT INTO pusoy_dos.round
+        let _ = self.pool.prep_exec(r"INSERT INTO pusoy_dos.round
               (  game,
                  hands,
                  current_player,
@@ -58,6 +48,30 @@ impl Round {
                 "first_round" => round_def.first_round
             }).unwrap();
 
+            // todo - return result
+
+    }
+
+    pub fn update_round(&self, id: u64, game_def: GameDefinition) {
+
+        let round_def = game_def.round.export();
+        let game = Game::load(game_def.clone()).unwrap();
+
+        let query_result = self.pool.prep_exec(r"UPDATE pusoy_dos.round
+            SET hands = :hands,
+                current_player = :current_player,
+                last_move = :last_move,
+                pass_count = :pass_count,
+                first_round = :first_round
+            WHERE game = :game",
+            params!{
+                "game" => id,
+                "hands" => json::encode(&game_def.players).unwrap(),
+                "current_player" => game.get_next_player().unwrap().get_id(),
+                "last_move" => json::encode(&round_def.last_move).unwrap(),
+                "pass_count" => round_def.pass_count,
+                "first_round" => round_def.first_round
+            }).unwrap();
     }
 
     pub fn get(&self, id: u64) -> Option<GameDefinition> {
@@ -116,7 +130,7 @@ impl Round {
 
                         let players_serialised = game_data.get::<String, &str>("hands").unwrap();
                         let players:Vec<Player> = json::decode(&players_serialised).unwrap();
-                        info!("players: {:?}", players);
+                        //info!("players: {:?}", players);
 
                         let player_ids = players.iter().map(|ref player| { player.get_id() }).collect();
                         info!("player ids: {:?}", player_ids);
