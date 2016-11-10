@@ -34,6 +34,8 @@ impl GameList {
         let open_games = self.game_data.get_open_games(id);
         let num_open_games = open_games.len();
 
+        info!("{:?}", games);
+
         data.add("games", &games);
         data.add("num_games", &num_games);
         data.add("open_games", &open_games);

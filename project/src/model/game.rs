@@ -1,5 +1,6 @@
 use serde::{Serialize, Serializer};
 
+#[derive(Debug)]
 pub struct Game{
     pub id: u64,
     pub creator_id: u64,

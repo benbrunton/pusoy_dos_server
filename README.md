@@ -1,5 +1,4 @@
 # Pusoy Dos
-
 A multiplayer Pusoy Dos server written in [Rust](https://www.rust-lang.org).
 
 ## Prerequisites
@@ -18,7 +17,7 @@ A multiplayer Pusoy Dos server written in [Rust](https://www.rust-lang.org).
 - docker
 - elm?
 
-#Todo
+## Todo
 - [x] - log in
 - [x] - session
 - [x] - html templates
@@ -26,12 +25,18 @@ A multiplayer Pusoy Dos server written in [Rust](https://www.rust-lang.org).
 - [x] - create game
 - [x] - join game
 - [x] - play game
+- [ ] - winning condition
 - [ ] - multiple decks
 - [ ] - implement jokers
 - [ ] - get all 5 card tricks correct
 - [ ] - additional auth providers
+- [ ] - game rule options
 - [ ] - stylesheets
+- [ ] - Nice front page & additional info
+- [ ] - Fork me on github
 - [ ] - interactive front end
+- [ ] - real time updates
+- [ ] - move timeout (auto-pass)
 - [ ] - deployment
+- [ ] - SSL on play.benbru.com
 - [ ] - error pages
-- [ ] - profit?

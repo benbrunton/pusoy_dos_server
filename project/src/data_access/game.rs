@@ -112,12 +112,11 @@ impl Game {
         
         self.get_game_list(r"SELECT pusoy_dos.game.id, 
                             creator,
-                            name,
-                            started
+                            name
                 FROM pusoy_dos.game 
                 JOIN pusoy_dos.user ON creator = user.id
                 LEFT JOIN pusoy_dos.user_game ON user_game.game = game.id AND user = :user
-                    WHERE user_game.user IS NULL", user)
+                    WHERE user_game.user IS NULL AND started = 0", user)
 
     }
 

@@ -76,7 +76,7 @@ fn main() {
     let game_controller = game::Game::new(&config, &TERA, game_data.clone(), user_data.clone());
     let game_join = game_join::GameJoin::new(&config, game_data.clone());
     let begin_game = begin_game::BeginGame::new(&config, game_data.clone(), round_data.clone());
-    let inplay_controller = inplay::InPlay::new(&config, &TERA, round_data.clone());
+    let inplay_controller = inplay::InPlay::new(&config, &TERA, round_data.clone(), user_data.clone());
     let move_controller = game_move::GameMove::new(&config, round_data.clone());
 
     router.get("/", home_page_controller, "index");

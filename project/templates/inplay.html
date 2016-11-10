@@ -2,15 +2,35 @@
 {% block title %}Game {{ id }}{% endblock title %}
 {% block content %}
 <div>
-    <h2>Game in progress...</h2>
+    <div>
+        <p>Players:</p>
+        <ul>
+            {% for player in players %}
+                <li>
+                    <span class="name">
+                    {% if player.id == user_id %}
+                        <strong>{{player.name}}</strong>
+                    {% else %}
+                        {{ player.name }}
+                    {% endif %}
+                    </span>
+                    {% if player.id ==  next_player %}
+                    <span>*</span>
+                    {% endif %} 
+                </li>
+            {% endfor %}
+        </ul>
+
     {% if  your_turn  %}
         <h3>Your turn!</h3>
     {% else %}
-        <h3>Waiting...</h3>
+        <h3>Waiting for {{ next_player_name }} </h3>
     {% endif %}
 
     <div class="last-move">
-        {{ last_move }}
+        {% for card in last_move %}
+        <span> | {{card.rank}} {{card.suit_display}} |</span>
+        {% endfor %}
     </div>
 
 

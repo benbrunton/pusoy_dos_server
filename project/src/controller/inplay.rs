@@ -6,28 +6,35 @@ use router::Router;
 
 use tera::{Tera, Context};
 use data_access::round::Round as RoundData;
+use data_access::user::User as UserData;
 use config::Config;
 use helpers;
 use pusoy_dos::game::game::Game;
+use pusoy_dos::game::player_move::{Move, Trick};
 use pusoy_dos::cards::card::Card;
 use serde::{Serialize, Serializer};
 
 pub struct InPlay{
     tera: &'static Tera,
     round_data: RoundData,
-    hostname: String
+    hostname: String,
+    user_data: UserData
 }
 
 impl InPlay {
     
-    pub fn new(config: &Config, tera:&'static Tera, round_data: RoundData) -> InPlay {
+    pub fn new(config: &Config, 
+                tera:&'static Tera, 
+                round_data: RoundData, 
+                user_data: UserData) -> InPlay {
 
         let hostname = config.get("hostname").unwrap();
 
         InPlay{
             tera: tera,
             round_data: round_data,
-            hostname: hostname
+            hostname: hostname,
+            user_data: user_data
         }
     }
 
@@ -52,24 +59,64 @@ impl InPlay {
         info!("game loaded");
 
         let next_player = game.get_next_player().unwrap();
+        let next_player_id = next_player.get_id();
 
-        let current_user_turn = user_id == next_player.get_id(); 
+        let current_user_turn = user_id == next_player_id; 
         let current_user = game.get_player(user_id).unwrap();
 
         let cards:Vec<DCard> = current_user.get_hand().iter().map(|&c|{ DCard(c.clone()) }).collect();
 
         let last_move = round.clone().round.get_last_move();
-        let display_last_move = format!("{:?}", last_move);
-        info!("last move : {}", display_last_move);
+        let display_last_move = self.convert_move_to_cards(last_move);
 
+        let players = self.user_data.get_users_by_game(game_id);
+        let mut next_player_name = "unknown";
+
+        for player in players.iter(){
+            if player.id == next_player_id {
+                next_player_name = &player.name;
+            }
+        }
+
+        data.add("user_id", &user_id);
         data.add("logged_in", &true);
         data.add("your_turn", &current_user_turn);
+        data.add("next_player", &next_player_id);
+        data.add("next_player_name", &next_player_name);
         data.add("id", &game_id);
         data.add("cards", &cards);
         data.add("last_move", &display_last_move);
+        data.add("players", &players);
+
         let content_type = "text/html".parse::<Mime>().unwrap();
         let page = self.tera.render(template, data).unwrap();
         Response::with((content_type, status::Ok, page))
+    }
+
+    fn convert_move_to_cards(&self, last_move:Move) -> Vec<DCard> {
+        match last_move {
+            Move::Pass                    => vec!(),
+            Move::Single(card)            => vec!(DCard(card)),
+            Move::Pair(c1, c2)            => vec!(DCard(c1), DCard(c2)),
+            Move::Prial(c1, c2, c3)       => vec!(DCard(c1), DCard(c2), DCard(c3)),
+            Move::FiveCardTrick(trick)    => self.trick_to_cards(trick)
+        }
+        
+    }
+
+    fn trick_to_cards(&self, trick:Trick) -> Vec<DCard> {
+        match trick {
+            Trick::Straight(c1, c2, c3, c4, c5)|
+            Trick::Flush(c1, c2, c3, c4, c5)|
+            Trick::FullHouse(c1, c2, c3, c4, c5)|
+            Trick::FourOfAKind(c1, c2, c3, c4, c5)|
+            Trick::StraightFlush(c1, c2, c3, c4, c5)|
+            Trick::FiveOfAKind(c1, c2, c3, c4, c5) => vec!(DCard(c1),
+                                                    DCard(c2),
+                                                    DCard(c3),
+                                                    DCard(c4),
+                                                    DCard(c5))
+        }
     }
 }
 

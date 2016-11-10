@@ -1,5 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Game {{ id }}{% endblock title %}
+{% block content %}
+
+
 <h2>Pregame not joined</h2>
 
 <form action="/game/{{ id }}/join" method="POST">
     <input type="submit" value="Join">
 </form>
+
+{% endblock content %}

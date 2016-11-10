@@ -5,21 +5,29 @@
         <a href="/new-game">Create Game</a>
 
         <div class="joined-games">
+            <h3>joined games</h3>
             {% if num_games > 0  %}
                 <table class="table">
                     <thead>
                         <tr>
                             <th>#</th>
 							<th>Owner</th>
+                            <th>status</th>
                             <th>Action</th>
                         </tr>
                     </thead>
-
 					<tbody>
 					{% for game in games %}
 						<tr>
 							<td>{{ game.id }}</td>
 							<td>{{ game.creator_name }}</td>
+                            <td>
+                                {% if game.started %}
+                                    started
+                                {% else %}
+                                    waiting to begin
+                                {% endif %} 
+                            </td>
                             <td><a href="/game/{{ game.id }}">view</a></td>
 						</tr>
 				  	{% endfor %}	
@@ -31,6 +39,7 @@
         </div>
 
         <div class="open-games">
+            <h3>open games</h3>
             {% if num_open_games > 0 %}
                 <table class="table">
                     <thead>
@@ -50,6 +59,8 @@
                         {% endfor %}
                     </tbody>
                 </table>
+            {% else %}
+                <p>No available games</p>
             {% endif %}
         </div>
 
