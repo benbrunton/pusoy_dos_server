@@ -58,6 +58,7 @@ impl Game {
 
     fn render_page(&self, state: GameState, game: &Option<GameModel>, users: Vec<UserModel>) -> String {
         let mut data = Context::new();
+        data.add("logged_in", &true);
         
         match *game {
             Some(ref game_model) => {

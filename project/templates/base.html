@@ -7,6 +7,16 @@
     {% endblock head %}
 </head>
 <body>
+    <header>
+        <h1>Pusoy Dos</h1>
+        {% if logged_in %}
+            <ul>
+                <li><a href="/">home</a></li>
+                <li><a href="/logout">logout</a></li>
+            </ul>
+        {% endif %}
+    </header>
+    <hr><br>
     <div id="content">{% block content %}{% endblock content %}</div>
     <div id="footer">
         {% block footer %}

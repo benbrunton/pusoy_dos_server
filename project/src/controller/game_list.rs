@@ -25,6 +25,9 @@ impl GameList {
     }
 
     fn get_page(&self, id:u64) -> TeraResult<String> {
+
+        // todo - base context that can be configured with
+        // common attributes - e.g. logged_in
         let mut data = Context::new(); 
         let games = self.game_data.get_valid_games(id);
         let num_games = games.len();
@@ -35,6 +38,7 @@ impl GameList {
         data.add("num_games", &num_games);
         data.add("open_games", &open_games);
         data.add("num_open_games", &num_open_games);
+        data.add("logged_in", &true);
 
         self.tera.render("game_list.html", data)
     }
