@@ -105,9 +105,10 @@ fn main() {
 	chain.link_after(session.clone());
 
     chain.link_after(logger_after);
+    let port = config.get("port");
     // todo - a little error checking around this
     // will save a little debugging
-    Iron::new(chain).http("0.0.0.0:3000").unwrap();
+    Iron::new(chain).http(format!("0.0.0.0:{}", port)).unwrap();
 
 }
 
