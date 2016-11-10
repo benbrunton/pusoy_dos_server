@@ -46,6 +46,7 @@ use iron::prelude::*;
 use router::Router;
 use iron_logger::Logger;
 use tera::Tera;
+use std::net::{Ipv4Addr, SocketAddr, IpAddr};
 
 lazy_static!{
 
@@ -108,7 +109,9 @@ fn main() {
     let port = config.get("port");
     // todo - a little error checking around this
     // will save a little debugging
-    Iron::new(chain).http(format!("0.0.0.0:{}", port)).unwrap();
+    let ip = IpAddr::V4(Ipv4Addr::new(0, 0, 0, 0));
+    let host = SocketAddr::new(ip, port.unwrap().parse::<u16>().unwrap());
+    Iron::new(chain).http(host).unwrap();
 
 }
 
