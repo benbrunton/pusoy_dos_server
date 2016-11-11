@@ -64,7 +64,9 @@ impl InPlay {
         let current_user_turn = user_id == next_player_id; 
         let current_user = game.get_player(user_id).unwrap();
 
-        let cards:Vec<DCard> = current_user.get_hand().iter().map(|&c|{ DCard(c.clone()) }).collect();
+        let mut cards:Vec<DCard> = current_user.get_hand().iter().map(|&c|{ DCard(c.clone()) }).collect();
+        cards.sort();
+        cards.reverse();
 
         let last_move = round.clone().round.get_last_move();
         let display_last_move = self.convert_move_to_cards(last_move);
@@ -148,6 +150,7 @@ impl Handler for InPlay {
 
 // todo - move
 //
+#[derive(PartialEq, Eq, PartialOrd, Ord)]
 struct DCard(Card);
 
 impl Serialize for DCard {
