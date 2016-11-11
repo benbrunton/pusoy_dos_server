@@ -24,10 +24,11 @@ A multiplayer Pusoy Dos server written in [Rust](https://www.rust-lang.org).
 - [ ] - display datetime of interactions
 - [ ] - get all 5 card tricks correct
 - [ ] - additional auth providers
+- [ ] - implement reversals (configured at game creation)
 - [ ] - game rule options
 - [ ] - stylesheets
 - [ ] - Nice front page & additional info
-- [ ] - Fork me on github
+- [ ] - "Fork me on github"
 - [ ] - interactive front end
 - [ ] - real time updates
 - [ ] - move timeout (auto-pass)
