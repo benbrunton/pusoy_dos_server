@@ -40,11 +40,8 @@ impl GameMove{
         info!("game loaded");
 
         let next_player = game.get_next_player().unwrap();
-        info!("next player - {:?}", next_player);
 
-        info!("user id : {}", user_id);
         let current_user = game.get_player(user_id).unwrap();
-        info!("current user - {:?}", current_user);
 
         info!("hand: {:?}", hand);
         let valid_move = game.player_move(user_id, hand);
@@ -88,7 +85,6 @@ impl GameMove{
     }
 
     fn get_rank(&self, rank:&str) -> Rank {
-        info!("rank: {}", rank);
         match rank {
             "2"  => Rank::Two,
             "3"  => Rank::Three,
@@ -109,7 +105,6 @@ impl GameMove{
     }
 
     fn get_suit(&self, suit:&str) -> Suit {
-        info!("suit: {}", suit);
         match suit {
             "Clubs"    => Suit::Clubs,
             "Hearts"   => Suit::Hearts,
@@ -135,6 +130,7 @@ impl Handler for GameMove {
 
         
         info!("{:?}", hashmap);
+        info!("{:?}", hand);
 
         let session_user_id = helpers::get_user_id(req);
         let redirect_to_homepage = helpers::redirect(&self.hostname, "");
