@@ -107,18 +107,12 @@ impl InPlay {
     }
 
     fn trick_to_cards(&self, trick:Trick) -> Vec<DCard> {
-        match trick {
-            Trick::Straight(c1, c2, c3, c4, c5)|
-            Trick::Flush(c1, c2, c3, c4, c5)|
-            Trick::FullHouse(c1, c2, c3, c4, c5)|
-            Trick::FourOfAKind(c1, c2, c3, c4, c5)|
-            Trick::StraightFlush(c1, c2, c3, c4, c5)|
-            Trick::FiveOfAKind(c1, c2, c3, c4, c5) => vec!(DCard(c1),
-                                                    DCard(c2),
-                                                    DCard(c3),
-                                                    DCard(c4),
-                                                    DCard(c5))
-        }
+        let c = trick.cards;
+        vec!(DCard(c[0]),
+            DCard(c[1]),
+            DCard(c[2]),
+            DCard(c[3]),
+            DCard(c[4]))
     }
 }
 

@@ -169,7 +169,7 @@ dependencies = [
 [[package]]
 name = "idna"
 version = "0.1.0"
-source = "git+https://github.com/servo/rust-url#23601ba92fe8ca42179a93a0164a925ff4eea913"
+source = "git+https://github.com/servo/rust-url#1be1b3be4d9d03ddd9b0d342d93f52f618ba4326"
 dependencies = [
  "matches 0.1.4 (registry+https://github.com/rust-lang/crates.io-index)",
  "unicode-bidi 0.2.3 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -439,7 +439,7 @@ dependencies = [
 [[package]]
 name = "pusoy_dos"
 version = "0.1.0"
-source = "git+https://github.com/benbrunton/pusoy-dos#4ab11b9fe7ef15567604b76f26ebb082129facc7"
+source = "git+https://github.com/benbrunton/pusoy-dos#7626c3b49c8cd61b24009980ac40b985fb0c25e3"
 dependencies = [
  "rand 0.3.14 (registry+https://github.com/rust-lang/crates.io-index)",
  "rustc-serialize 0.3.21 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -668,7 +668,7 @@ dependencies = [
 [[package]]
 name = "url"
 version = "1.2.3"
-source = "git+https://github.com/servo/rust-url#23601ba92fe8ca42179a93a0164a925ff4eea913"
+source = "git+https://github.com/servo/rust-url#1be1b3be4d9d03ddd9b0d342d93f52f618ba4326"
 dependencies = [
  "idna 0.1.0 (git+https://github.com/servo/rust-url)",
  "matches 0.1.4 (registry+https://github.com/rust-lang/crates.io-index)",
