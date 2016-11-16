@@ -65,7 +65,8 @@ impl Round {
                 current_player = :current_player,
                 last_move = :last_move,
                 pass_count = :pass_count,
-                first_round = :first_round
+                first_round = :first_round,
+                winners = :winners
             WHERE game = :game",
             params!{
                 "game" => id,

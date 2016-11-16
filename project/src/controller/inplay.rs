@@ -67,8 +67,14 @@ impl InPlay {
         cards.reverse();
 
         let current_user_winner = match round.winners.clone().first() {
-            Some(id) => *id == user_id,
-            _        => false
+            Some(id) => {
+                info!("current_winner: {}", id);
+                *id == user_id
+            },
+            _        => {
+                info!("no winners!");
+                false
+            }
         };
 
         let mut sorted_winners = round.winners.clone();
