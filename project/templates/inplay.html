@@ -21,9 +21,15 @@
             {% endfor %}
         </ul>
 
-    {% if  your_turn  %}
+    {% if current_user_winner %}
+        <h2>You Won!</h2> 
+    {% elif  your_turn  %}
         <h3>Your turn!</h3>
     {% else %}
+        {% if current_user_finished %}
+            <h3>You used all your cards</h3>
+        {% endif %}
+         
         <h3>Waiting for {{ next_player_name }} </h3>
     {% endif %}
 

@@ -43,6 +43,11 @@ impl GameMove{
         let updated_game = valid_move.expect("error with move");
         self.round_data.update_round(game_id, updated_game);
 
+        //TODO - check whether >1 remaining players
+        // and if not, then complete game
+        // - completed games don't offer last user ability to make a move
+        // AND get removed from front page
+
         let play_url = format!("play/{}", game_id);
         helpers::redirect(&self.hostname, &play_url)
     }

@@ -29,7 +29,8 @@ impl Round {
                  current_player,
                  last_move,
                  pass_count,
-                 first_round
+                 first_round,
+                 winners
             )
             VALUES
                 ( :game, 
@@ -37,7 +38,8 @@ impl Round {
                   :current_player, 
                   :last_move,
                   :pass_count,
-                  :first_round
+                  :first_round,
+                  :winners
                 )",
             params!{
                 "game" => id,
@@ -45,7 +47,8 @@ impl Round {
                 "current_player" => game.get_next_player().unwrap().get_id(),
                 "last_move" => json::encode(&round_def.last_move).unwrap(),
                 "pass_count" => round_def.pass_count,
-                "first_round" => round_def.first_round
+                "first_round" => round_def.first_round,
+                "winners" => json::encode(&game_def.winners).expect("unable to encode winners")
             }).unwrap();
 
             // todo - return result

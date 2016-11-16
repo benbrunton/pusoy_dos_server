@@ -74,7 +74,10 @@ impl InPlay {
         let mut sorted_winners = round.winners.clone();
         sorted_winners.sort();
 
-        let current_user_finished = sorted_winners.binary_search(&user_id);
+        let current_user_finished = match sorted_winners.binary_search(&user_id){
+            Ok(_) => true,
+            _     => false
+        };
 
         let last_move = round.clone().round.get_last_move();
         let display_last_move = self.convert_move_to_cards(last_move);
