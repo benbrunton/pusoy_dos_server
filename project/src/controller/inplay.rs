@@ -55,6 +55,14 @@ impl InPlay {
         info!("loading game : {}", game_id);
         let round = round_result.expect("failed to load round");
         let game = Game::load(round.clone()).expect("game failed to load");
+
+        let round_def = round.round.export();
+        info!("round_def: {:?}", round_def);
+        if round_def.players.len() < 2 {
+            info!("GAME OVER FOR GAME: {}", game_id);
+            return helpers::redirect(&self.hostname, format!("game-complete/{}", game_id));
+        }
+
         let next_player = game.get_next_player().expect("unable to get next player");
 
         let next_player_id = next_player.get_id();

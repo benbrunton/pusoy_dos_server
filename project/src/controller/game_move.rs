@@ -7,20 +7,22 @@ use std::collections::HashMap;
 use config::Config;
 use helpers;
 use data_access::round::Round as RoundData;
+use data_access::game::Game as GameData;
 use pusoy_dos::game::game::Game;
 use pusoy_dos::cards::types::*;
 use pusoy_dos::cards::card::Card;
 
 pub struct GameMove{
     round_data: RoundData,
+    game_data: GameData,
     hostname: String
 }
 
 impl GameMove{
 
-    pub fn new(config:&Config, round_data: RoundData) -> GameMove {
+    pub fn new(config:&Config, round_data: RoundData, game_data: GameData) -> GameMove {
         let hostname = config.get("hostname").unwrap();
-        GameMove{ hostname: hostname, round_data: round_data }
+        GameMove{ hostname: hostname, round_data: round_data, game_data: game_data }
     }
 
     fn execute(&self, user_id:u64, game_id:u64, hand: Vec<Card>) -> Response {
@@ -41,12 +43,12 @@ impl GameMove{
 
         let valid_move = game.player_move(user_id, hand);
         let updated_game = valid_move.expect("error with move");
-        self.round_data.update_round(game_id, updated_game);
+        self.round_data.update_round(game_id, updated_game.clone());
 
-        //TODO - check whether >1 remaining players
-        // and if not, then complete game
-        // - completed games don't offer last user ability to make a move
-        // AND get removed from front page
+        let updated_round = updated_game.round.export();
+        if updated_round.players.len() < 2 {
+            let _ = self.game_data.complete_game(game_id);
+        }
 
         let play_url = format!("play/{}", game_id);
         helpers::redirect(&self.hostname, &play_url)

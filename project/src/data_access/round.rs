@@ -124,6 +124,7 @@ impl Round {
                                 .expect("unable to decode player hands");
 
                         let player_ids = players.iter()
+                                .filter(|ref player| {player.get_hand().len() > 0 })
                                 .map(|ref player| { player.get_id() }).collect();
 
                         let current_player = game_data.get("current_player")
