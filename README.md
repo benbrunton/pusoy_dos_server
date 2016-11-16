@@ -18,12 +18,11 @@ A multiplayer Pusoy Dos server written in [Rust](https://www.rust-lang.org).
 - elm?
 
 ## Todo
-- [ ] - winning condition
-- [ ] - multiple decks
 - [ ] - implement jokers
+- [ ] - implement reversals (configured at game creation)
+- [ ] - multiple decks
 - [ ] - display datetime of interactions
 - [ ] - additional auth providers
-- [ ] - implement reversals (configured at game creation)
 - [ ] - game rule options
 - [ ] - stylesheets
 - [ ] - Nice front page & additional info
