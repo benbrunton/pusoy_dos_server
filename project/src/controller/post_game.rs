@@ -20,6 +20,7 @@ impl PostGame{
         let content_type = "text/html".parse::<Mime>().unwrap();
 
         let mut data = Context::new();
+        data.add("logged_in", &true);
         let template = "post_game.html";
         let page = self.tera.render(template, data).expect("error rendering template");
         Response::with((content_type, status::Ok, page))

@@ -104,7 +104,7 @@ impl Game {
                         FROM pusoy_dos.user_game
                         JOIN pusoy_dos.game ON pusoy_dos.game.id = game
                         JOIN pusoy_dos.user ON creator = user.id
-                    WHERE user = :user", user)
+                    WHERE user = :user AND complete = 0", user)
     }
 
     pub fn get_open_games(&self, user:u64) -> Vec<GameModel> {
