@@ -22,7 +22,6 @@ A multiplayer Pusoy Dos server written in [Rust](https://www.rust-lang.org).
 - [ ] - multiple decks
 - [ ] - implement jokers
 - [ ] - display datetime of interactions
-- [ ] - get all 5 card tricks correct
 - [ ] - additional auth providers
 - [ ] - implement reversals (configured at game creation)
 - [ ] - game rule options

@@ -59,8 +59,8 @@ ENGINE = InnoDb
 AUTO_INCREMENT = 4
 DEFAULT CHARACTER SET = utf8;
 
--- game_moves table
-DROP TABLE IF EXISTS `game_move`;
+-- round table
+DROP TABLE IF EXISTS `round`;
 
 CREATE TABLE IF NOT EXISTS `round` (
   `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,

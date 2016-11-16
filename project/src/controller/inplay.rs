@@ -52,13 +52,11 @@ impl InPlay {
             _ => ()
         }
 
-        let round = round_result.unwrap();
-        info!("loading game: {}", game_id);
+        info!("loading game : {}", game_id);
+        let round = round_result.expect("failed to load round");
+        let game = Game::load(round.clone()).expect("game failed to load");
+        let next_player = game.get_next_player().expect("unable to get next player");
 
-        let game = Game::load(round.clone()).unwrap();
-        info!("game loaded");
-
-        let next_player = game.get_next_player().unwrap();
         let next_player_id = next_player.get_id();
 
         let current_user_turn = user_id == next_player_id; 

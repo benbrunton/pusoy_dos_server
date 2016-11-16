@@ -33,21 +33,15 @@ impl GameMove{
             _ => ()
         }
 
-        let round = round_result.unwrap();
         info!("loading game: {}", game_id);
 
-        let game = Game::load(round.clone()).unwrap();
+        let round = round_result.expect("error with round result");
+        let game = Game::load(round.clone()).expect("error loading game");
         info!("game loaded");
 
-        let next_player = game.get_next_player().unwrap();
-
-        let current_user = game.get_player(user_id).unwrap();
-
-        info!("hand: {:?}", hand);
         let valid_move = game.player_move(user_id, hand);
-        info!("{:?}", valid_move);
-
-        self.round_data.update_round(game_id, valid_move.unwrap());
+        let updated_game = valid_move.expect("error with move");
+        self.round_data.update_round(game_id, updated_game);
 
         let play_url = format!("play/{}", game_id);
         helpers::redirect(&self.hostname, &play_url)

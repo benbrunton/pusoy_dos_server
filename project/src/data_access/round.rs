@@ -147,7 +147,7 @@ impl Round {
                         Some(GameDefinition{
                             players: players,
                             round: round,
-                            winner: None
+                            winners: vec!()
                         })
                     },
                     _ => {
