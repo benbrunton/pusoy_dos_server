@@ -70,7 +70,7 @@ CREATE TABLE IF NOT EXISTS `round` (
   `last_move` BLOB NULL DEFAULT NULL,
   `pass_count` INT(10) UNSIGNED NOT NULL DEFAULT 0,
   `first_round` INT(1) UNSIGNED NOT NULL DEFAULT 1,
-  `winner` INT(10) UNSIGNED NULL DEFAULT NULL,
+  `winners` BLOB NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   INDEX `idx_round_game` (`game` ASC))
 ENGINE = InnoDb

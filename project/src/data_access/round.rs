@@ -66,12 +66,17 @@ impl Round {
             WHERE game = :game",
             params!{
                 "game" => id,
-                "hands" => json::encode(&game_def.players).unwrap(),
-                "current_player" => game.get_next_player().unwrap().get_id(),
-                "last_move" => json::encode(&round_def.last_move).unwrap(),
+                "hands" => json::encode(&game_def.players)
+                    .expect("unable to encode player hands"),
+                "current_player" => game.get_next_player()
+                    .expect("unable to find current player").get_id(),
+                "last_move" => json::encode(&round_def.last_move)
+                    .expect("unable to encode last move"),
                 "pass_count" => round_def.pass_count,
-                "first_round" => round_def.first_round
-            }).unwrap();
+                "first_round" => round_def.first_round,
+                "winners" => json::encode(&game_def.winners)
+                    .expect("unable to encode winners")
+            }).expect("update round failed");
     }
 
     pub fn get(&self, id: u64) -> Option<GameDefinition> {
@@ -83,7 +88,8 @@ impl Round {
                  current_player,
                  last_move,
                  pass_count,
-                 first_round
+                 first_round,
+                 winners
              FROM pusoy_dos.round
             WHERE game = :id",
             params!{
@@ -99,55 +105,45 @@ impl Round {
                     Some(game) => {
                         let mut game_data = game.unwrap();
 
-                        /*
-                        TODO: builder for game definition
+                        let last_move_serialised = game_data.get::<String, &str>("last_move")
+                                .expect("unable to get last move");
+                        let last_move = json::decode(&last_move_serialised)
+                                .expect("unable to decode last move");
 
-                        Card -> card!(rank, suit)
-                        Move -> build_move(Vec<Card>)
+                        let first_round = game_data.get::<u8, &str>("first_round")
+                                .expect("unable to get `is first round`") == 1;
 
-                        Player::new(id)
-                        player.set_hand(hand);
+                        let players_serialised = game_data.get::<String, &str>("hands")
+                                .expect("unable to get player hands");
 
-                        Round::new        players: Vec<u64>,
-                                          current_player: u64,
-                                          last_move: Move,
-                                          passes: u64,
-                                          first_round: bool
+                        let players:Vec<Player> = json::decode(&players_serialised)
+                                .expect("unable to decode player hands");
 
-                        GameDefinition 
-                        /// pub players: Vec<Player>,
-                        /// pub round: Round,
-                        /// pub winner: Option<u64> 
+                        let player_ids = players.iter()
+                                .map(|ref player| { player.get_id() }).collect();
 
-                         */
+                        let current_player = game_data.get("current_player")
+                                .expect("unable to get current player");
 
-                        let last_move_serialised = game_data.get::<String, &str>("last_move").unwrap();
-                        let last_move = json::decode(&last_move_serialised).unwrap();
-                        info!("last move: {:?}", last_move);
-
-                        let first_round = game_data.get::<u8, &str>("first_round").unwrap() == 1;
-                        info!("is first round?: {}", first_round);
-
-                        let players_serialised = game_data.get::<String, &str>("hands").unwrap();
-                        let players:Vec<Player> = json::decode(&players_serialised).unwrap();
-                        //info!("players: {:?}", players);
-
-                        let player_ids = players.iter().map(|ref player| { player.get_id() }).collect();
-                        info!("player ids: {:?}", player_ids);
-
-                        let current_player = game_data.get("current_player").unwrap();
-                        info!("current player {:?}", current_player);
-
-                        let pass_count = game_data.get("pass_count").unwrap();
-                        info!("pass count: {}", pass_count);
+                        let pass_count = game_data.get("pass_count")
+                                .expect("unable to get pass count");
                         
-                        let round = GameRound::new(player_ids, current_player, last_move, pass_count, first_round);
-                        info!("round: {:?}", round);
+                        let round = GameRound::new(
+                                            player_ids, 
+                                            current_player, 
+                                            last_move, 
+                                            pass_count, 
+                                            first_round);
+
+                        let winners_serialised = game_data.get::<String, &str>("winners")
+                                .expect("unable to get winners from db");
+                        let winners = json::decode(&winners_serialised)
+                                .expect("unable to decode winners");
 
                         Some(GameDefinition{
                             players: players,
                             round: round,
-                            winners: vec!()
+                            winners: winners
                         })
                     },
                     _ => {
