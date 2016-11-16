@@ -66,6 +66,16 @@ impl InPlay {
         cards.sort();
         cards.reverse();
 
+        let current_user_winner = match round.winners.clone().first() {
+            Some(id) => *id == user_id,
+            _        => false
+        };
+
+        let mut sorted_winners = round.winners.clone();
+        sorted_winners.sort();
+
+        let current_user_finished = sorted_winners.binary_search(&user_id);
+
         let last_move = round.clone().round.get_last_move();
         let display_last_move = self.convert_move_to_cards(last_move);
 
@@ -80,6 +90,8 @@ impl InPlay {
 
         data.add("user_id", &user_id);
         data.add("logged_in", &true);
+        data.add("current_user_winner", &current_user_winner);
+        data.add("current_user_finished", &current_user_finished);
         data.add("your_turn", &current_user_turn);
         data.add("next_player", &next_player_id);
         data.add("next_player_name", &next_player_name);
