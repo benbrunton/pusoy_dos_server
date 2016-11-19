@@ -10,7 +10,7 @@ use data_access::round::Round as RoundData;
 use data_access::game::Game as GameData;
 use pusoy_dos::game::game::Game;
 use pusoy_dos::cards::types::*;
-use pusoy_dos::cards::card::Card;
+use pusoy_dos::cards::card::{ Card, PlayerCard };
 
 pub struct GameMove{
     round_data: RoundData,
@@ -25,7 +25,7 @@ impl GameMove{
         GameMove{ hostname: hostname, round_data: round_data, game_data: game_data }
     }
 
-    fn execute(&self, user_id:u64, game_id:u64, hand: Vec<Card>) -> Response {
+    fn execute(&self, user_id:u64, game_id:u64, hand: Vec<PlayerCard>) -> Response {
         let round_result = self.round_data.get(game_id);
         match round_result {
             None => {
@@ -62,7 +62,7 @@ impl GameMove{
         }
     }
 
-    fn get_move(&self, hashmap: Option<HashMap<String, Vec<String>>>) -> Vec<Card>{
+    fn get_move(&self, hashmap: Option<HashMap<String, Vec<String>>>) -> Vec<PlayerCard>{
         let mut cards = vec!();
 
         match hashmap {
@@ -77,12 +77,14 @@ impl GameMove{
         cards
     }
 
-    fn get_card(&self, card:String) -> Card {
+    fn get_card(&self, card:String) -> PlayerCard {
         let words = card.split(" ").collect::<Vec<&str>>();
         let rank = self.get_rank(words[1]);
         let suit = self.get_suit(words[0]);
             
-        Card::new(rank, suit)
+        let card = Card::new(rank, suit);
+
+        PlayerCard::Card(card)
     }
 
     fn get_rank(&self, rank:&str) -> Rank {

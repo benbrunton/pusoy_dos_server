@@ -11,7 +11,7 @@ use config::Config;
 use helpers;
 use pusoy_dos::game::game::Game;
 use pusoy_dos::game::player_move::{Move, Trick};
-use pusoy_dos::cards::card::Card;
+use pusoy_dos::cards::card::PlayerCard;
 use serde::{Serialize, Serializer};
 
 pub struct InPlay{
@@ -124,22 +124,25 @@ impl InPlay {
 
     fn convert_move_to_cards(&self, last_move:Move) -> Vec<DCard> {
         match last_move {
-            Move::Pass                    => vec!(),
-            Move::Single(card)            => vec!(DCard(card)),
-            Move::Pair(c1, c2)            => vec!(DCard(c1), DCard(c2)),
-            Move::Prial(c1, c2, c3)       => vec!(DCard(c1), DCard(c2), DCard(c3)),
-            Move::FiveCardTrick(trick)    => self.trick_to_cards(trick)
+            Move::Pass                  => vec!(),
+            Move::Single(card)          => vec!(DCard(PlayerCard::Card(card))),
+            Move::Pair(c1, c2)          => vec!(DCard(PlayerCard::Card(c1)), 
+                                                DCard(PlayerCard::Card(c2))),
+            Move::Prial(c1, c2, c3)     => vec!(DCard(PlayerCard::Card(c1)), 
+                                                DCard(PlayerCard::Card(c2)), 
+                                                DCard(PlayerCard::Card(c3))),
+            Move::FiveCardTrick(trick)  => self.trick_to_cards(trick)
         }
         
     }
 
     fn trick_to_cards(&self, trick:Trick) -> Vec<DCard> {
         let c = trick.cards;
-        vec!(DCard(c[0]),
-            DCard(c[1]),
-            DCard(c[2]),
-            DCard(c[3]),
-            DCard(c[4]))
+        vec!(DCard(PlayerCard::Card(c[0])),
+            DCard(PlayerCard::Card(c[1])),
+            DCard(PlayerCard::Card(c[2])),
+            DCard(PlayerCard::Card(c[3])),
+            DCard(PlayerCard::Card(c[4])))
     }
 }
 
@@ -172,7 +175,7 @@ impl Handler for InPlay {
 // todo - move
 //
 #[derive(PartialEq, Eq, PartialOrd, Ord)]
-struct DCard(Card);
+struct DCard(PlayerCard);
 
 impl Serialize for DCard {
 
@@ -180,13 +183,29 @@ impl Serialize for DCard {
         where S: Serializer
     {
 
+        let card = self.0;
+        let (rank, suit, suit_display, joker) = match card {
+            PlayerCard::Card(c) |
+            PlayerCard::Wildcard(c)  => (format!("{}", c.rank), 
+                                    format!("{:?}", c.suit),
+                                    format!("{}", c.suit),
+                                    false),
+            PlayerCard::Joker(n)    => (String::from(""), 
+                                    format!("joker {}", n),
+                                    String::from("joker"),
+                                    true)
+        };
+
         let mut state = try!(serializer.serialize_map(Some(2)));
 		try!(serializer.serialize_map_key(&mut state, "suit_display"));
-		try!(serializer.serialize_map_value(&mut state, format!("{}", self.0.suit)));
+		try!(serializer.serialize_map_value(&mut state, suit_display));
 		try!(serializer.serialize_map_key(&mut state, "suit"));
-		try!(serializer.serialize_map_value(&mut state, format!("{:?}", self.0.suit)));
+		try!(serializer.serialize_map_value(&mut state, suit));
 		try!(serializer.serialize_map_key(&mut state, "rank"));
-		try!(serializer.serialize_map_value(&mut state, format!("{}", self.0.rank)));
+		try!(serializer.serialize_map_value(&mut state, rank));
+        try!(serializer.serialize_map_key(&mut state, "joker"));
+		try!(serializer.serialize_map_value(&mut state, joker));
+
         serializer.serialize_map_end(state)
     }
 }

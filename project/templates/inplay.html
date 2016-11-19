@@ -51,8 +51,16 @@
                         disabled
                         {% endif %}
                     >
+                    {% if card.joker == false %}
                     <span>{{card.rank}}</span>
+                    {% endif %}
                     <span>{{card.suit_display}}</span>
+                    {% if card.joker %}
+                        <select name="joker {{card.rank}} select">
+                            <option value="A Spades">A spades</option>
+                            <option value="3 Clubs">3 Clubs</option>
+                        </select>
+                    {% endif %}
                 </label>
             </div>
         {% endfor %}

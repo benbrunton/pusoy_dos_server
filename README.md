@@ -1,5 +1,5 @@
 # Pusoy Dos
-A multiplayer Pusoy Dos server written in [Rust](https://www.rust-lang.org).
+A multiplayer [Pusoy Dos](https://en.wikipedia.org/wiki/Pusoy_dos) server written in [Rust](https://www.rust-lang.org).
 
 ## Prerequisites
 - Docker
@@ -15,21 +15,19 @@ A multiplayer Pusoy Dos server written in [Rust](https://www.rust-lang.org).
  - [tera templates](https://github.com/Keats/tera)
 - mysql
 - docker
-- elm?
 
 ## Todo
 - [ ] - implement jokers
 - [ ] - implement reversals (configured at game creation)
-- [ ] - multiple decks
-- [ ] - display datetime of interactions
-- [ ] - additional auth providers
-- [ ] - game rule options
 - [ ] - stylesheets
+- [ ] - real time updates
+- [ ] - additional auth providers - { Google, Twitter, Github, Reddit }
+- [ ] - game rule options
+- [ ] - multiple decks
 - [ ] - Nice front page & additional info
 - [ ] - "Fork me on github"
-- [ ] - interactive front end
-- [ ] - real time updates
 - [ ] - move timeout (auto-pass)
-- [ ] - deployment
 - [ ] - SSL on play.benbru.com
+- [ ] - deployment
+- [ ] - display datetime of interactions
 - [ ] - error pages
