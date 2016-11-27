@@ -129,6 +129,7 @@ impl Handler for GameMove {
 
         let ref query = req.extensions.get::<Router>().unwrap().find("id");
 
+        // TODO - take jokers into account
         let hand = self.get_move(hashmap.to_owned());
 
         

@@ -10,7 +10,8 @@ use helpers;
 pub struct HomePageController {
     hostname: String,
     tera: &'static Tera,
-    fb_app_id: String
+    fb_app_id: String,
+    dev_mode: bool
 }
 
 impl HomePageController {
@@ -19,11 +20,16 @@ impl HomePageController {
 
         let hostname = config.get("hostname").unwrap();
         let fb_app_id = config.get("fb_app_id").unwrap();
+        let dev_mode = match config.get("mode") {
+            Some(mode) => mode == "dev",
+            _           => false
+        };
 
         HomePageController {
             hostname: hostname,
             tera: tera,
-            fb_app_id: fb_app_id
+            fb_app_id: fb_app_id,
+            dev_mode: dev_mode
         }
     }
 
@@ -47,6 +53,7 @@ impl HomePageController {
             self.hostname);
         let mut data = Context::new(); 
         data.add("fb_login", &fb);
+        data.add("dev_mode", &self.dev_mode);
         self.tera.render("index.html", data)
     }
 }

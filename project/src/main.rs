@@ -95,7 +95,14 @@ fn main() {
     router.get("/play/:id", inplay_controller, "inplay");
     router.post("/play/:id", move_controller, "move");
  
-    dev_mode(&config, &mut router, user_data.clone());
+    match config.get("mode") {
+        Some(mode) => {
+            if mode == "dev" {
+                dev_mode(&config, &mut router, user_data.clone())
+            }
+        },
+        _ => ()
+    }
 
     let (logger_before, logger_after) = Logger::new(None);
 

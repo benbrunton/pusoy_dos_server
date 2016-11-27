@@ -2,6 +2,8 @@
 {% block title %}Welcome{% endblock title %}
 {% block content %}
     <p><a href="{{ fb_login  }}">Login with Facebook</a></p>
+    {% if dev_mode %}
     </p><a href="/test_auth">Offline Login</a></p>
+    {% endif %}
 {% endblock content %}
 
