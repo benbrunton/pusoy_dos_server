@@ -83,9 +83,12 @@ impl GameMove{
     }
 
     fn is_joker(&self, card:String) -> bool {
-        let words = card.split(" ").collect::<Vec<&str>>();
+        let words = card.trim().split(" ").collect::<Vec<&str>>();
         let suit = words[0];
-        info!("checking whether < {} > is a joker", &card);
+        //info!("checking whether < {} > is a joker", &card);
+        info!("len: {}", words.len());
+        info!("suit: {}", suit);
+        info!("suit == joker: {:?}", suit == "joker");
         words.len() == 2 && suit == "joker"
 
     }
@@ -96,6 +99,7 @@ impl GameMove{
     }
 
     fn get_joker(&self, card:String, hand: HashMap<String, Vec<String>>) -> PlayerCard {
+        // todo - select card selected in corresponding joker select
         let card = Card::new(Rank::Three, Suit::Clubs);
         PlayerCard::Wildcard(card)
     }

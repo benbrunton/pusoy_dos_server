@@ -8,5 +8,5 @@ mysql < /project/mysql/setup.sql
 
 #cargo test # ensure dependencies are set up
 
-#tail -F -n0 /etc/hosts
-cargo run
+#cargo run
+tail -F -n0 /etc/hosts

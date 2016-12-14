@@ -56,7 +56,7 @@
                     {% endif %}
                     <span>{{card.suit_display}}</span>
                     {% if card.joker %}
-                        <select name="joker {{card.rank}} select">
+                        <select name="{{card.suit}} select">
                             <option value="A Spades">A Spades</option>
                             <option value="2 Spades">2 Spades</option>
                             <option value="3 Spades">3 Spades</option>
