@@ -19,3 +19,6 @@ sh:
 
 edit:
 	vim Makefile
+
+tail-logs:
+	docker logs -f pd_server

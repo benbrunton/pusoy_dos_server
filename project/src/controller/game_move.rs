@@ -67,14 +67,37 @@ impl GameMove{
 
         match hashmap {
             Some(h) => {
-                for(card, _) in h {
-                    cards.push(self.get_card(card));
+                for(card, _) in &h {
+                    if self.is_joker(card.clone()) {
+                        info!("{} is a joker", &card);
+                        cards.push(self.get_joker(card.clone(), h.clone()));
+                    } else if self.is_card(card.clone()) {
+                        cards.push(self.get_card(card.clone()));
+                    }
                 }
             },
             _ => ()
         }
 
         cards
+    }
+
+    fn is_joker(&self, card:String) -> bool {
+        let words = card.split(" ").collect::<Vec<&str>>();
+        let suit = words[0];
+        info!("checking whether < {} > is a joker", &card);
+        words.len() == 2 && suit == "joker"
+
+    }
+
+    fn is_card(&self, card:String) -> bool {
+        let words = card.split(" ").collect::<Vec<&str>>();
+        words.len() == 2
+    }
+
+    fn get_joker(&self, card:String, hand: HashMap<String, Vec<String>>) -> PlayerCard {
+        let card = Card::new(Rank::Three, Suit::Clubs);
+        PlayerCard::Wildcard(card)
     }
 
     fn get_card(&self, card:String) -> PlayerCard {
@@ -129,9 +152,7 @@ impl Handler for GameMove {
 
         let ref query = req.extensions.get::<Router>().unwrap().find("id");
 
-        // TODO - take jokers into account
         let hand = self.get_move(hashmap.to_owned());
-
         
         info!("{:?}", hashmap);
         info!("{:?}", hand);
