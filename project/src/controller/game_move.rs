@@ -83,29 +83,42 @@ impl GameMove{
     }
 
     fn is_joker(&self, card:String) -> bool {
-        let words = card.trim().split(" ").collect::<Vec<&str>>();
+        let words = self.get_words(&card);
         let suit = words[0];
-        //info!("checking whether < {} > is a joker", &card);
-        info!("len: {}", words.len());
-        info!("suit: {}", suit);
-        info!("suit == joker: {:?}", suit == "joker");
         words.len() == 2 && suit == "joker"
 
     }
 
     fn is_card(&self, card:String) -> bool {
-        let words = card.split(" ").collect::<Vec<&str>>();
+        let words = self.get_words(&card);
         words.len() == 2
     }
 
     fn get_joker(&self, card:String, hand: HashMap<String, Vec<String>>) -> PlayerCard {
-        // todo - select card selected in corresponding joker select
-        let card = Card::new(Rank::Three, Suit::Clubs);
-        PlayerCard::Wildcard(card)
+        let words = self.get_words(&card);
+       
+        for(selection, selected_card) in & hand {
+            let w = self.get_words(&selection);
+            if w.len() == 3 && 
+                w[0] == "joker" && 
+                w[1] == words[1] && 
+                w[2] == "select" {
+                return self.get_card(selected_card
+                                        .first()
+                                        .expect("should be something selected")
+                                        .to_owned());
+            }
+        }
+
+        panic!("No idea how you ended up with that! {}", card);
+    }
+
+    fn get_words<'a>(&'a self, card:&'a str) -> Vec<&str>{
+        card.trim().split(" ").collect::<Vec<&str>>()
     }
 
     fn get_card(&self, card:String) -> PlayerCard {
-        let words = card.split(" ").collect::<Vec<&str>>();
+        let words = self.get_words(&card);
         let rank = self.get_rank(words[1]);
         let suit = self.get_suit(words[0]);
             
@@ -129,7 +142,7 @@ impl GameMove{
             "Q"  => Rank::Queen,
             "K"  => Rank::King,
             "A"  => Rank::Ace,
-            _    => panic!("invalid rank supplied in move")
+            _    => panic!("invalid rank supplied in move : {}", rank)
         }
              
     }
