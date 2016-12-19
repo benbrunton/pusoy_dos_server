@@ -103,7 +103,7 @@ impl GameMove{
                 w[0] == "joker" && 
                 w[1] == words[1] && 
                 w[2] == "select" {
-                return self.get_card(selected_card
+                return self.get_wildcard(selected_card
                                         .first()
                                         .expect("should be something selected")
                                         .to_owned());
@@ -125,6 +125,16 @@ impl GameMove{
         let card = Card::new(rank, suit);
 
         PlayerCard::Card(card)
+    }
+
+    fn get_wildcard(&self, card:String) -> PlayerCard {
+        let words = self.get_words(&card);
+        let rank = self.get_rank(words[1]);
+        let suit = self.get_suit(words[0]);
+            
+        let card = Card::new(rank, suit);
+
+        PlayerCard::Wildcard(card)
     }
 
     fn get_rank(&self, rank:&str) -> Rank {

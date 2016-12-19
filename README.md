@@ -17,7 +17,7 @@ A multiplayer [Pusoy Dos](https://en.wikipedia.org/wiki/Pusoy_dos) server writte
 - docker
 
 ## Todo
-- [ ] - implement jokers
+- [x] - implement jokers
 - [ ] - implement reversals (configured at game creation)
 - [ ] - stylesheets
 - [ ] - real time updates
