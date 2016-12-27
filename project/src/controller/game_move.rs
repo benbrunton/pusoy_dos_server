@@ -25,7 +25,10 @@ impl GameMove{
         GameMove{ hostname: hostname, round_data: round_data, game_data: game_data }
     }
 
-    fn execute(&self, user_id:u64, game_id:u64, hand: Vec<PlayerCard>) -> Response {
+    fn execute(&self, 
+                user_id:u64, 
+                game_id:u64, 
+                hashmap:Option<HashMap<String, Vec<String>>>) -> Response {
         let round_result = self.round_data.get(game_id);
         match round_result {
             None => {
@@ -38,8 +41,12 @@ impl GameMove{
         info!("loading game: {}", game_id);
 
         let round = round_result.expect("error with round result");
+        let reversed = round.reversed; 
         let game = Game::load(round.clone()).expect("error loading game");
         info!("game loaded");
+
+        let hand = self.get_move(hashmap, reversed);
+        info!("{:?}", hand);
 
         let valid_move = game.player_move(user_id, hand);
         let updated_game = valid_move.expect("error with move");
@@ -62,7 +69,7 @@ impl GameMove{
         }
     }
 
-    fn get_move(&self, hashmap: Option<HashMap<String, Vec<String>>>) -> Vec<PlayerCard>{
+    fn get_move(&self, hashmap: Option<HashMap<String, Vec<String>>>, reversed:bool) -> Vec<PlayerCard>{
         let mut cards = vec!();
 
         match hashmap {
@@ -70,9 +77,9 @@ impl GameMove{
                 for(card, _) in &h {
                     if self.is_joker(card.clone()) {
                         info!("{} is a joker", &card);
-                        cards.push(self.get_joker(card.clone(), h.clone()));
+                        cards.push(self.get_joker(card.clone(), h.clone(), reversed));
                     } else if self.is_card(card.clone()) {
-                        cards.push(self.get_card(card.clone()));
+                        cards.push(self.get_card(card.clone(), reversed));
                     }
                 }
             },
@@ -94,7 +101,7 @@ impl GameMove{
         words.len() == 2
     }
 
-    fn get_joker(&self, card:String, hand: HashMap<String, Vec<String>>) -> PlayerCard {
+    fn get_joker(&self, card:String, hand: HashMap<String, Vec<String>>, reversed:bool) -> PlayerCard {
         let words = self.get_words(&card);
        
         for(selection, selected_card) in & hand {
@@ -106,7 +113,7 @@ impl GameMove{
                 return self.get_wildcard(selected_card
                                         .first()
                                         .expect("should be something selected")
-                                        .to_owned());
+                                        .to_owned(), reversed);
             }
         }
 
@@ -117,22 +124,22 @@ impl GameMove{
         card.trim().split(" ").collect::<Vec<&str>>()
     }
 
-    fn get_card(&self, card:String) -> PlayerCard {
+    fn get_card(&self, card:String, reversed:bool) -> PlayerCard {
         let words = self.get_words(&card);
         let rank = self.get_rank(words[1]);
         let suit = self.get_suit(words[0]);
             
-        let card = Card::new(rank, suit);
+        let card = Card::new(rank, suit, reversed);
 
         PlayerCard::Card(card)
     }
 
-    fn get_wildcard(&self, card:String) -> PlayerCard {
+    fn get_wildcard(&self, card:String, reversed:bool) -> PlayerCard {
         let words = self.get_words(&card);
         let rank = self.get_rank(words[1]);
         let suit = self.get_suit(words[0]);
-            
-        let card = Card::new(rank, suit);
+
+        let card = Card::new(rank, suit, reversed);
 
         PlayerCard::Wildcard(card)
     }
@@ -179,10 +186,8 @@ impl Handler for GameMove {
 
         let ref query = req.extensions.get::<Router>().unwrap().find("id");
 
-        let hand = self.get_move(hashmap.to_owned());
         
         info!("{:?}", hashmap);
-        info!("{:?}", hand);
 
         let session_user_id = helpers::get_user_id(req);
         let redirect_to_homepage = helpers::redirect(&self.hostname, "");
@@ -191,7 +196,7 @@ impl Handler for GameMove {
             Some(user_id) => {
                 match *query {
                     Some(id) => {
-                        self.execute(user_id, id.parse::<u64>().unwrap(), hand)
+                        self.execute(user_id, id.parse::<u64>().unwrap(), hashmap.to_owned())
                     },
                     _ => redirect_to_homepage
                 }

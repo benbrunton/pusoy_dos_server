@@ -30,7 +30,8 @@ impl Round {
                  last_move,
                  pass_count,
                  first_round,
-                 winners
+                 winners,
+                 reversed
             )
             VALUES
                 ( :game, 
@@ -39,7 +40,8 @@ impl Round {
                   :last_move,
                   :pass_count,
                   :first_round,
-                  :winners
+                  :winners,
+                  :reversed
                 )",
             params!{
                 "game" => id,
@@ -48,7 +50,8 @@ impl Round {
                 "last_move" => json::encode(&round_def.last_move).unwrap(),
                 "pass_count" => round_def.pass_count,
                 "first_round" => round_def.first_round,
-                "winners" => json::encode(&game_def.winners).expect("unable to encode winners")
+                "winners" => json::encode(&game_def.winners).expect("unable to encode winners"),
+                "reversed" => game_def.reversed
             }).unwrap();
 
             // todo - return result
@@ -93,7 +96,8 @@ impl Round {
                  last_move,
                  pass_count,
                  first_round,
-                 winners
+                 winners,
+                 reversed
              FROM pusoy_dos.round
             WHERE game = :id",
             params!{
@@ -132,6 +136,9 @@ impl Round {
 
                         let pass_count = game_data.get("pass_count")
                                 .expect("unable to get pass count");
+                                
+                        let reversed = game_data.get::<u8, &str>("reversed")
+                                .expect("unable to get reversed") == 1;
                         
                         let round = GameRound::new(
                                             player_ids, 
@@ -148,7 +155,8 @@ impl Round {
                         Some(GameDefinition{
                             players: players,
                             round: round,
-                            winners: winners
+                            winners: winners,
+                            reversed: reversed
                         })
                     },
                     _ => {

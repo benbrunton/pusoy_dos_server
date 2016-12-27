@@ -71,6 +71,7 @@ CREATE TABLE IF NOT EXISTS `round` (
   `pass_count` INT(10) UNSIGNED NOT NULL DEFAULT 0,
   `first_round` INT(1) UNSIGNED NOT NULL DEFAULT 1,
   `winners` BLOB NULL DEFAULT NULL,
+  `reversed` INT(1) UNSIGNED NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   INDEX `idx_round_game` (`game` ASC))
 ENGINE = InnoDb
