@@ -1,0 +1,51 @@
+body {
+  background-color: #f5f5f5;
+  color: #67727a;
+}
+a,
+a:visited {
+  text-decoration: none;
+  color: inherit;
+}
+.container {
+  max-width: 850px;
+  margin: 0 auto;
+}
+.app-header {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  background-color: #6991ac;
+  color: #c3d7df;
+}
+.app-content {
+  margin-top: 150px;
+/* this is an experiment with non-js
+        but enhanced card view
+        - not sure it will work!
+    .cards input[type="checkbox"]
+        visibility hidden
+        width 0
+        height 0
+    */
+}
+.app-content a:hover {
+  text-decoration: underline;
+}
+.app-content .cards>div {
+  display: inline;
+}
+.app-footer {
+  margin: 25px;
+}
+.app-footer a:hover {
+  text-decoration: underline;
+}
+.hearts,
+.diamonds {
+  color: #d75c37;
+}
+.clubs,
+.spades {
+  color: #67727a;
+}

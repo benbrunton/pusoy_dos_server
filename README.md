@@ -26,6 +26,7 @@ A multiplayer [Pusoy Dos](https://en.wikipedia.org/wiki/Pusoy_dos) server writte
 - [ ] - multiple decks
 - [ ] - "Fork me on github"
 - [ ] - SSL on play.benbru.com
+- [ ] - Store sessions in redis
 - [ ] - deployment
 - [ ] - display datetime of interactions
 - [ ] - error pages

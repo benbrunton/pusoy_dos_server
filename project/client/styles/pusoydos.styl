@@ -1,0 +1,56 @@
+cl-red = #d75c37
+cl-gray = #67727a
+cl-blue = #6991ac
+cl-light = #c3d7df
+cl-white = #f5f5f5
+
+body
+    background-color cl-white
+    color cl-gray
+
+a, a:visited
+    text-decoration none
+    color inherit
+
+.container
+    max-width 850px
+    margin 0 auto
+
+.app-header
+    position fixed
+    top 0
+    width 100%
+    background-color cl-blue
+    color cl-light
+
+.app-content
+    margin-top 150px
+
+    a:hover
+        text-decoration underline
+
+    .cards>div
+        display inline
+
+    /* this is an experiment with non-js
+        but enhanced card view
+        - not sure it will work!
+    .cards input[type="checkbox"]
+        visibility hidden
+        width 0
+        height 0
+    */
+
+.app-footer 
+    margin 25px
+
+    a:hover
+        text-decoration underline
+
+
+.hearts, .diamonds
+    color cl-red
+
+.clubs, .spades
+    color cl-gray
+

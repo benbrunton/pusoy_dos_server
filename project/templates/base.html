@@ -6,15 +6,12 @@
     {% block head %}
     <title>{% block title %}{% endblock title %} - Pusoy Dos Online</title>
     {% endblock head %}
-    <style>
-        .hearts, .diamonds {
-            color: darkred; 
-        }
-    </style>
     <link rel="stylesheet" href="/public/vendor/purecss/pure-min.css">
+    <link rel="stylesheet" href="/public/css/pusoydos.css">
 </head>
 <body>
-    <header>
+
+    <header class="app-header">
         <h1>Pusoy Dos</h1>
         {% if logged_in %}
             <ul>
@@ -23,13 +20,16 @@
             </ul>
         {% endif %}
     </header>
-    <hr><br>
-    <div id="content">{% block content %}{% endblock content %}</div>
-    <br><hr>
-    <div id="footer">
+
+    <div class="container">
+        <div class="app-content" id="content">{% block content %}{% endblock content %}</div>
+    </div>
+
+    <div class="app-footer" id="footer">
         {% block footer %}
         &copy; Copyright 2016 <a href="http://benbru.com/">Ben Brunton</a>.
         {% endblock footer %}
     </div>
+
 </body>
 </html>

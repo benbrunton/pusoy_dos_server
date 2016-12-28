@@ -18,7 +18,6 @@ impl Session {
     pub fn store_session(&self, session: &SessionModel) {
         let session_key = format!("{}", session.key.clone());
 
-        self.remove_session(session);
 
         match session.user_id {
             None => {
@@ -30,6 +29,8 @@ impl Session {
 
         let user_id = session.user_id.clone().unwrap();
         
+
+        self.remove_session(session);
 
         info!("preparing to store session {}", session_key);
 
