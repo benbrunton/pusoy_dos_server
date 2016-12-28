@@ -51,7 +51,7 @@ impl Round {
                 "pass_count" => round_def.pass_count,
                 "first_round" => round_def.first_round,
                 "winners" => json::encode(&game_def.winners).expect("unable to encode winners"),
-                "reversed" => game_def.reversed
+                "reversed" => if game_def.reversed { 1 } else { 0 }
             }).unwrap();
 
             // todo - return result
@@ -69,7 +69,8 @@ impl Round {
                 last_move = :last_move,
                 pass_count = :pass_count,
                 first_round = :first_round,
-                winners = :winners
+                winners = :winners,
+                reversed = :reversed
             WHERE game = :game",
             params!{
                 "game" => id,
@@ -82,7 +83,8 @@ impl Round {
                 "pass_count" => round_def.pass_count,
                 "first_round" => round_def.first_round,
                 "winners" => json::encode(&game_def.winners)
-                    .expect("unable to encode winners")
+                    .expect("unable to encode winners"),
+                "reversed" => if game_def.reversed { 1 } else { 0 }
             }).expect("update round failed");
     }
 

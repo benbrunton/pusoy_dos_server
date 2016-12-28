@@ -42,6 +42,7 @@ impl GameMove{
 
         let round = round_result.expect("error with round result");
         let reversed = round.reversed; 
+        info!("game reversed: {:?}", reversed);
         let game = Game::load(round.clone()).expect("error loading game");
         info!("game loaded");
 
