@@ -22,3 +22,6 @@ edit:
 
 tail-logs:
 	docker logs -f pd_server
+
+reset-db:
+	docker exec pd_server ./scripts/reset-db

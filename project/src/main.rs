@@ -14,6 +14,8 @@ extern crate tera;
 #[macro_use] extern crate log;
 extern crate env_logger;
 extern crate urlencoded;
+extern crate staticfile;
+extern crate mount;
 
 #[macro_use] extern crate pusoy_dos;
 
@@ -48,6 +50,9 @@ use router::Router;
 use iron_logger::Logger;
 use tera::Tera;
 use std::net::{Ipv4Addr, SocketAddr, IpAddr};
+use std::path::Path;
+use staticfile::Static;
+use mount::Mount;
 
 lazy_static!{
 
@@ -106,7 +111,12 @@ fn main() {
 
     let (logger_before, logger_after) = Logger::new(None);
 
-    let mut chain = Chain::new(router);
+    let mut mount = Mount::new();
+    mount
+        .mount("/", router)
+        .mount("/public/", Static::new(Path::new("public")));
+
+    let mut chain = Chain::new(mount);
 
     chain.link_before(logger_before);
 

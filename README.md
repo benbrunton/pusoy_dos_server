@@ -17,16 +17,14 @@ A multiplayer [Pusoy Dos](https://en.wikipedia.org/wiki/Pusoy_dos) server writte
 - docker
 
 ## Todo
-- [x] - implement jokers
-- [ ] - implement reversals (configured at game creation)
-- [ ] - stylesheets
+- [ ] - UI design
 - [ ] - real time updates
 - [ ] - additional auth providers - { Google, Twitter, Github, Reddit }
+- [ ] - move timeout (auto-pass)
+- [ ] - Nice front page & additional info
 - [ ] - game rule options
 - [ ] - multiple decks
-- [ ] - Nice front page & additional info
 - [ ] - "Fork me on github"
-- [ ] - move timeout (auto-pass)
 - [ ] - SSL on play.benbru.com
 - [ ] - deployment
 - [ ] - display datetime of interactions

@@ -2,3 +2,4 @@ target
 project/config/app_config.toml
 *.swp
 .deploy
+.DS_Store
