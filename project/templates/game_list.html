@@ -2,12 +2,17 @@
 {% block title %}Games{% endblock title %}
 {% block content %}
     <div class="game-panel">
-        <a href="/new-game">Create Game</a>
+        <div class="game-menu">
+            <a class="button-primary pure-button" href="/new-game">
+                <i class="fa fa-plus"></i>&nbsp;&nbsp;
+                New Game
+            </a>
+        </div>
 
-        <div class="joined-games">
-            <h3>joined games</h3>
+        <div class="joined-games game-list">
+            <h3><i class="fa fa-user"></i>&nbsp;&nbsp;My Games</h3>
             {% if num_games > 0  %}
-                <table class="table">
+                <table class="pure-table pure-table-horizontal">
                     <thead>
                         <tr>
                             <th>#</th>
@@ -38,10 +43,10 @@
             {% endif %}
         </div>
 
-        <div class="open-games">
-            <h3>open games</h3>
+        <div class="open-games game-list">
+            <h3><i class="fa fa-globe"></i>&nbsp;&nbsp;Public Games</h3>
             {% if num_open_games > 0 %}
-                <table class="table">
+                <table class="pure-table pure-table-horizontal">
                     <thead>
                         <tr>
                             <th>#</th>

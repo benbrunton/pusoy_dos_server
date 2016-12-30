@@ -12,22 +12,16 @@ a:visited {
   margin: 0 auto;
 }
 .app-header {
-  position: fixed;
-  top: 0;
-  width: 100%;
   background-color: #6991ac;
   color: #c3d7df;
+  border-bottom: 8px solid #d75c37;
 }
-.app-content {
-  margin-top: 150px;
-/* this is an experiment with non-js
-        but enhanced card view
-        - not sure it will work!
-    .cards input[type="checkbox"]
-        visibility hidden
-        width 0
-        height 0
-    */
+.app-header .title {
+  text-align: center;
+}
+.app-header .header-icon {
+  padding: 20px 0;
+  text-align: center;
 }
 .app-content a:hover {
   text-decoration: underline;
@@ -48,4 +42,16 @@ a:visited {
 .clubs,
 .spades {
   color: #67727a;
+}
+.game-panel .game-menu {
+  margin: 30px 0;
+  text-align: center;
+}
+.game-panel .game-list {
+  margin: 30px 10px;
+}
+a.button-primary,
+.button-primary {
+  background-color: #c3d7df;
+  color: #6991ac;
 }
