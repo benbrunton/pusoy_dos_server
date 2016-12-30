@@ -1,9 +1,19 @@
 {% extends "base.html" %}
 {% block title %}Welcome{% endblock title %}
 {% block content %}
-    <p><a href="{{ fb_login  }}">Login with Facebook</a></p>
-    {% if dev_mode %}
-    </p><a href="/test_auth">Offline Login</a></p>
-    {% endif %}
+    <div class="index">
+        <div class="login">
+            <p><a class="pure-button button-facebook" href="{{ fb_login  }}">
+                <i class="fa fa-facebook-official facebook-color" aria-hidden="true"></i>
+                Login with Facebook</a></p>
+            {% if dev_mode %}
+            </p><a class="pure-button" href="/test_auth">Offline Login</a></p>
+            {% endif %}
+        </div>
+
+        <p class="blurb">
+            Pusoy Dos is a good game!
+        </p>
+    </div>
 {% endblock content %}
 

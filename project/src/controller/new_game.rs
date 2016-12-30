@@ -16,7 +16,8 @@ impl <'a> NewGame {
     }
 
     fn get_page(&self) -> TeraResult<String> {
-        let data = Context::new(); 
+        let mut data = Context::new(); 
+        data.add("logged_in", &true);
         self.tera.render("game_create.html", data)
     }
 }

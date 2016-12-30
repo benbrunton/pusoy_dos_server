@@ -4,6 +4,10 @@ cl-blue = #6991ac
 cl-light = #c3d7df
 cl-white = #f5f5f5
 
+cl-facebook = #3b5998
+
+decorative-border-width = 8px
+
 body
     background-color cl-white
     color cl-gray
@@ -19,7 +23,7 @@ a, a:visited
 .app-header
     background-color cl-blue
     color cl-light
-    border-bottom 8px solid cl-red
+    border-bottom decorative-border-width solid cl-red
     .title
         text-align center
     .header-icon
@@ -45,10 +49,20 @@ a, a:visited
     */
 
 .app-footer 
-    margin 25px
+    margin-top 20px
+    padding 15px
+    text-align center
+    border-top decorative-border-width solid cl-blue
+    background-color cl-light
+    color cl-blue
 
     a:hover
         text-decoration underline
+
+.index
+    padding 5px
+    .login
+        text-align center 
 
 
 .hearts, .diamonds
@@ -70,3 +84,6 @@ a, a:visited
 a.button-primary, .button-primary
     background-color cl-light
     color cl-blue
+
+.facebook-color
+    color cl-facebook
