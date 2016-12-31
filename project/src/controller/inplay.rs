@@ -106,6 +106,8 @@ impl InPlay {
             }
         }
 
+        let reversed = round.reversed;
+
         data.add("user_id", &user_id);
         data.add("logged_in", &true);
         data.add("current_user_winner", &current_user_winner);
@@ -118,6 +120,7 @@ impl InPlay {
         data.add("last_move", &display_last_move);
         data.add("players", &players);
         data.add("valid_move", &valid_move);
+        data.add("round_reversed", &reversed);
 
         let content_type = "text/html".parse::<Mime>().unwrap();
         let page = self.tera.render(template, data).unwrap();
