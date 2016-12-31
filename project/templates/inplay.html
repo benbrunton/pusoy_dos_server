@@ -2,6 +2,13 @@
 {% block title %}Game {{ id }}{% endblock title %}
 {% block content %}
 <div>
+    
+    {% if valid_move == false %}
+    <div class="invalid-move">
+        <h3>You can't play that move!</h3>
+    </div>
+    {% endif %}
+
     <div>
         <p>Players:</p>
         <ul>

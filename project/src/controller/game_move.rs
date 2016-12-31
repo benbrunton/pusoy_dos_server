@@ -50,15 +50,24 @@ impl GameMove{
         info!("{:?}", hand);
 
         let valid_move = game.player_move(user_id, hand);
-        let updated_game = valid_move.expect("error with move");
-        self.round_data.update_round(game_id, updated_game.clone());
+        let mut qs = "";
+        match valid_move {
+            Ok(updated_game) => {
+                self.round_data.update_round(game_id, updated_game.clone());
 
-        let updated_round = updated_game.round.export();
-        if updated_round.players.len() < 2 {
-            let _ = self.game_data.complete_game(game_id);
+                let updated_round = updated_game.round.export();
+                if updated_round.players.len() < 2 {
+                    let _ = self.game_data.complete_game(game_id);
+                }        
+            },
+            _ => {
+                qs = "?error=true";
+            }
         }
+        
+        
 
-        let play_url = format!("play/{}", game_id);
+        let play_url = format!("play/{}{}", game_id, qs);
         helpers::redirect(&self.hostname, &play_url)
     }
 

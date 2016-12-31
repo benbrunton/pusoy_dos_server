@@ -13,6 +13,7 @@ use pusoy_dos::game::game::Game;
 use pusoy_dos::game::player_move::{Move, Trick};
 use pusoy_dos::cards::card::PlayerCard;
 use serde::{Serialize, Serializer};
+use query;
 
 pub struct InPlay{
     tera: &'static Tera,
@@ -38,7 +39,7 @@ impl InPlay {
         }
     }
 
-    pub fn display(&self, user_id:u64, game_id:u64) -> Response {
+    pub fn display(&self, user_id:u64, game_id:u64, valid_move:bool) -> Response {
 
         let template = "inplay.html";
         let mut data = Context::new();
@@ -116,6 +117,7 @@ impl InPlay {
         data.add("cards", &cards);
         data.add("last_move", &display_last_move);
         data.add("players", &players);
+        data.add("valid_move", &valid_move);
 
         let content_type = "text/html".parse::<Mime>().unwrap();
         let page = self.tera.render(template, data).unwrap();
@@ -151,6 +153,12 @@ impl Handler for InPlay {
     fn handle(&self, req: &mut Request) -> IronResult<Response> {
 
         let ref query = req.extensions.get::<Router>().unwrap().find("id");
+        let error = query::get(req.url.to_string(), "error");
+
+        let valid_move = match error {
+            None => true,
+            _ => false
+        };
 
         let session_user_id = helpers::get_user_id(req);
         let redirect_to_homepage = helpers::redirect(&self.hostname, "");
@@ -159,7 +167,7 @@ impl Handler for InPlay {
             Some(user_id) => {
                 match *query {
                     Some(id) => {
-                        self.display(user_id, id.parse::<u64>().unwrap())
+                        self.display(user_id, id.parse::<u64>().unwrap(), valid_move)
                     },
                     _ => redirect_to_homepage
                 }
