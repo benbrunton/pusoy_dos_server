@@ -2,6 +2,7 @@
 {% block title %}Game {{ id }}{% endblock title %}
 {% block content %}
 <div>
+    <noscript>
     
     {% if valid_move == false %}
     <div class="invalid-move">
@@ -134,6 +135,8 @@
         </form>
 	
     </div>
-   
+    </noscript>
+    <script src="/public/vendor/vue/vue.min.js"></script>
+    <script src="/public/js/inplay.js"></script>   
 </div>
 {% endblock content %}

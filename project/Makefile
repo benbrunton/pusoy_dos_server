@@ -2,3 +2,6 @@
 
 css:
 	stylus ./client/styles/pusoydos.styl --out public/css
+
+js:
+	cp ./client/js/inplay.js public/js/
