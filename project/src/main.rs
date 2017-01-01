@@ -26,6 +26,7 @@ mod query;
 mod model;
 mod data_access;
 mod helpers;
+mod api;
 
 use controller::{
         home_page, 
@@ -111,10 +112,14 @@ fn main() {
 
     let (logger_before, logger_after) = Logger::new(None);
 
+    let api_router = api::router::new(round_data.clone(), user_data.clone());
+
     let mut mount = Mount::new();
     mount
         .mount("/", router)
+        .mount("/api/v1/", api_router)
         .mount("/public/", Static::new(Path::new("public")));
+
 
     let mut chain = Chain::new(mount);
 

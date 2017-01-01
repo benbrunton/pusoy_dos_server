@@ -1,8 +1,7 @@
 {% extends "base.html" %}
 {% block title %}Game {{ id }}{% endblock title %}
 {% block content %}
-<div>
-    <noscript>
+<div id="inplay">
     
     {% if valid_move == false %}
     <div class="invalid-move">
@@ -12,21 +11,8 @@
 
     <div>
         <p>Players:</p>
-        <ul>
-            {% for player in players %}
-                <li>
-                    <span class="name">
-                    {% if player.id == user_id %}
-                        <strong>{{player.name}}</strong>
-                    {% else %}
-                        {{ player.name }}
-                    {% endif %}
-                    </span>
-                    {% if player.id ==  next_player %}
-                    <span>*</span>
-                    {% endif %} 
-                </li>
-            {% endfor %}
+        <ul class="player-list">
+            <player v-for="player in playerList" v-bind:player="player"></player>
         </ul>
 
     {% if current_user_winner %}
@@ -135,7 +121,6 @@
         </form>
 	
     </div>
-    </noscript>
     <script src="/public/vendor/vue/vue.min.js"></script>
     <script src="/public/js/inplay.js"></script>   
 </div>

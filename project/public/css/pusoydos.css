@@ -69,3 +69,6 @@ a.button-primary,
 .facebook-color {
   color: #3b5998;
 }
+.player-list .logged-in-player {
+  font-weight: bold;
+}

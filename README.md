@@ -30,6 +30,7 @@ A multiplayer [Pusoy Dos](https://en.wikipedia.org/wiki/Pusoy_dos) server writte
 - [ ] - "Fork me on github"
 - [ ] - SSL on play.benbru.com
 - [ ] - Store sessions in redis
+- [ ] - Tighten up security around all endpoints { permissions middleware? }
 - [ ] - deployment
 - [ ] - display datetime of interactions
 - [ ] - error pages
