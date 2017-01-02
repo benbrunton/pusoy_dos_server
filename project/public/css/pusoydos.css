@@ -40,6 +40,17 @@ a:visited {
 .app-footer a:hover {
   text-decoration: underline;
 }
+.app-footer .feedback {
+  margin-bottom: 15px;
+}
+.app-footer .feedback .btn,
+.app-footer .feedback .btn:hover,
+.app-footer .feedback .btn:visited {
+  text-decoration: none;
+  color: #6991ac;
+  background-color: #f5f5f5;
+  width: 124px;
+}
 .index {
   padding: 5px;
 }

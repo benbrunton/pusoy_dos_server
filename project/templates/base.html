@@ -27,6 +27,9 @@
     <link rel="stylesheet" href="/public/vendor/purecss/pure-min.css">
     <link rel="stylesheet" href="/public/vendor/font-awesome-4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="/public/css/pusoydos.css">
+    <script>
+        window.pd = {};
+    </script>
 </head>
 <body>
 
@@ -54,7 +57,17 @@
 
     <div class="app-footer" id="footer">
         {% block footer %}
-        &copy; Copyright 2016 <a href="http://benbru.com/">Ben Brunton</a>.
+
+        <div class="feedback">
+            <a class="btn pure-button" target="_blank" href="https://github.com/benbrunton/pusoy_dos_server/issues">
+                <i class="fa fa-comments"></i>&nbsp;Feedback
+            </a>
+            <a class="btn pure-button" target="_blank" href="https://github.com/benbrunton/pusoy_dos_server">
+                <i class="fa fa-github"></i>&nbsp;Contribute
+            </a>
+        </div>
+
+        &copy; 2017 <a href="http://benbru.com/">Ben Brunton</a>.
         {% endblock footer %}
     </div>
 

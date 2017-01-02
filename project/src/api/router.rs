@@ -12,7 +12,7 @@ pub fn new(round_data:RoundData, user_data:UserData) -> Router {
 
     let players_controller = players::Players::new(round_data, user_data);
 
-    router.get("/players/:game_id", players_controller, "api_players");
+    router.get("/players/:id", players_controller, "api_players");
 
     router
 }

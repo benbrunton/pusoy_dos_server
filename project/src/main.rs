@@ -11,6 +11,7 @@ extern crate uuid;
 extern crate tera;
 #[macro_use] extern crate lazy_static;
 #[macro_use] extern crate serde;
+extern crate serde_json;
 #[macro_use] extern crate log;
 extern crate env_logger;
 extern crate urlencoded;
