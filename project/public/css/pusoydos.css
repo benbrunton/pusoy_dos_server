@@ -83,3 +83,10 @@ a.button-primary,
 .player-list .logged-in-player {
   font-weight: bold;
 }
+.last-move .card {
+  padding: 4px;
+  border: 1px solid #67727a;
+  border-radius: 3px;
+  margin: 1px;
+  background-color: #fff;
+}

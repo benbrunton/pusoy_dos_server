@@ -32,9 +32,8 @@
     {% endif %}
 
     <div class="last-move">
-        {% for card in last_move %}
-        <span class="{{card.suit | lower }}"> | {{card.rank}} {{card.suit_display}} |</span>
-        {% endfor %}
+        <p>On the table:</p>
+        <move-card v-for="card in lastMove" v-bind:card="card"></card>
     </div>
 
 
