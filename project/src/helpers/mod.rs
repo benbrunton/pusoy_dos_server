@@ -63,6 +63,12 @@ fn trick_to_cards(trick:Trick) -> Vec<DCard> {
 #[derive(PartialEq, Eq, PartialOrd, Ord)]
 pub struct DCard(PlayerCard);
 
+impl DCard {
+    pub fn new(c: PlayerCard) -> DCard {
+        DCard(c)
+    }
+}
+
 impl Serialize for DCard {
 
 	fn serialize<S>(&self, serializer: &mut S) -> Result<(), S::Error>
@@ -78,7 +84,7 @@ impl Serialize for DCard {
                                     false),
             PlayerCard::Joker(n)    => (String::from(""), 
                                     format!("joker {}", n),
-                                    String::from("joker"),
+                                    String::from("🃏"),
                                     true)
         };
 

@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block title %}Game {{ id }}{% endblock title %}
 {% block content %}
-<div id="inplay">
+<div id="inplay" class="inplay">
     
     {% if valid_move == false %}
     <div class="invalid-move">
@@ -31,86 +31,19 @@
         <h3>Card order reversed!</h3>
     {% endif %}
 
-    <div class="last-move">
+    <div class="last-move card-set">
         <p>On the table:</p>
         <move-card v-for="card in lastMove" v-bind:card="card"></card>
     </div>
 
 
     <div>
-        <h4>your cards</h4>
-        <form class="cards" method="POST">
-        {% for card in cards %}
-            <div class="{{ card.suit | lower }} {{ card.rank }}">
-                <label>
-                    <input type="checkbox" name="{{card.suit}} {{card.rank}}"
-                        {% if your_turn == false %}
-                        disabled
-                        {% endif %}
-                    >
-                    {% if card.joker == false %}
-                    <span>{{card.rank}}</span>
-                    {% endif %}
-                    <span>{{card.suit_display}}</span>
-                    {% if card.joker %}
-                        <select name="{{card.suit}} select">
-                            <option value="Spades A">A Spades</option>
-                            <option value="Spades 2">2 Spades</option>
-                            <option value="Spades 3">3 Spades</option>
-                            <option value="Spades 4">4 Spades</option>
-                            <option value="Spades 5">5 Spades</option>
-                            <option value="Spades 6">6 Spades</option>
-                            <option value="Spades 7">7 Spades</option>
-                            <option value="Spades 8">8 Spades</option>
-                            <option value="Spades 9">9 Spades</option>
-                            <option value="Spades 10">10 Spades</option>
-                            <option value="Spades J">J Spades</option>
-                            <option value="Spades Q">Q Spades</option>
-                            <option value="Spades K">K Spades</option>
-                            <option value="Diamonds A">A Diamonds</option>
-                            <option value="Diamonds 2">2 Diamonds</option>
-                            <option value="Diamonds 3">3 Diamonds</option>
-                            <option value="Diamonds 4">4 Diamonds</option>
-                            <option value="Diamonds 5">5 Diamonds</option>
-                            <option value="Diamonds 6">6 Diamonds</option>
-                            <option value="Diamonds 7">7 Diamonds</option>
-                            <option value="Diamonds 8">8 Diamonds</option>
-                            <option value="Diamonds 9">9 Diamonds</option>
-                            <option value="Diamonds 10">10 Diamonds</option>
-                            <option value="Diamonds J">J Diamonds</option>
-                            <option value="Diamonds Q">Q Diamonds</option>
-                            <option value="Diamonds K">K Diamonds</option>
-                            <option value="Hearts A">A Hearts</option>
-                            <option value="Hearts 2">2 Hearts</option>
-                            <option value="Hearts 3">3 Hearts</option>
-                            <option value="Hearts 4">4 Hearts</option>
-                            <option value="Hearts 5">5 Hearts</option>
-                            <option value="Hearts 6">6 Hearts</option>
-                            <option value="Hearts 7">7 Hearts</option>
-                            <option value="Hearts 8">8 Hearts</option>
-                            <option value="Hearts 9">9 Hearts</option>
-                            <option value="Hearts 10">10 Hearts</option>
-                            <option value="Hearts J">J Hearts</option>
-                            <option value="Hearts Q">Q Hearts</option>
-                            <option value="Hearts K">K Hearts</option>
-                            <option value="Clubs A">A Clubs</option>
-                            <option value="Clubs 2">2 Clubs</option>
-                            <option value="Clubs 3">3 Clubs</option>
-                            <option value="Clubs 4">4 Clubs</option>
-                            <option value="Clubs 5">5 Clubs</option>
-                            <option value="Clubs 6">6 Clubs</option>
-                            <option value="Clubs 7">7 Clubs</option>
-                            <option value="Clubs 8">8 Clubs</option>
-                            <option value="Clubs 9">9 Clubs</option>
-                            <option value="Clubs 10">10 Clubs</option>
-                            <option value="Clubs J">J Clubs</option>
-                            <option value="Clubs Q">Q Clubs</option>
-                            <option value="Clubs K">K Clubs</option>
-                        </select>
-                    {% endif %}
-                </label>
+        <h4>my cards</h4>
+        <div class="my-cards-container">
+            <div class="my-cards card-set">
+                <player-card v-for="card in myCards" v-bind:card="card"></player-card>
             </div>
-        {% endfor %}
+        </div>
 
          
         {% if  your_turn  %}

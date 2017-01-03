@@ -38,8 +38,8 @@ a, a:visited
     a:hover
         text-decoration underline
 
-    .cards>div
-        display inline
+/*    .cards>div
+        display inline */
 
     /* this is an experiment with non-js
         but enhanced card view
@@ -102,10 +102,41 @@ a.button-primary, .button-primary
     .logged-in-player
         font-weight bold
 
-.last-move
-    .card
-        padding 4px
-        border 1px solid cl-gray
-        border-radius 3px
-        margin 1px
-        background-color cl-card-fore
+.inplay
+    overflow-x hidden
+    .my-cards-container
+        overflow-x scroll
+    .card-set
+        display flex
+        width 500px
+        height 52px
+        padding-top 5px 
+        margin 0 auto
+        .card-container
+            flex 1 0 0
+            overflow hidden
+            cursor pointer
+        .card-container:last-child
+            overflow visible
+        .card
+            padding 2px
+            border 1px solid cl-gray
+            border-radius 3px
+            background-color cl-card-fore
+            display inline-block
+            width 30px
+            height 35px
+            box-sizing content-box
+            text-align left
+            font-size 0.7em
+            p
+                margin 0
+        .card-container.picked
+            overflow visible
+            transform scale(1.2)
+            z-index 1
+            .card
+                text-align center
+                p
+                    display inline-block
+                    padding 7px 1px 1px 0

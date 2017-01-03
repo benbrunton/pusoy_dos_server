@@ -26,9 +26,16 @@ a:visited {
 .app-content a:hover {
   text-decoration: underline;
 }
-.app-content .cards>div {
-  display: inline;
-}
+/*    .cards>div
+        display inline */
+/* this is an experiment with non-js
+        but enhanced card view
+        - not sure it will work!
+    .cards input[type="checkbox"]
+        visibility hidden
+        width 0
+        height 0
+    */
 .app-footer {
   margin-top: 20px;
   padding: 15px;
@@ -83,10 +90,51 @@ a.button-primary,
 .player-list .logged-in-player {
   font-weight: bold;
 }
-.last-move .card {
-  padding: 4px;
+.inplay {
+  overflow-x: hidden;
+}
+.inplay .my-cards-container {
+  overflow-x: scroll;
+}
+.inplay .card-set {
+  display: flex;
+  width: 500px;
+  height: 52px;
+  padding-top: 5px;
+  margin: 0 auto;
+}
+.inplay .card-set .card-container {
+  flex: 1 0 0;
+  overflow: hidden;
+  cursor: pointer;
+}
+.inplay .card-set .card-container:last-child {
+  overflow: visible;
+}
+.inplay .card-set .card {
+  padding: 2px;
   border: 1px solid #67727a;
   border-radius: 3px;
-  margin: 1px;
   background-color: #fff;
+  display: inline-block;
+  width: 30px;
+  height: 35px;
+  box-sizing: content-box;
+  text-align: left;
+  font-size: 0.7em;
+}
+.inplay .card-set .card p {
+  margin: 0;
+}
+.inplay .card-set .card-container.picked {
+  overflow: visible;
+  transform: scale(1.2);
+  z-index: 1;
+}
+.inplay .card-set .card-container.picked .card {
+  text-align: center;
+}
+.inplay .card-set .card-container.picked .card p {
+  display: inline-block;
+  padding: 7px 1px 1px 0;
 }

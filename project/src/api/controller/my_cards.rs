@@ -10,6 +10,7 @@ use serde_json;
 use serde_json::{Value, Map};
 
 use helpers;
+use helpers::DCard;
 
 use data_access::round::Round as RoundData;
 use data_access::user::User as UserData;
@@ -17,13 +18,13 @@ use data_access::user::User as UserData;
 use pusoy_dos::game::game::Game;
 
 #[derive(Clone)]
-pub struct LastMove{
+pub struct MyCards{
     round_data: RoundData
 }
 
-impl LastMove {
-    pub fn new(round_data: RoundData) -> LastMove {
-        LastMove {
+impl MyCards {
+    pub fn new(round_data: RoundData) -> MyCards {
+        MyCards {
             round_data: round_data
         }
     }
@@ -43,10 +44,18 @@ impl LastMove {
         }
 
         let round = round_result.expect("failed to load round");
-        let last_move = round.round.get_last_move();
-        let displayed_last_move = helpers::convert_move_to_display_cards(last_move);
+        let game = Game::load(round.clone()).expect("game failed to load");
+        let current_user = game.get_player(user_id).unwrap();
 
-        Response::with((content_type, status::Ok, serde_json::to_string(&displayed_last_move).unwrap()))
+        let mut cards:Vec<DCard> = current_user
+                                    .get_hand()
+                                    .iter()
+                                    .map(|&c|{ DCard::new(c.clone()) }).collect();
+        cards.sort();
+        cards.reverse();
+
+
+        Response::with((content_type, status::Ok, serde_json::to_string(&cards).unwrap()))
    
     }
 
@@ -62,7 +71,7 @@ impl LastMove {
     }
 }
 
-impl Handler for LastMove {
+impl Handler for MyCards {
 
     fn handle(&self, req: &mut Request) -> IronResult<Response> {
 
