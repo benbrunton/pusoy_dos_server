@@ -5,26 +5,32 @@ Vue.component('player', {
     template: '<li><span :class="player.loggedIn ? \'logged-in-player\' : \'\'" class="name">{{ player.name }}</span><span v-if="player.next">*</span></li>'
 });
 
-Vue.component('move-card', {
+Vue.component('table-card', {
     props: ['card'],
     template: '<span class="card" :class="card.suit.toLowerCase() + \' \' + card.rank.toLowerCase()">{{card.rank + card.suitDisplay}}</span>'
 });
 
-Vue.component('player-card', {
-    props: {
-        card: {
-            type: Object
-        },
-        selected: {
-            type: Boolean,
-            default: false
+
+Vue.component('move-card', {
+    props: ['card'],
+    template: '<span v-on:click="deselect" class="card" :class="card.suit.toLowerCase() + \' \' + card.rank.toLowerCase()">{{card.rank + card.suitDisplay}}</span>',
+    methods: {
+        deselect: function(){
+            var card = this.card;
+            app.myCards.push(card);
+            app.selectedCards = app.selectedCards.filter(function(c){ return c !== card; });
         }
-    },
-    template: '<span class="card-container" v-on:click="select" :class="card.suit.toLowerCase() + \' \' + card.rank.toLowerCase() + \' \' + (selected ? \'picked\' : \'\')"><span class="card"><p>{{card.rank}}</p><p>{{card.suitDisplay}}</p></span></span>',
+    }
+});
+
+Vue.component('player-card', {
+    props: ['card'],
+    template: '<span class="card-container" v-on:click="select" :class="card.suit.toLowerCase() + \' \' + card.rank.toLowerCase()"><span class="card"><p>{{card.rank}}</p><p>{{card.suitDisplay}}</p></span></span>',
     methods: {
         select: function(){
-            deselectAllCards();
-            this.selected = !this.selected; 
+            var card = this.card;
+            app.selectedCards.push(card);
+            app.myCards = app.myCards.filter(function(c){ return c !== card; });
         }
     }
 });
@@ -34,7 +40,8 @@ var app = new Vue({
     data: {
         playerList: [],
         lastMove:[],
-        myCards:[]
+        myCards:[],
+        selectedCards:[]
     }
 }); 
 
@@ -53,8 +60,3 @@ function grab(url, prop){
         });
 }
 
-function deselectAllCards(){
-    app.myCards.forEach(function(card){
-        card.selected = false;
-    });
-}

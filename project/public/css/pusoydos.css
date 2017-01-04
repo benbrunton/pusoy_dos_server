@@ -26,16 +26,6 @@ a:visited {
 .app-content a:hover {
   text-decoration: underline;
 }
-/*    .cards>div
-        display inline */
-/* this is an experiment with non-js
-        but enhanced card view
-        - not sure it will work!
-    .cards input[type="checkbox"]
-        visibility hidden
-        width 0
-        height 0
-    */
 .app-footer {
   margin-top: 20px;
   padding: 15px;
@@ -94,7 +84,8 @@ a.button-primary,
   overflow-x: hidden;
 }
 .inplay .my-cards-container {
-  overflow-x: scroll;
+  overflow-x: auto;
+  height: 65px;
 }
 .inplay .card-set {
   display: flex;
@@ -104,7 +95,6 @@ a.button-primary,
   margin: 0 auto;
 }
 .inplay .card-set .card-container {
-  flex: 1 0 0;
   overflow: hidden;
   cursor: pointer;
 }
@@ -137,4 +127,13 @@ a.button-primary,
 .inplay .card-set .card-container.picked .card p {
   display: inline-block;
   padding: 7px 1px 1px 0;
+}
+.inplay .action {
+  text-align: center;
+}
+.inplay .action .action-btn {
+  margin: 0 auto;
+}
+.inplay .action .action-btn.show {
+  display: block;
 }
