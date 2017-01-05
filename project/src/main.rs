@@ -115,22 +115,26 @@ fn main() {
 
     let api_router = api::router::new(round_data.clone(), user_data.clone());
 
+    let mut page_chain = Chain::new(router);
+    let mut api_chain = Chain::new(api_router);
+
+    let session = SessionMiddleware::new(session_store);
+    page_chain.link_before(session.clone());
+	page_chain.link_after(session.clone());
+
+    api_chain.link_before(session.clone());
+
     let mut mount = Mount::new();
     mount
-        .mount("/", router)
-        .mount("/api/v1/", api_router)
+        .mount("/", page_chain)
+        .mount("/api/v1/", api_chain)
         .mount("/public/", Static::new(Path::new("public")));
 
 
     let mut chain = Chain::new(mount);
-
     chain.link_before(logger_before);
 
-
-    let session = SessionMiddleware::new(session_store);
-    chain.link_before(session.clone());
-	chain.link_after(session.clone());
-
+    
     chain.link_after(logger_after);
     let port = config.get("port");
     // todo - a little error checking around this
