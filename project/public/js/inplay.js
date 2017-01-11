@@ -42,6 +42,14 @@ var app = new Vue({
         lastMove:[],
         myCards:[],
         selectedCards:[]
+    },
+    methods: {
+        submit: function(){
+           post('/api/v1/submit-cards/' + pd.gameId, app.selectedCards,
+            function(result){
+                console.log(result);
+            }); 
+        }
     }
 }); 
 
@@ -60,3 +68,25 @@ function grab(url, prop){
         });
 }
 
+function post(url, data, callback){
+    var body = JSON.stringify(data);
+    var myHeaders = new Headers({
+        "Content-Type": "application/json",
+    });
+
+    var opts = {
+        method: "POST",
+        headers: myHeaders,
+        body: body,
+        credentials: 'same-origin'
+    };
+
+    console.log('sending..');
+    console.log(data);
+
+    fetch(url, opts)
+        .then(function(response){
+            return response.json();
+        })
+        .then(callback);
+}

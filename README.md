@@ -13,10 +13,11 @@ A multiplayer [Pusoy Dos](https://en.wikipedia.org/wiki/Pusoy_dos) server writte
 - [rust](https://www.rust-lang.org)
  - [iron framework](http://ironframework.io/)
  - [tera templates](https://github.com/Keats/tera)
-- vue.js
-- stylus
-- mysql
-- docker
+- [vue.js](https://vuejs.org)
+- [pure.css](http://purecss.io/)
+- [stylus](http://stylus-lang.com/)
+- [mysql](https://www.mysql.com/)
+- [docker](https://www.docker.com/)
 
 ## Todo
 - [ ] - real time updates
