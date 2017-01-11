@@ -45,7 +45,7 @@ var app = new Vue({
     },
     methods: {
         submit: function(){
-           post('/api/v1/submit-cards/' + pd.gameId, app.selectedCards,
+           post('/api/v1/submit-move/' + pd.gameId, app.selectedCards,
             function(result){
                 console.log(result);
             }); 

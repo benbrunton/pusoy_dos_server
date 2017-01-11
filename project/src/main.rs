@@ -17,6 +17,7 @@ extern crate env_logger;
 extern crate urlencoded;
 extern crate staticfile;
 extern crate mount;
+extern crate bodyparser;
 
 #[macro_use] extern crate pusoy_dos;
 
