@@ -17,6 +17,9 @@ use data_access::round::Round as RoundData;
 use data_access::user::User as UserData;
 
 use pusoy_dos::game::game::Game;
+use pusoy_dos::cards::types::*;
+use pusoy_dos::cards::card::{ Card, PlayerCard };
+
 
 
 #[derive(Clone)]
@@ -35,6 +38,12 @@ impl SubmitMove {
     pub fn execute(&self, user_id: u64, 
                         id: u64, 
                         json:Option<serde_json::Value>) -> Response {
+
+        let player_move = json.unwrap();
+        info!("{:?}", player_move);
+
+        let cards = self.get_cards(player_move);
+        info!("{:?}", cards);
         self.output_error()
     }
 
@@ -57,11 +66,71 @@ impl SubmitMove {
         }
     }
 
+    fn get_cards(&self, player_move:serde_json::Value) -> Vec<PlayerCard> {
+            player_move
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|ref obj| {
+    
+            let obj = obj.as_object().unwrap();
+            let suit = obj.get("suit").unwrap().as_str().unwrap();
+            let rank = obj.get("rank").unwrap().as_str().unwrap();
+            let joker = obj.get("joker").unwrap().as_bool().unwrap();
+            self.get_card(rank, suit, joker, false)
+        }).collect::<Vec<PlayerCard>>()
+
+    }
+
+   fn get_card(&self, rank:&str, suit:&str, joker: bool, reversed:bool) -> PlayerCard {
+
+        let r = self.get_rank(&rank);
+        let s = self.get_suit(&suit);
+        let card = Card::new(r, s, reversed);
+
+        if joker {
+            PlayerCard::Wildcard(card)
+        } else {
+            PlayerCard::Card(card)
+        }
+    }
+
+
+    fn get_rank(&self, rank:&str) -> Rank {
+        match rank {
+            "2"  => Rank::Two,
+            "3"  => Rank::Three,
+            "4"  => Rank::Four,
+            "5"  => Rank::Five,
+            "6"  => Rank::Six,
+            "7"  => Rank::Seven,
+            "8"  => Rank::Eight,
+            "9"  => Rank::Nine,
+            "10" => Rank::Ten,
+            "J"  => Rank::Jack,
+            "Q"  => Rank::Queen,
+            "K"  => Rank::King,
+            "A"  => Rank::Ace,
+            _    => panic!("invalid rank supplied in move : {}", rank)
+        }
+             
+    }
+
+    fn get_suit(&self, suit:&str) -> Suit {
+        match suit {
+            "Clubs"    => Suit::Clubs,
+            "Hearts"   => Suit::Hearts,
+            "Diamonds" => Suit::Diamonds,
+            "Spades"   => Suit::Spades,
+            _          => panic!("invalid suit supplied in move")
+        }
+    }
+
 }
 
 impl Handler for SubmitMove{
     fn handle(&self, req: &mut Request) -> IronResult<Response> {
-        let ref hashmap = self.get_body(req);
+        let ref body = self.get_body(req);
 
 
         let ref query = req.extensions.get::<Router>().unwrap().find("id");
@@ -73,7 +142,7 @@ impl Handler for SubmitMove{
                 info!("valid user - checking game id");
                 match *query {
                     Some(id) => {
-                        self.execute(user_id, id.parse::<u64>().unwrap(), hashmap.to_owned())
+                        self.execute(user_id, id.parse::<u64>().unwrap(), body.to_owned())
                     },
                     _ => {
                         info!("invalid id: {:?}", query);
