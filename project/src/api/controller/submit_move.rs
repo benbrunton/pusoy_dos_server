@@ -14,6 +14,7 @@ use helpers::DCard;
 use bodyparser;
 
 use data_access::round::Round as RoundData;
+use data_access::game::Game as GameData;
 use data_access::user::User as UserData;
 
 use pusoy_dos::game::game::Game;
@@ -24,14 +25,16 @@ use pusoy_dos::cards::card::{ Card, PlayerCard };
 
 #[derive(Clone)]
 pub struct SubmitMove{
-    round_data: RoundData
+    round_data: RoundData,
+    game_data: GameData
 }
 
 impl SubmitMove {
 
-    pub fn new(round_data: RoundData) -> SubmitMove{
+    pub fn new(round_data: RoundData, game_data: GameData) -> SubmitMove{
         SubmitMove{
-            round_data: round_data
+            round_data: round_data,
+            game_data: game_data
         }
     }
 
@@ -39,12 +42,61 @@ impl SubmitMove {
                         id: u64, 
                         json:Option<serde_json::Value>) -> Response {
 
+
+        let round_result = self.round_data.get(id);
+        match round_result {
+            None => {
+                info!("no round found for game {}", id);
+                return self.output_error();
+            },
+            _ => ()
+        }
+
+        info!("loading game: {}", id);
+
+        let round = round_result.expect("error with round result");
+        let reversed = round.reversed; 
+        info!("game reversed: {:?}", reversed);
+        let game = Game::load(round.clone()).expect("error loading game");
+        info!("game loaded");
+
+
         let player_move = json.unwrap();
         info!("{:?}", player_move);
 
         let cards = self.get_cards(player_move);
         info!("{:?}", cards);
+
+        let valid_move = game.player_move(user_id, cards.clone());
+
+        match valid_move {
+            Ok(updated_game) => {
+                self.round_data.update_round(id, updated_game.clone());
+
+                let updated_round = updated_game.round.export();
+                if updated_round.players.len() < 2 {
+                    let _ = self.game_data.complete_game(id);
+                }        
+            },
+            _ => {
+                info!("invalid_move! {:?}", cards);
+                return self.output_error();
+            }
+        }
+ 
         self.output_error()
+    }
+
+    fn output_success(&self) -> Response {
+
+        let mut payload = BTreeMap::new();
+        payload.insert("success", true);
+
+        let success = json::encode(&payload).unwrap();
+
+        let content_type = "application/json".parse::<Mime>().unwrap();
+        Response::with((content_type, status::Ok, success))
+
     }
 
     fn output_error(&self) -> Response {

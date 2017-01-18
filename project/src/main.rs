@@ -114,7 +114,7 @@ fn main() {
 
     let (logger_before, logger_after) = Logger::new(None);
 
-    let api_router = api::router::new(round_data.clone(), user_data.clone());
+    let api_router = api::router::new(round_data.clone(), user_data.clone(), game_data.clone());
 
     let mut page_chain = Chain::new(router);
     let mut api_chain = Chain::new(api_router);
