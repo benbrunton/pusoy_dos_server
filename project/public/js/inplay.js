@@ -35,28 +35,68 @@ Vue.component('player-card', {
     }
 });
 
+Vue.component('status', {
+    props: ['players'],
+    template:'<div><span v-if="hasWon">You Won!</span><span v-else-if="userTurn">Your turn</span><span v-else>Waiting for {{nextUser}}</span>',
+    computed: {
+        hasWon: function(){
+            return false;
+        },
+        userTurn: function(){
+            var userTurn = false;
+            this.players.forEach(function(player){
+                if(player.loggedIn && player.next){
+                    userTurn = true;
+                }
+            });
+
+            return userTurn;
+        },
+        nextUser: function(){
+            var nextUser = 'player';
+            this.players.forEach(function(player){
+               if(player.next){
+                    nextUser = player.name;
+                } 
+            });
+
+            return nextUser;
+        }
+    }
+});
+
 var app = new Vue({
     el: "#inplay",
     data: {
         playerList: [],
         lastMove:[],
         myCards:[],
-        selectedCards:[]
+        selectedCards:[],
+        submitted: false
     },
     methods: {
         submit: function(){
-           post('/api/v1/submit-move/' + pd.gameId, app.selectedCards,
-            function(result){
-                console.log(result);
-            }); 
+            app.submitted = true;
+            post('/api/v1/submit-move/' + pd.gameId, app.selectedCards,
+                function(result){
+                    app.submitted = false; 
+                    if(result.success){
+                        app.selectedCards = [];
+                        reloadData();
+                    } else {
+                        console.log(result);
+                    }
+                }); 
         }
     }
 }); 
 
 
-grab('/api/v1/players/' + pd.gameId, 'playerList');
-grab('/api/v1/last-move/' + pd.gameId,  'lastMove');
-grab('/api/v1/my-cards/' + pd.gameId, 'myCards');
+function reloadData(){
+    grab('/api/v1/players/' + pd.gameId, 'playerList');
+    grab('/api/v1/last-move/' + pd.gameId,  'lastMove');
+    grab('/api/v1/my-cards/' + pd.gameId, 'myCards');
+}
 
 function grab(url, prop){
     var creds = {credentials: 'same-origin'};
@@ -90,3 +130,5 @@ function post(url, data, callback){
         })
         .then(callback);
 }
+
+reloadData();

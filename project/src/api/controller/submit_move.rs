@@ -62,8 +62,6 @@ impl SubmitMove {
 
 
         let player_move = json.unwrap();
-        info!("{:?}", player_move);
-
         let cards = self.get_cards(player_move);
         info!("{:?}", cards);
 
@@ -71,20 +69,21 @@ impl SubmitMove {
 
         match valid_move {
             Ok(updated_game) => {
+                info!("valid move - updating game");
                 self.round_data.update_round(id, updated_game.clone());
 
                 let updated_round = updated_game.round.export();
                 if updated_round.players.len() < 2 {
                     let _ = self.game_data.complete_game(id);
-                }        
+                } 
             },
             _ => {
-                info!("invalid_move! {:?}", cards);
+                info!("invalid_move!");
                 return self.output_error();
             }
         }
  
-        self.output_error()
+        self.output_success()
     }
 
     fn output_success(&self) -> Response {

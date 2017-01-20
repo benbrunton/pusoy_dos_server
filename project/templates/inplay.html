@@ -3,29 +3,19 @@
 {% block content %}
 <div id="inplay" class="inplay">
     
-    {% if valid_move == false %}
-    <div class="invalid-move">
-        <h3>You can't play that move!</h3>
-    </div>
-    {% endif %}
-
+    
     <div>
         <p>Players:</p>
         <ul class="player-list">
             <player v-for="player in playerList" v-bind:player="player"></player>
         </ul>
 
-    {% if current_user_winner %}
-        <h2>You Won!</h2> 
-    {% elif  your_turn  %}
-        <h3>Your turn!</h3>
-    {% else %}
-        {% if current_user_finished %}
-            <h3>You used all your cards</h3>
-        {% endif %}
-         
-        <h3>Waiting for {{ next_player_name }} </h3>
-    {% endif %}
+
+
+        <div class="status">
+            <status v-bind:players="playerList"></status>
+        </div>
+
 
     {% if round_reversed %}
         <h3>Card order reversed!</h3>
@@ -55,7 +45,8 @@
             
         {% if  your_turn  %}
             <div class="action">
-                <button v-if="selectedCards.length > 0" 
+                <span v-if="submitted"><i class="fa fa-spin fa-circle-o-notch"></i></span>
+                <button else-v-if="selectedCards.length > 0" 
                     v-on:click="submit"
                     class="pure-button action-btn play-btn">Play Card<span v-if="selectedCards.length > 1">s</span>
                 </button>
