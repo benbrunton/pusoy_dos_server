@@ -20,9 +20,9 @@ A multiplayer [Pusoy Dos](https://en.wikipedia.org/wiki/Pusoy_dos) server writte
 - [docker](https://www.docker.com/)
 
 ## Todo
+- [ ] - show when player has won in game
 - [ ] - real time updates
 - [ ] - Round history ( moved, passed )
-- [ ] - UI design
 - [ ] - additional auth providers - { Google, Twitter, Github, Reddit }
 - [ ] - move timeout (auto-pass)
 - [ ] - Nice front page & additional info

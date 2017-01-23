@@ -50,6 +50,7 @@ impl Players {
         let players = self.user_data.get_users_by_game(game_id);
 
         let content_type = "application/json".parse::<Mime>().unwrap();
+        // TODO - winning player condition
         let output_players = players.iter().map(|ref player|{
             let mut p = Map::new();
             p.insert("id".to_string(), Value::U64(player.id));
