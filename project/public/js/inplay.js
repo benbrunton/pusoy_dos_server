@@ -37,7 +37,7 @@ Vue.component('player-card', {
 
 Vue.component('status', {
     props: ['players'],
-    template:'<div><span v-if="hasWon">You Won!</span><span v-else-if="userTurn">Your turn</span><span v-else>Waiting for {{nextUser}}</span>',
+    template:'<div class="text-center"><span v-if="hasWon">You Won!</span><span v-else-if="userTurn">your turn</span><span v-else>waiting for {{nextUser}}</span>',
     computed: {
         hasWon: function(){
             return false;
@@ -72,7 +72,8 @@ var app = new Vue({
         lastMove:[],
         myCards:[],
         selectedCards:[],
-        submitted: false
+        submitted: false,
+        reversed: false
     },
     methods: {
         submit: function(){
@@ -96,6 +97,9 @@ function reloadData(){
     grab('/api/v1/players/' + pd.gameId, 'playerList');
     grab('/api/v1/last-move/' + pd.gameId,  'lastMove');
     grab('/api/v1/my-cards/' + pd.gameId, 'myCards');
+    
+    // hack to display when order is reversed
+    app.reversed = app.lastMove.length > 0 && app.lastMove[0].reversed;
 }
 
 function grab(url, prop){

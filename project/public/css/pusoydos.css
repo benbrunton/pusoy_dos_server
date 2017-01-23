@@ -137,3 +137,6 @@ a.button-primary,
 .inplay .action .action-btn.show {
   display: block;
 }
+.text-center {
+  text-align: center;
+}

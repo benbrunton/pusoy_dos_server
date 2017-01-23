@@ -20,6 +20,7 @@ A multiplayer [Pusoy Dos](https://en.wikipedia.org/wiki/Pusoy_dos) server writte
 - [docker](https://www.docker.com/)
 
 ## Todo
+- [ ] - Jokers
 - [ ] - show when player has won in game
 - [ ] - real time updates
 - [ ] - Round history ( moved, passed )
