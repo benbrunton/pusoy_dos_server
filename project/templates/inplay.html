@@ -26,6 +26,26 @@
         <div v-else>
             <h5 class="text-center"><i class="fa fa-circle-thin"></i></h5>
         </div>
+     
+        <div class="move" v-if="selectedCards.length > 0">
+            <h4>my move</h4>
+            <div class="card-set">
+                <move-card v-for="card in selectedCards" v-bind:card="card"></move-card>
+            </div>
+        </div>
+
+         {% if  your_turn  %}
+            <div class="action">
+                <span v-if="submitted"><i class="fa fa-spin fa-circle-o-notch"></i></span>
+                <button else-v-if="selectedCards.length > 0" 
+                    v-on:click="submit"
+                    class="pure-button action-btn play-btn">play move<span v-if="selectedCards.length > 1">s</span>
+                </button>
+                <input v-else 
+                        v-on:click="submit" class="pure-button action-btn pass-btn" type="submit" value="pass"/>
+            </div>
+
+        {% endif %}
 
 
         <div>
@@ -36,26 +56,7 @@
                 </div>
             </div>
         </div>
-     
-        <div class="move" v-if="selectedCards.length > 0">
-            <h4>my move</h4>
-            <div class="card-set">
-                <move-card v-for="card in selectedCards" v-bind:card="card"></move-card>
-            </div>
-        </div>
-            
-        {% if  your_turn  %}
-            <div class="action">
-                <span v-if="submitted"><i class="fa fa-spin fa-circle-o-notch"></i></span>
-                <button else-v-if="selectedCards.length > 0" 
-                    v-on:click="submit"
-                    class="pure-button action-btn play-btn">Play Card<span v-if="selectedCards.length > 1">s</span>
-                </button>
-                <input v-else 
-                        v-on:click="submit" class="pure-button action-btn pass-btn" type="submit" value="Pass"/>
-            </div>
-
-        {% endif %}
+           
 	
     <script>
         window.pd.gameId = "{{ id }}";

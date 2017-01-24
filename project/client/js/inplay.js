@@ -78,19 +78,36 @@ var app = new Vue({
     methods: {
         submit: function(){
             app.submitted = true;
-            post('/api/v1/submit-move/' + pd.gameId, app.selectedCards,
-                function(result){
-                    app.submitted = false; 
-                    if(result.success){
-                        app.selectedCards = [];
-                        reloadData();
-                    } else {
-                        console.log(result);
-                    }
-                }); 
+            submitMove();
         }
     }
 }); 
+
+function submitMove(){
+    post('/api/v1/submit-move/' + pd.gameId, app.selectedCards,
+        function(result){
+            app.submitted = false; 
+            if(result.success){
+                app.selectedCards = [];
+                reloadData();
+                swal({
+                    type:'success', 
+                    title:'nice move!', 
+                    timer: 1500, 
+                    showConfirmButton:false
+                });
+            } else {
+                console.log(result);
+                swal({
+                    type:'error', 
+                    title:'that move didn\'t work!',
+                    showConfirmButton: false,
+                    timer:1500
+                });
+            }
+        }); 
+
+}
 
 
 function reloadData(){
