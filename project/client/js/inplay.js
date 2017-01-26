@@ -65,58 +65,80 @@ Vue.component('status', {
     }
 });
 
+Vue.component('submit-move', {
+    props:['selectedCards'],
+    template: `<div class="action">
+                <span v-if="submitted">
+                    <i class="fa fa-spin fa-circle-o-notch"></i>
+                </span>
+                <button v-else-if="selectedCards.length > 0" 
+                    v-on:click="submit"
+                    class="pure-button action-btn play-btn">
+                        play move<span v-if="selectedCards.length > 1">s</span>
+                </button>
+                <input v-else 
+                        v-on:click="submit" class="pure-button action-btn pass-btn" type="submit" value="pass"/>
+            </div>`,
+    data:function(){
+        return {
+            submitted: false
+        };
+    },
+    computed: {
+        haveMove: function(){
+            return this.selectedCards.length > 0;
+        }
+    },
+    methods: {
+        submit: function(){
+            this.submitted = true;
+            var o = this;
+            post('/api/v1/submit-move/' + pd.gameId, app.selectedCards,
+                function(result){
+                    o.submitted = false; 
+                    if(result.success){
+                        app.selectedCards = [];
+                        reloadData();
+                        swal({
+                            type:'success', 
+                            title:'nice move!', 
+                            timer: 1500, 
+                            showConfirmButton:false
+                        });
+                    } else {
+                        console.log(result);
+                        swal({
+                            type:'error', 
+                            title:'that move didn\'t work!',
+                            showConfirmButton: false,
+                            timer:1500
+                        });
+                    }
+                }); 
+
+
+        }
+    }
+});
+
 var app = new Vue({
     el: "#inplay",
     data: {
+        myGo: false,
         playerList: [],
         lastMove:[],
         myCards:[],
         selectedCards:[],
-        submitted: false,
         reversed: false
-    },
-    methods: {
-        submit: function(){
-            app.submitted = true;
-            submitMove();
-        }
     }
 }); 
 
-function submitMove(){
-    post('/api/v1/submit-move/' + pd.gameId, app.selectedCards,
-        function(result){
-            app.submitted = false; 
-            if(result.success){
-                app.selectedCards = [];
-                reloadData();
-                swal({
-                    type:'success', 
-                    title:'nice move!', 
-                    timer: 1500, 
-                    showConfirmButton:false
-                });
-            } else {
-                console.log(result);
-                swal({
-                    type:'error', 
-                    title:'that move didn\'t work!',
-                    showConfirmButton: false,
-                    timer:1500
-                });
-            }
-        }); 
-
-}
-
+var updatePoll = 0;
 
 function reloadData(){
     grab('/api/v1/players/' + pd.gameId, 'playerList');
     grab('/api/v1/last-move/' + pd.gameId,  'lastMove');
     grab('/api/v1/my-cards/' + pd.gameId, 'myCards');
-    
-    // hack to display when order is reversed
-    app.reversed = app.lastMove.length > 0 && app.lastMove[0].reversed;
 }
 
 function grab(url, prop){
@@ -126,6 +148,23 @@ function grab(url, prop){
             return response.json();
         }).then(function(result){
             app[prop] = result;
+            // hack to display when order is reversed
+            app.reversed = app.lastMove.length > 0 && app.lastMove[0].reversed;
+            
+            // hack to globally set when logged in player turn
+            app.myGo  = false;
+            app.selectedCards = [];
+            app.playerList.forEach(function(player){
+                if(player.loggedIn && player.next){
+                    app.myGo = true;
+                }
+            });
+
+            clearTimeout(updatePoll);
+            if(!app.myGo){
+                updatePoll = setTimeout(reloadData, 5000);
+            }
+
         });
 }
 
