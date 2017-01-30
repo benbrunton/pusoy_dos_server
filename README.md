@@ -22,17 +22,21 @@ A multiplayer [Pusoy Dos](https://en.wikipedia.org/wiki/Pusoy_dos) server writte
 ## Todo
 - [ ] - Jokers
 - [ ] - show when player has won in game
-- [ ] - real time updates
+- [x] - real time updates
 - [ ] - Round history ( moved, passed )
 - [ ] - additional auth providers - { Google, Twitter, Github, Reddit }
 - [ ] - move timeout (auto-pass)
 - [ ] - Nice front page & additional info
 - [ ] - game rule options
 - [ ] - multiple decks
-- [ ] - "Fork me on github"
 - [ ] - SSL on play.benbru.com
 - [ ] - Store sessions in redis
+- [ ] - Additional performance audit and improvements
 - [ ] - Tighten up security around all endpoints { permissions middleware? }
 - [ ] - deployment
 - [ ] - display datetime of interactions
 - [ ] - error pages
+
+## Contributing
+Contributions are encouraged and welcome via Pull Request. 
+Hit me up via an issue for suggestions or help.

@@ -29,7 +29,12 @@ Vue.component('player-card', {
     methods: {
         select: function(){
             var card = this.card;
-            app.selectedCards.push(card);
+
+            if(card.joker){
+                app.jokerModal = true;
+            }else{
+                app.selectedCards.push(card);
+            }
             app.myCards = app.myCards.filter(function(c){ return c !== card; });
         }
     }
@@ -74,7 +79,7 @@ Vue.component('submit-move', {
                 <button v-else-if="selectedCards.length > 0" 
                     v-on:click="submit"
                     class="pure-button action-btn play-btn">
-                        play move<span v-if="selectedCards.length > 1">s</span>
+                        play card<span v-if="selectedCards.length > 1">s</span>
                 </button>
                 <input v-else 
                         v-on:click="submit" class="pure-button action-btn pass-btn" type="submit" value="pass"/>
@@ -129,11 +134,31 @@ var app = new Vue({
         lastMove:[],
         myCards:[],
         selectedCards:[],
-        reversed: false
+        reversed: false,
+        jokerModal: false,
+        jokerRank: null,
+        jokerSuit: null 
+    },
+    methods:{
+        setJoker: function(){
+            app.selectedCards.push({
+                rank:app.jokerRank,
+                suit:app.jokerSuit.className,
+                joker: true,
+                reversed: app.reversed,
+                suitDisplay:app.jokerSuit.display
+            });
+            app.jokerModal = false;
+        }
     }
 }); 
 
 var updatePoll = 0;
+
+function setup(){
+    document.querySelector('.inplay').classList.remove('not-loaded');
+    reloadData();
+}
 
 function reloadData(){
     grab('/api/v1/players/' + pd.gameId, 'playerList');
@@ -191,4 +216,4 @@ function post(url, data, callback){
         .then(callback);
 }
 
-reloadData();
+setup();
