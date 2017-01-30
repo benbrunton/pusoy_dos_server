@@ -2,7 +2,7 @@
 A multiplayer [Pusoy Dos](https://en.wikipedia.org/wiki/Pusoy_dos) server written in [Rust](https://www.rust-lang.org).
 
 ## Prerequisites
-- Docker
+- [Docker](https://www.docker.com)
 
 ## Build
 - Checkout source
@@ -20,22 +20,32 @@ A multiplayer [Pusoy Dos](https://en.wikipedia.org/wiki/Pusoy_dos) server writte
 - [docker](https://www.docker.com/)
 
 ## Todo
-- [ ] - Jokers
+- [ ] - fix reversals
 - [ ] - show when player has won in game
-- [x] - real time updates
-- [ ] - Round history ( moved, passed )
 - [ ] - additional auth providers - { Google, Twitter, Github, Reddit }
 - [ ] - move timeout (auto-pass)
 - [ ] - Nice front page & additional info
+- [ ] - improved game lobby menus
 - [ ] - game rule options
 - [ ] - multiple decks
 - [ ] - SSL on play.benbru.com
 - [ ] - Store sessions in redis
 - [ ] - Additional performance audit and improvements
+- [x] - real time updates
 - [ ] - Tighten up security around all endpoints { permissions middleware? }
 - [ ] - deployment
 - [ ] - display datetime of interactions
 - [ ] - error pages
+
+## Backlog
+- [ ] - Round history ( moved, passed )
+- [ ] - private games
+- [ ] - Social sharing features
+- [ ] - client side move validation
+- [ ] - help with moves
+- [ ] - user profiles
+- [ ] - mobile apps
+- [ ] - CLI application
 
 ## Contributing
 Contributions are encouraged and welcome via Pull Request. 
