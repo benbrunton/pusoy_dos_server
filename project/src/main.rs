@@ -18,6 +18,7 @@ extern crate urlencoded;
 extern crate staticfile;
 extern crate mount;
 extern crate bodyparser;
+extern crate time;
 
 #[macro_use] extern crate pusoy_dos;
 
@@ -47,6 +48,7 @@ use controller::{
     };
 use config::Config;
 use util::session::SessionMiddleware;
+use util::nocache::NoCacheMiddleware;
 
 use iron::prelude::*;
 use router::Router;
@@ -120,10 +122,13 @@ fn main() {
     let mut api_chain = Chain::new(api_router);
 
     let session = SessionMiddleware::new(session_store);
+    let no_cache = NoCacheMiddleware;
+
     page_chain.link_before(session.clone());
 	page_chain.link_after(session.clone());
 
     api_chain.link_before(session.clone());
+    api_chain.link_after(no_cache);
 
     let mut mount = Mount::new();
     mount
@@ -139,7 +144,7 @@ fn main() {
     chain.link_after(logger_after);
     let port = config.get("port");
     // todo - a little error checking around this
-    // will save a little debugging
+    // will save a fair amount of debugging
     let ip = IpAddr::V4(Ipv4Addr::new(0, 0, 0, 0));
     let host = SocketAddr::new(ip, port.unwrap().parse::<u16>().unwrap());
     Iron::new(chain).http(host).unwrap();
