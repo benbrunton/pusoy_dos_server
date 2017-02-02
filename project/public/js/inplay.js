@@ -177,9 +177,7 @@ function grab(url, prop){
             return response.json();
         }).then(function(result){
             app[prop] = result;
-            // hack to display when order is reversed
-            app.reversed = app.lastMove.length > 0 && app.lastMove[0].reversed;
-            
+                        
             // hack to globally set when logged in player turn
             app.myGo  = false;
             app.selectedCards = [];
@@ -187,6 +185,10 @@ function grab(url, prop){
                 if(player.loggedIn && player.next){
                     app.myGo = true;
                 }
+
+                // hack to display when order is reversed
+                app.reversed = player.reversed;
+
             });
 
             clearTimeout(updatePoll);

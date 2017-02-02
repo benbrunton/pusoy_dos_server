@@ -46,6 +46,7 @@ impl Players {
         let game = Game::load(round.clone()).expect("game failed to load");
         let next_player = game.get_next_player().expect("unable to get next player");
         let next_player_id = next_player.get_id();
+        let reversed = round.reversed;
 
         let players = self.user_data.get_users_by_game(game_id);
 
@@ -57,6 +58,7 @@ impl Players {
             p.insert("name".to_string(), Value::String(player.name.clone()));
             p.insert("next".to_string(), Value::Bool(player.id == next_player_id));
             p.insert("loggedIn".to_string(), Value::Bool(player.id == user_id));
+            p.insert("reversed".to_string(), Value::Bool(reversed));
             p
         }).collect::<Vec<Map<String, Value>>>();
 

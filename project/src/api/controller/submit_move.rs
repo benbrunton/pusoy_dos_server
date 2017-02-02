@@ -62,7 +62,7 @@ impl SubmitMove {
 
 
         let player_move = json.unwrap();
-        let cards = self.get_cards(player_move);
+        let cards = self.get_cards(player_move, reversed);
         info!("{:?}", cards);
 
         let valid_move = game.player_move(user_id, cards.clone());
@@ -117,7 +117,7 @@ impl SubmitMove {
         }
     }
 
-    fn get_cards(&self, player_move:serde_json::Value) -> Vec<PlayerCard> {
+    fn get_cards(&self, player_move:serde_json::Value, reversed: bool) -> Vec<PlayerCard> {
             player_move
                 .as_array()
                 .unwrap()
@@ -128,7 +128,7 @@ impl SubmitMove {
             let suit = obj.get("suit").unwrap().as_str().unwrap();
             let rank = obj.get("rank").unwrap().as_str().unwrap();
             let joker = obj.get("joker").unwrap().as_bool().unwrap();
-            self.get_card(rank, suit, joker, false)
+            self.get_card(rank, suit, joker, reversed)
         }).collect::<Vec<PlayerCard>>()
 
     }

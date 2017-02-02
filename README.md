@@ -20,7 +20,6 @@ A multiplayer [Pusoy Dos](https://en.wikipedia.org/wiki/Pusoy_dos) server writte
 - [docker](https://www.docker.com/)
 
 ## Todo
-- [ ] - fix reversals
 - [ ] - show when player has won in game
 - [ ] - Round history ( moved, passed )
 - [ ] - move timeout (auto-pass)
