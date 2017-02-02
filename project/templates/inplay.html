@@ -27,9 +27,12 @@
             <h5 class="text-center"><i class="fa fa-circle-thin"></i></h5>
         </div>
      
-        <div class="move" v-if="selectedCards.length > 0">
+        <div class="move">
             <h4>my move</h4>
-            <div class="card-set">
+            <h5 class="text-center move-placeholder" v-if="selectedCards.length < 1">
+                <i class="fa fa-circle-thin"></i>
+            </h5>
+            <div v-else class="card-set">
                 <move-card v-for="card in selectedCards" v-bind:card="card"></move-card>
             </div>
         </div>
@@ -82,7 +85,7 @@
             <button v-on:click="setJoker" class="pure-button action-button">OK</button>
         </div>
            
-	
+    </div>	
     <script>
         window.pd.gameId = "{{ id }}";
     </script>

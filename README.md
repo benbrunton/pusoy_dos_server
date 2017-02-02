@@ -20,7 +20,6 @@ A multiplayer [Pusoy Dos](https://en.wikipedia.org/wiki/Pusoy_dos) server writte
 - [docker](https://www.docker.com/)
 
 ## Todo
-- [ ] - page shifts down when select first card :(
 - [ ] - fix reversals
 - [ ] - show when player has won in game
 - [ ] - Round history ( moved, passed )
@@ -47,6 +46,7 @@ A multiplayer [Pusoy Dos](https://en.wikipedia.org/wiki/Pusoy_dos) server writte
 - [ ] - user profiles
 - [ ] - mobile apps
 - [ ] - CLI application
+- [ ] - Changelog from github
 
 ## Contributing
 Contributions are encouraged and welcome via Pull Request. 
