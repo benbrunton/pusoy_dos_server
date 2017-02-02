@@ -28,6 +28,10 @@ Vue.component('player-card', {
     template: '<span class="card-container" v-on:click="select" :class="card.suit.toLowerCase() + \' \' + card.rank.toLowerCase()"><span class="card"><p>{{card.rank}}</p><p>{{card.suitDisplay}}</p></span></span>',
     methods: {
         select: function(){
+            if(!app.myGo){
+                return;
+            }
+
             var card = this.card;
 
             if(card.joker){

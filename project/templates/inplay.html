@@ -27,7 +27,7 @@
             <h5 class="text-center"><i class="fa fa-circle-thin"></i></h5>
         </div>
      
-        <div class="move">
+        <div v-if="myGo" class="move">
             <h4>my move</h4>
             <h5 class="text-center move-placeholder" v-if="selectedCards.length < 1">
                 <i class="fa fa-circle-thin"></i>

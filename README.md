@@ -23,8 +23,9 @@ A multiplayer [Pusoy Dos](https://en.wikipedia.org/wiki/Pusoy_dos) server writte
 - [ ] - fix reversals
 - [ ] - show when player has won in game
 - [ ] - Round history ( moved, passed )
-- [ ] - additional auth providers - { Google, Twitter, Github, Reddit }
 - [ ] - move timeout (auto-pass)
+- [ ] - Nice Move! even when move is invalid
+- [ ] - additional auth providers - { Google, Twitter, Github, Reddit }
 - [ ] - Nice front page & additional info
 - [ ] - improved game lobby menus
 - [ ] - game rule options
