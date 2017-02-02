@@ -22,14 +22,13 @@ A multiplayer [Pusoy Dos](https://en.wikipedia.org/wiki/Pusoy_dos) server writte
 ## Todo
 - [ ] - show when player has won in game
 - [ ] - Round history ( moved, passed )
-- [ ] - move timeout (auto-pass)
 - [ ] - Nice Move! even when move is invalid
-- [ ] - additional auth providers - { Google, Twitter, Github, Reddit }
 - [ ] - Nice front page & additional info
 - [ ] - improved game lobby menus
 - [ ] - game rule options
 - [ ] - multiple decks
 - [ ] - SSL on play.benbru.com
+- [ ] - additional auth providers - { Google, Twitter, Github, Reddit }
 - [ ] - Store sessions in redis
 - [ ] - Additional performance audit and improvements
 - [x] - real time updates
@@ -44,6 +43,8 @@ A multiplayer [Pusoy Dos](https://en.wikipedia.org/wiki/Pusoy_dos) server writte
 - [ ] - client side move validation
 - [ ] - help with moves
 - [ ] - user profiles
+- [ ] - notifications
+- [ ] - move timeout (auto-pass)
 - [ ] - mobile apps
 - [ ] - CLI application
 - [ ] - Changelog from github
