@@ -23,8 +23,13 @@ A multiplayer [Pusoy Dos](https://en.wikipedia.org/wiki/Pusoy_dos) server writte
 - [ ] - show when player has won in game
 - [ ] - Round history ( moved, passed )
 - [ ] - Nice Move! even when move is invalid
+- [ ] - Redirect to homepage when user logged out
 - [ ] - Nice front page & additional info
-- [ ] - improved game lobby menus
+- [ ] - improved game menus
+-- [ ] - game lobby (including notifications etc)
+-- [ ] - Join game
+-- [ ] - create game
+-- [ ] - Joker modal
 - [ ] - game rule options
 - [ ] - multiple decks
 - [ ] - SSL on play.benbru.com
@@ -48,6 +53,8 @@ A multiplayer [Pusoy Dos](https://en.wikipedia.org/wiki/Pusoy_dos) server writte
 - [ ] - mobile apps
 - [ ] - CLI application
 - [ ] - Changelog from github
+- [ ] - Give desktop some attention
+- [ ] - Integrations (slack?)
 
 ## Contributing
 Contributions are encouraged and welcome via Pull Request. 
