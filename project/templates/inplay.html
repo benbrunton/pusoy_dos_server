@@ -16,8 +16,10 @@
             <status v-bind:players="playerList"></status>
         </div>
 
-        <h4 v-if="lastMove.length > 0">
-            last move <span v-if="reversed" class="reversed">(order reversed)</span>
+        <h4>
+            <span v-if="lastMove.length > 0">Last Move</span>
+            <span v-else>New Move</span>
+            <span v-if="reversed" class="reversed">(order reversed)</span>
         </h4>
 
         <div class="last-move card-set" v-if="lastMove.length > 0">

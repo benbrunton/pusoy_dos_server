@@ -59,6 +59,9 @@ impl Players {
             p.insert("next".to_string(), Value::Bool(player.id == next_player_id));
             p.insert("loggedIn".to_string(), Value::Bool(player.id == user_id));
             p.insert("reversed".to_string(), Value::Bool(reversed));
+            p.insert("winner".to_string(), Value::Bool(round.winners.len() > 0 && round.winners[0] == player.id));
+            let players_still_playing =  round.round.export().players;
+            p.insert("stillIn".to_string(), Value::Bool(players_still_playing.iter().any(|&e| e == player.id)));
             p
         }).collect::<Vec<Map<String, Value>>>();
 

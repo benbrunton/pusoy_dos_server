@@ -1,8 +1,17 @@
 console.log('Pusoy Dos:: in play');
 
+var playerTemplate = '<li>' +
+                        '<strike v-if="!player.stillIn" class="name">{{player.name}}</strike>' +
+                        '<span v-else :class="player.loggedIn ? \'logged-in-player\' : \'\'" class="name">{{ player.name }}</span>' +
+                        '<span class="icons">' +
+                            '<span v-if="player.winner"><i class="win-trophy fa fa-trophy"></i></span>' +
+                            '<span v-if="player.next">*</span></li>' +
+                        '</span>' +
+                      '</li>';
+
 Vue.component('player', {
     props: ['player'],
-    template: '<li><span :class="player.loggedIn ? \'logged-in-player\' : \'\'" class="name">{{ player.name }}</span><span v-if="player.next">*</span></li>'
+    template: playerTemplate
 });
 
 Vue.component('table-card', {
@@ -46,10 +55,16 @@ Vue.component('player-card', {
 
 Vue.component('status', {
     props: ['players'],
-    template:'<div class="text-center"><span v-if="hasWon">You Won!</span><span v-else-if="userTurn">your turn</span><span v-else>waiting for {{nextUser}}</span>',
+    template:'<div class="text-center"><div v-if="hasWon">You Won!</div><span v-if="userTurn">your turn</span><span v-else>Waiting for {{nextUser}}</span>',
     computed: {
         hasWon: function(){
-            return false;
+            var hasWon = false;
+            this.players.forEach(function(player){
+                if(player.loggedIn && player.winner){
+                    hasWon = true;
+                }
+            });
+            return hasWon;
         },
         userTurn: function(){
             var userTurn = false;

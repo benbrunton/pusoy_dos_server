@@ -141,6 +141,10 @@ a.button-primary,
 .inplay .action .action-btn.show {
   display: block;
 }
+.inplay .win-trophy {
+  margin-left: 5px;
+  color: #ffd700;
+}
 .text-center {
   text-align: center;
 }

@@ -20,10 +20,10 @@ A multiplayer [Pusoy Dos](https://en.wikipedia.org/wiki/Pusoy_dos) server writte
 - [docker](https://www.docker.com/)
 
 ## Todo
-- [ ] - show when player has won in game
 - [ ] - Round history ( moved, passed )
 - [ ] - Nice Move! even when move is invalid
 - [ ] - Redirect to homepage when user logged out
+- [ ] - End game screens
 - [ ] - Nice front page & additional info
 - [ ] - improved game menus
 -- [ ] - game lobby (including notifications etc)
