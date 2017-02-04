@@ -30,7 +30,7 @@ impl PostGame{
 
 impl Handler for PostGame {
 
-    fn handle(&self, req: &mut Request) -> IronResult<Response> {
+    fn handle(&self, _: &mut Request) -> IronResult<Response> {
         Ok(self.display())
     }
 }

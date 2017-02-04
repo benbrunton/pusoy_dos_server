@@ -7,14 +7,10 @@ use router::Router;
 use rustc_serialize::json;
 use std::collections::BTreeMap;
 use serde_json;
-use serde_json::{Value, Map};
 
 use helpers;
 
 use data_access::round::Round as RoundData;
-use data_access::user::User as UserData;
-
-use pusoy_dos::game::game::Game;
 
 #[derive(Clone)]
 pub struct LastMove{
@@ -28,7 +24,7 @@ impl LastMove {
         }
     }
 
-    fn output(&self, user_id:u64, game_id: u64) -> Response {
+    fn output(&self, _:u64, game_id: u64) -> Response {
 
         // TODO - only access players endpoint if user is in game
 

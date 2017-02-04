@@ -5,7 +5,6 @@ use iron::{status, modifiers, Url};
 use iron::mime::Mime;
 use tera::TeraResult;
 
-use pusoy_dos::game::game::Game;
 use pusoy_dos::game::player_move::{Move, Trick};
 use pusoy_dos::cards::card::PlayerCard;
 use serde::{Serialize, Serializer};

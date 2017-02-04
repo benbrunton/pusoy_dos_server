@@ -1,7 +1,6 @@
-use iron::{BeforeMiddleware, AfterMiddleware, IronResult, IronError, Request, Response};
-use iron::typemap::Key;
-use hyper::header::{Headers, CacheControl, CacheDirective, Expires, HttpDate, Pragma};
-use time::{self, Duration};
+use iron::{AfterMiddleware, IronResult, Request, Response};
+use hyper::header::{CacheControl, CacheDirective, Expires, HttpDate, Pragma};
+use time;
  
 pub struct NoCacheMiddleware;
 

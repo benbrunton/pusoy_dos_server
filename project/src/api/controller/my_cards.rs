@@ -7,13 +7,11 @@ use router::Router;
 use rustc_serialize::json;
 use std::collections::BTreeMap;
 use serde_json;
-use serde_json::{Value, Map};
 
 use helpers;
 use helpers::DCard;
 
 use data_access::round::Round as RoundData;
-use data_access::user::User as UserData;
 
 use pusoy_dos::game::game::Game;
 
