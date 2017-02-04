@@ -13,6 +13,7 @@ dependencies = [
  "mount 0.2.1 (git+https://github.com/iron/mount.git)",
  "mysql 8.0.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "pusoy_dos 0.1.0 (git+https://github.com/benbrunton/pusoy-dos)",
+ "rand 0.3.15 (registry+https://github.com/rust-lang/crates.io-index)",
  "router 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "rustc-serialize 0.3.22 (registry+https://github.com/rust-lang/crates.io-index)",
  "serde 0.8.21 (registry+https://github.com/rust-lang/crates.io-index)",

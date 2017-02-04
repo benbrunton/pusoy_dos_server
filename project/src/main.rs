@@ -19,6 +19,7 @@ extern crate staticfile;
 extern crate mount;
 extern crate bodyparser;
 extern crate time;
+extern crate rand;
 
 #[macro_use] extern crate pusoy_dos;
 

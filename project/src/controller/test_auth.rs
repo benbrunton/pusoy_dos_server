@@ -6,6 +6,7 @@ use config::Config;
 use data_access::user::User as UserData;
 use model::user::PartUser;
 use util::session::Session;
+use rand;
 
 pub struct TestAuthController {
     hostname: String,
@@ -47,8 +48,10 @@ impl Handler for TestAuthController {
 
         info!("TestAuthController handler");
 
-        let name = "Testy McTestface";
-        let id = "12345678";
+        
+        let unique_num = rand::random::<u8>();
+        let name = format!("Testy McTestface_{}", unique_num);;
+        let id = format!("1660{}", unique_num); // just rammed some random nums in here to prevent collisions
 
         let user = PartUser{
             name: String::from(name),
