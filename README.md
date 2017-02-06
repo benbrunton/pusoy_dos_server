@@ -20,6 +20,7 @@ A multiplayer [Pusoy Dos](https://en.wikipedia.org/wiki/Pusoy_dos) server writte
 - [docker](https://www.docker.com/)
 
 ## Todo
+- [ ] - Push notifications
 - [ ] - Round history ( moved, passed )
 - [ ] - Nice Move! even when move is invalid
 - [ ] - Redirect to homepage when user logged out
@@ -32,7 +33,6 @@ A multiplayer [Pusoy Dos](https://en.wikipedia.org/wiki/Pusoy_dos) server writte
 -- [ ] - Joker modal
 - [ ] - game rule options
 - [ ] - multiple decks
-- [ ] - SSL on play.benbru.com
 - [ ] - additional auth providers - { Google, Twitter, Github, Reddit }
 - [ ] - Store sessions in redis
 - [ ] - Additional performance audit and improvements
@@ -48,7 +48,6 @@ A multiplayer [Pusoy Dos](https://en.wikipedia.org/wiki/Pusoy_dos) server writte
 - [ ] - client side move validation
 - [ ] - help with moves
 - [ ] - user profiles
-- [ ] - notifications
 - [ ] - move timeout (auto-pass)
 - [ ] - mobile apps
 - [ ] - CLI application
