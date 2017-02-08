@@ -76,8 +76,10 @@
         &copy; 2017 <a href="http://benbru.com/">Ben Brunton</a>.
         {% endblock footer %}
     </div>
-
-    <script src="/public/js/push.js"></script>
+    
+    {% if logged_in %}
+        <script src="/public/js/push.js"></script>
+    {% endif %}
 
 </body>
 </html>

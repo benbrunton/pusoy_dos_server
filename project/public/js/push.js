@@ -1,80 +1,77 @@
 
-let swRegistration;
 
-//if not registered
-let enableHeader = document.createElement('div');
+(function(){
+    'use strict';
 
-enableHeader.innerHTML = '<button class="enable-notifications pure-button action-button">Allow Notifications</button>';
-let container = document.querySelector('.container');
-container.insertBefore(enableHeader, container.firstChild);
-let pushButton = document.querySelector('.enable-notifications');
-
-if ('serviceWorker' in navigator && 'PushManager' in window) {
-  console.log('Service Worker and Push is supported');
-
-  navigator.serviceWorker.register('/public/js/sw.js')
-  .then(function(swReg) {
-    console.log('Service Worker is registered', swReg);
-
-    swRegistration = swReg;
-    initialiseUI();
-  })
-  .catch(function(error) {
-    console.error('Service Worker Error', error);
-  });
-} else {
-  console.warn('Push messaging is not supported');
-  pushButton.textContent = 'Push Not Supported';
-}
-
-//Notification.requestPermission();
-function initialiseUI() {
-  pushButton.addEventListener('click', function() {
-    pushButton.disabled = true;
-    if (isSubscribed) {
-      // TODO: Unsubscribe user
-    } else {
-      subscribeUser();
-    }
-  });
-
-  // Set the initial subscription value
-  swRegistration.pushManager.getSubscription()
-  .then(function(subscription) {
-    isSubscribed = !(subscription === null);
-
-    updateSubscriptionOnServer(subscription);
-
-    if (isSubscribed) {
-      console.log('User IS subscribed.');
-    } else {
-      console.log('User is NOT subscribed.');
+    if (!('serviceWorker' in navigator && 'PushManager' in window)) {
+        console.warn('Push messaging is not supported');
+        return;
     }
 
-  });
-}
+    console.log('Service Worker and Push is supported');
 
-function subscribeUser() {
-  swRegistration.pushManager.subscribe({userVisibleOnly: true})
-  .then(function(subscription) {
-    console.log('User is subscribed.');
+    // TODO - check whether permissions have been granted or dismissed before
+    Promise.all([ 
+        navigator.permissions.query({name:'push', userVisibleOnly:true}),
+        navigator.serviceWorker.register('/public/js/sw.js')])
+        .then(init)
+        .catch(function(error) {
+            console.error('Service Worker Error', error);
+        });
 
-    updateSubscriptionOnServer(subscription);
+    function init(result){
 
-    isSubscribed = true;
-  })
-  .catch(function(err) {
-    console.log('Failed to subscribe the user: ', err);
-  });
-}
+        let pushPermission = result[0];
+        let swReg = result[1];
 
-function updateSubscriptionOnServer(subscription) {
-  // TODO: Send subscription to application server
+        if(pushPermission.state === 'granted'){
+            console.log('permission is already granted');
+            return;
+        }
+
+        addNotice()
+            .addEventListener('click', function() {
+                this.disabled = true;
+                subscribeUser(swReg);
+            });
+
+    }
+
+    function addNotice(){
+        let enableHeader = document.createElement('div');
+        enableHeader.innerHTML = '<button class="enable-notifications pure-button action-button">Allow Notifications</button>';
+
+        let container = document.querySelector('.container');
+        let pushButton = enableHeader.querySelector('.enable-notifications');
+
+        container.insertBefore(enableHeader, container.firstChild);
+
+        return pushButton;
+    }
 
 
-  if (subscription) {
-    console.log(subscription);
-//    console.log(JSON.stringify(subscription));
-  }
+    function subscribeUser(swRegistration) {
+        swRegistration.pushManager.subscribe({userVisibleOnly: true})
+            .then(function(subscription) {
+                console.log('User is subscribed.');
+                updateSubscriptionOnServer(subscription);
+          })
+          .catch(function(err) {
+            // TODO: could do with doing a bit more than this...
+            console.log('Failed to subscribe the user: ', err);
+          });
+    }
 
-}
+    function updateSubscriptionOnServer(subscription) {
+      // TODO: Send subscription to application server
+
+
+      if (subscription) {
+        console.log(subscription);
+    //    console.log(JSON.stringify(subscription));
+      }
+
+    }
+    
+}());
+
