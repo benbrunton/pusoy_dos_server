@@ -27,10 +27,10 @@ A multiplayer [Pusoy Dos](https://en.wikipedia.org/wiki/Pusoy_dos) server writte
 - [ ] - End game screens
 - [ ] - Nice front page & additional info
 - [ ] - improved game menus
--- [ ] - game lobby (including notifications etc)
--- [ ] - Join game
--- [ ] - create game
--- [ ] - Joker modal
+ - [ ] - game lobby (including notifications etc)
+ - [ ] - Join game
+ - [ ] - create game
+ - [ ] - Joker modal
 - [ ] - game rule options
 - [ ] - multiple decks
 - [ ] - additional auth providers - { Google, Twitter, Github, Reddit }
