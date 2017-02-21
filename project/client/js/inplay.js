@@ -2,7 +2,7 @@ console.log('Pusoy Dos:: in play');
 
 var playerTemplate = '<li>' +
                         '<strike :class="player.loggedIn ? \'logged-in-player\' : \'\'" v-if="!player.stillIn" class="name">{{player.name}}</strike>' +
-                        '<span v-else :class="player.loggedIn ? \'logged-in-player\' : \'\'" class="name">{{ player.name }}</span>' +
+                        '<span v-else :class="player.loggedIn ? \'logged-in-player\' : \'\'" class="name">{{ player.name }} <small>( {{player.cardCount }} )</small></span>' +
                         '<span class="icons">' +
                             '<span v-if="player.winner"><i class="win-trophy fa fa-trophy"></i></span>' +
                             '<span v-if="player.next">*</span></li>' +

@@ -60,6 +60,8 @@ impl Players {
             p.insert("loggedIn".to_string(), Value::Bool(player.id == user_id));
             p.insert("reversed".to_string(), Value::Bool(reversed));
             p.insert("winner".to_string(), Value::Bool(round.winners.len() > 0 && round.winners[0] == player.id));
+            let card_count = game.get_player(player.id).unwrap().get_hand().len() as u64;
+            p.insert("cardCount".to_string(), Value::U64(card_count));
             let players_still_playing =  round.round.export().players;
             p.insert("stillIn".to_string(), Value::Bool(players_still_playing.iter().any(|&e| e == player.id)));
             p
