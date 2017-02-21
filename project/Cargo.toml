@@ -3,39 +3,27 @@ name = "pd_server"
 version = "0.1.0"
 authors = ["Ben Brunton <ben.b.brunton@gmail.com>"]
 
-[dependencies.iron]
-version = "*"
-
-[dependencies.url]
-git = "https://github.com/servo/rust-url"
-
-[dependencies.logger]
-git = "https://github.com/iron/logger.git"
-
-[dependencies.urlencoded]
-version = "*"
-
-[dependencies.mount]
-git = "https://github.com/iron/mount.git"
-
-[dependencies.bodyparser]
-git = "https://github.com/iron/body-parser.git"
-
 [dependencies]
-router = "*"
+iron = "0.4.0"
+router = "0.4.0"
 toml = "0.2"
 hyper = "0.9.10"
 rustc-serialize = "0.3"
-mysql = "*"
+mysql = "8.0.0"
 cookie = "0.2"
 uuid = { version = "0.2", features = ["v4"] }
 tera = "0.3.1"
 lazy_static = "0.2.1"
 serde = "0.8.14"
-serde_json = "*"
+serde_json = "0.8.4"
 env_logger = "0.3.5"
 log = "0.3.6"
+logger = "0.2.0"
 pusoy_dos = { git = "https://github.com/benbrunton/pusoy-dos" }
-staticfile = "*"
+staticfile = "0.3.1"
 time = "0.1.35"
 rand = "0.3"
+bodyparser = "0.4.1"
+mount = "0.2.1"
+url = "1.2.5"
+urlencoded = "0.4.1"

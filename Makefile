@@ -7,7 +7,7 @@ docker-release:
 	docker exec -t pd_server cargo build --release
 
 docker-run:
-	docker run -v ${PWD}/project:/project -d -p 0.0.0.0:3000:3000 --name pd_server benbrunton/pusoy_dos 
+	docker run -v ${PWD}/project:/project -d -p 0.0.0.0:3010:3000 --name pd_server benbrunton/pusoy_dos 
 
 docker-stop:
 	docker stop pd_server
