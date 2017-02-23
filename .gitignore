@@ -5,3 +5,4 @@ project/config/app_config.toml
 .DS_Store
 public/js/inplay.js
 pd.tar.gz
+demo-data.sql

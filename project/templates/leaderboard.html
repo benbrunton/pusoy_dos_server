@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Leaderboard{% endblock title %}
+{% block content %}
+
+<h2>Leaderboard</h2>
+
+<table class="pure-table pure-table-horizontal">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Name</th>
+            <th>Wins</th>
+        </tr>
+    </thead>
+
+    <tbody>
+					{% for user in leaderboard %}
+						<tr>
+							<td>{{ user.position }}</td>
+							<td>{{ user.name }}</td>
+                            <td>{{ user.wins }}</td>
+						</tr>
+				  	{% endfor %}	
+
+    </tbody>
+
+</table>
+
+{% endblock content %}
+

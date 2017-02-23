@@ -1,0 +1,14 @@
+USE pusoy_dos;
+DROP TABLE IF EXISTS `leaderboard` ;
+
+CREATE TABLE IF NOT EXISTS `leaderboard` (
+  `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(64) NOT NULL,
+  `position` INT(10) NOT NULL,
+  `wins` INT(45) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 4
+DEFAULT CHARACTER SET = utf8;
+
+

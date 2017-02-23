@@ -45,7 +45,8 @@ use controller::{
         begin_game,
         inplay,
         game_move,
-        post_game
+        post_game,
+        leaderboard
     };
 use config::Config;
 use util::session::SessionMiddleware;
@@ -77,6 +78,7 @@ fn main() {
     let session_store = data_access::session::Session::new(pool.clone());
     let game_data = data_access::game::Game::new(pool.clone());
     let round_data = data_access::round::Round::new(pool.clone());
+    let leaderboard_data = data_access::leaderboard::Leaderboard::new(pool.clone());
 
     let mut router = Router::new();
 
@@ -92,6 +94,7 @@ fn main() {
     let inplay_controller = inplay::InPlay::new(&config, &TERA, round_data.clone(), user_data.clone());
     let move_controller = game_move::GameMove::new(&config, round_data.clone(), game_data.clone());
     let post_game_controller = post_game::PostGame::new(&TERA);
+    let leaderboard = leaderboard::Leaderboard::new(&config, &TERA, leaderboard_data.clone());
 
     router.get("/", home_page_controller, "index");
     router.get("/auth", auth_controller, "auth_callback");
@@ -105,6 +108,7 @@ fn main() {
     router.get("/game-complete/:id", post_game_controller, "post_game");
     router.get("/play/:id", inplay_controller, "inplay");
     router.post("/play/:id", move_controller, "move");
+    router.get("/leaderboard", leaderboard, "leaderboard");
  
     match config.get("mode") {
         Some(mode) => {

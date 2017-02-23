@@ -11,6 +11,7 @@ pub mod begin_game;
 pub mod inplay;
 pub mod game_move;
 pub mod post_game;
+pub mod leaderboard;
 
 pub mod test_auth;
 
