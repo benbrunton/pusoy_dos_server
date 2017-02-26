@@ -2,13 +2,7 @@
 {% block title %}Games{% endblock title %}
 {% block content %}
     <div class="game-panel">
-        <div class="game-menu">
-            <a class="button-primary pure-button" href="/new-game">
-                <i class="fa fa-plus"></i>&nbsp;&nbsp;
-                New Game
-            </a>
-        </div>
-
+        
         <div class="joined-games game-list">
             <h3><i class="fa fa-user"></i>&nbsp;&nbsp;My Games</h3>
             {% if num_games > 0  %}
@@ -49,6 +43,7 @@
 									<span>
 										Waiting for {{game.creator_name}} to start the game
 									</span>
+                                    <div class="waiting"><i class="fa fa-spinner fa-spin"></i></div>
 									{% endif %}
 
 									
@@ -87,6 +82,13 @@
             {% else %}
                 <p>No available games</p>
             {% endif %}
+        </div>
+
+      <div class="game-menu">
+            <a class="action-button pure-button" href="/new-game">
+                <i class="fa fa-plus"></i>&nbsp;&nbsp;
+                New Game
+            </a>
         </div>
 
     </div>

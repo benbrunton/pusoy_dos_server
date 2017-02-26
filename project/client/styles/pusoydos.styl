@@ -10,7 +10,12 @@ cl-card-fore = #fff
 
 cl-facebook = #3b5998
 
-decorative-border-width = 8px
+decorative-border-width = 6px
+
+html, button, input, select, textarea,
+    .pure-g [class *= "pure-u"] {
+        font-family: 'Open Sans', sans-serif; 
+    }
 
 body
     background-color cl-white
@@ -27,12 +32,16 @@ a, a:visited
 .app-header
     background-color cl-blue
     color cl-light
-    border-bottom decorative-border-width solid cl-red
+    .topbar
+        border-bottom decorative-border-width solid cl-red
     .title
         text-align center
     .header-icon
-        padding 20px 0
+        padding 10px 0
         text-align center
+    .nav
+        background-color cl-light
+        color cl-blue
     
 
 .app-content
@@ -80,10 +89,14 @@ a, a:visited
 
     .game-list
         h3
-            margin-left 15px
-        margin 30px 0
+            margin-bottom 0
+            padding 12px
+            background-color cl-blue
+            color cl-white
+            margin-top 0
+            border-bottom decorative-border-width solid cl-red
+        margin 16px 0
     .my-game
-        margin-bottom 8px
         .cta
             margin-top 12px
         .id
@@ -97,13 +110,13 @@ a, a:visited
                 padding-top 3px
                 display block
     .game-container
-        padding 8px 12px
+        padding 4px 4px 6px 4px
         background-color cl-light
-        border-bottom 6px solid cl-blue
+        border-bottom 3px solid cl-blue
         &.my-go
             background-color cl-green
             color cl-white
-            border-bottom 6px solid cl-darkgreen
+            border-bottom 3px solid cl-darkgreen
             .id
                 background-color cl-darkgreen
             .action-button
@@ -115,13 +128,15 @@ a, a:visited
     .summary
         padding 12px
         text-align center
+    .waiting
+        margin-top 8px
 
  
 a.button-primary, .button-primary
     background-color cl-light
     color cl-blue
 
-.action-button
+a.action-button, .action-button
     background-color cl-blue
     color cl-white
 

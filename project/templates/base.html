@@ -23,6 +23,7 @@
     <meta name="msapplication-TileColor" content="#ffffff">
     <meta name="msapplication-TileImage" content="/public/img/favicon/ms-icon-144x144.png">
     <meta name="theme-color" content="#ffffff">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
     <link rel="stylesheet" href="/public/vendor/purecss/pure-min.css">
     <link rel="stylesheet" href="/public/vendor/purecss/grids-responsive-min.css">
     <link rel="stylesheet" href="/public/vendor/font-awesome-4.7.0/css/font-awesome.min.css">
@@ -38,13 +39,13 @@
 <body>
 
     <header class="app-header">
-        <div class="pure-g">
+        <div class="pure-g topbar">
             {% if logged_in %}
                 <div class="pure-u-1-5 header-icon">
-                   <a href="/"><i class="fa fa-home fa-lg"></i></a>
+                   <!--<a href="/"><i class="fa fa-home fa-lg"></i></a>-->
                 </div>
                 <div class="pure-u-1-5 header-icon">
-                   <a href="/leaderboard"><i class="fa fa-list-ol fa-lg"></i></a>
+                   <!-- <a href="/leaderboard"><i class="fa fa-list-ol fa-lg"></i></a>-->
                 </div>
 
                 <div class="pure-u-1-5 header-icon">
@@ -54,13 +55,13 @@
                 </div>
 
                 <div class="pure-u-1-5 header-icon">
-                   <a target="_blank" href="https://en.wikipedia.org/wiki/Pusoy_dos">
+                   <!-- <a target="_blank" href="https://en.wikipedia.org/wiki/Pusoy_dos">
                         <i class="fa fa-question fa-lg"></i>
-                    </a>
+                    </a> -->
                 </div>
 
                 <div class="pure-u-1-5 header-icon">
-                    <a href="/logout"><i class="fa fa-sign-out fa-lg"></i></a>
+                    <!-- <a href="/logout"><i class="fa fa-sign-out fa-lg"></i></a> -->
                 </div>
             {% else %}
                 <div class="pure-u-5-5">
@@ -77,6 +78,32 @@
                      </h3>
                 </div>
 
+            {% endif %}
+        </div>
+
+        <div class="pure-g nav">
+            {% if logged_in %}
+                <div class="pure-u-1-4 header-icon">
+                   <a href="/"><i class="fa fa-home fa-lg"></i>
+                    <small>Home</small></a>
+                </div>
+                <div class="pure-u-1-4 header-icon">
+                    <a href="/leaderboard"><i class="fa fa-list-ol fa-lg"></i>
+                        <small>Table</small>
+                    </a>
+                </div>
+
+                <div class="pure-u-1-4 header-icon">
+                   <a target="_blank" href="https://en.wikipedia.org/wiki/Pusoy_dos">
+                        <i class="fa fa-question-circle-o fa-lg"></i>
+                        <small>About</small>
+                    </a>
+                </div>
+
+                <div class="pure-u-1-4 header-icon">
+                    <a href="/logout"><i class="fa fa-sign-out fa-lg"></i>
+                    <small>Log out</small></a>
+                </div>
             {% endif %}
         </div>
     </header>
