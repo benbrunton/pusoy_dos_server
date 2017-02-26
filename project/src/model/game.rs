@@ -9,6 +9,9 @@ pub struct Game{
     pub next_player_name: Option<String>,
     pub next_player_id: Option<u64>
 }
+// last - move
+// winners
+// num players
 
 impl Serialize for Game {
 
