@@ -72,10 +72,58 @@ a:visited {
 .game-panel .game-list h3 {
   margin-left: 15px;
 }
+.game-panel .my-game {
+  margin-bottom: 8px;
+}
+.game-panel .my-game .cta {
+  margin-top: 12px;
+}
+.game-panel .my-game .id {
+  background-color: #6991ac;
+  color: #fff;
+  width: 20px;
+  height: 20px;
+  border-radius: 10px;
+  text-align: center;
+}
+.game-panel .my-game .id small {
+  padding-top: 3px;
+  display: block;
+}
+.game-panel .game-container {
+  padding: 8px 12px;
+  background-color: #c3d7df;
+  border-bottom: 6px solid #6991ac;
+}
+.game-panel .game-container.my-go {
+  background-color: #89bd75;
+  color: #f5f5f5;
+  border-bottom: 6px solid #2a8600;
+}
+.game-panel .game-container.my-go .id {
+  background-color: #2a8600;
+}
+.game-panel .game-container.my-go .action-button {
+  background-color: #2a8600;
+}
+@media (min-width: 48em) {
+  .game-panel .game-container {
+    margin: 4px;
+    height: 82%;
+  }
+}
+.game-panel .summary {
+  padding: 12px;
+  text-align: center;
+}
 a.button-primary,
 .button-primary {
   background-color: #c3d7df;
   color: #6991ac;
+}
+.action-button {
+  background-color: #6991ac;
+  color: #f5f5f5;
 }
 .facebook-color {
   color: #3b5998;

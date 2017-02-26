@@ -12,32 +12,52 @@
         <div class="joined-games game-list">
             <h3><i class="fa fa-user"></i>&nbsp;&nbsp;My Games</h3>
             {% if num_games > 0  %}
-                <table class="pure-table pure-table-horizontal">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-							<th>Owner</th>
-                            <th>status</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-					<tbody>
+                <div class="pure-g">
 					{% for game in games %}
-						<tr>
-							<td>{{ game.id }}</td>
-							<td>{{ game.creator_name }}</td>
-                            <td>
-                                {% if game.started %}
-                                    started
-                                {% else %}
-                                    waiting to begin
-                                {% endif %} 
-                            </td>
-                            <td><a href="/game/{{ game.id }}">view</a></td>
-						</tr>
+					<div class="my-game pure-u-1 pure-u-md-1-2">
+						<div class="game-container {% if id == game.next_player_id %}my-go{% endif %}">
+							<a href="/game/{{ game.id }}">
+								<div class="header">
+									<div class="id">
+										<small>{{ game.id }}</small>
+									</div>
+								</div>
+								<div class="summary">
+									{% if game.started %}
+									<span>
+										
+										{{game.next_player_name}}'s move
+
+										{%if id == game.next_player_id %}
+											<i class="fa fa-thumbs-o-up"></i>
+										{% endif %}
+
+									</span>
+
+
+									<div class="cta">
+
+										<div class="pure-button action-button">
+											{%if id == game.next_player_id %}
+												Play
+											{% else %}
+												View
+											{% endif %}
+										</div>
+									</div>
+									{% else %}
+									<span>
+										Waiting for {{game.creator_name}} to start the game
+									</span>
+									{% endif %}
+
+									
+								</div>
+                            </a>
+						</div>
+					</div>
 				  	{% endfor %}	
-					</tbody>
-                </table>
+                </div>
             {% else %}
                 <p>No available games</p>
             {% endif %}

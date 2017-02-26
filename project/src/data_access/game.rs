@@ -1,3 +1,4 @@
+use std::str;
 use model::game::Game as GameModel;
 use mysql;
 
@@ -18,9 +19,16 @@ impl Game {
     pub fn get_game(&self, id:u64) -> Option<GameModel> {
         info!("Retrieving game {}", id);
 
-        let result = self.pool.prep_exec(r"SELECT game.id, creator, name, started
+        let result = self.pool.prep_exec(r"SELECT game.id, 
+                                                creator, 
+                                                u1.name name, 
+                                                started, 
+                                                current_player, 
+                                                u2.name current_name
                                         FROM pusoy_dos.game
-                                        JOIN pusoy_dos.user ON creator = user.id
+                                            INNER JOIN pusoy_dos.user u1 ON creator = u1.id
+                                            LEFT JOIN pusoy_dos.round r ON game.id = r.game
+                                            LEFT JOIN pusoy_dos.user u2 ON r.current_player = u2.id
                                         WHERE game.id = :id", 
                                         params!{
                                             "id" => id
@@ -35,11 +43,28 @@ impl Game {
                     Some(game) => {
                         let mut game_data = game.unwrap();
                         let started:u8 = game_data.get("started").unwrap();
+
+						let current_name:Option<String> = match game_data.take("current_name") {
+							Some(mysql::Value::Bytes(a)) => Some(String::from(str::from_utf8(&a).unwrap())),
+							_				  => None
+							
+						};
+
+						let current_player_value = game_data.take("current_player");
+						let current_id:u64 = match current_player_value {
+							Some(mysql::Value::UInt(n)) => n,
+							Some(mysql::Value::Int(n)) => n as u64,
+							Some(mysql::Value::Float(n)) => n as u64,
+							_				         => 0
+						};
+
                         Some(GameModel{
                             id: game_data.get("id").unwrap(),
                             creator_id: game_data.get("creator").unwrap(),
                             creator_name: game_data.get("name").unwrap(),
-                            started: started == 1
+                            started: started == 1,
+                            next_player_name: current_name,
+                            next_player_id: Some(current_id)
                         })
                     },
                     _ => {
@@ -76,7 +101,9 @@ impl Game {
             id: new_game,
             creator_id: user, 
             creator_name: String::from("current user"),
-            started: false
+            started: false,
+            next_player_name: None,
+            next_player_id: None
          }
     }
 
@@ -97,13 +124,19 @@ impl Game {
     pub fn get_valid_games(&self, user:u64) -> Vec<GameModel> {
         info!("Getting games for user {}", user);
 
-        self.get_game_list(r"SELECT pusoy_dos.game.id, 
-                            creator,
-                            name,
-                            started
-                        FROM pusoy_dos.user_game
-                        JOIN pusoy_dos.game ON pusoy_dos.game.id = game
-                        JOIN pusoy_dos.user ON creator = user.id
+        self.get_game_list(r"SELECT game.id, 
+                                    creator, 
+                                    u1.name name, 
+                                    started, 
+                                    current_player, 
+                                    u2.name current_name,
+									user_game.user user,
+									complete
+							FROM pusoy_dos.user_game
+							JOIN pusoy_dos.game ON pusoy_dos.game.id = game
+							JOIN pusoy_dos.user u1 ON creator = u1.id
+							LEFT JOIN pusoy_dos.round r ON game.id = r.game
+							LEFT JOIN pusoy_dos.user u2 ON r.current_player = u2.id
                     WHERE user = :user AND complete = 0", user)
     }
 
@@ -112,7 +145,9 @@ impl Game {
         
         self.get_game_list(r"SELECT pusoy_dos.game.id, 
                             creator,
-                            name
+                            name,
+							'unknown' as current_name,
+							0 as current_id
                 FROM pusoy_dos.game 
                 JOIN pusoy_dos.user ON creator = user.id
                 LEFT JOIN pusoy_dos.user_game ON user_game.game = game.id AND user = :user
@@ -161,14 +196,31 @@ impl Game {
 
                 Ok(mut row) => {
                     let started:u8 = row.take("started").unwrap_or(0);
+
+					let current_name:Option<String> = match row.take("current_name") {
+						Some(mysql::Value::Bytes(a)) => Some(String::from(str::from_utf8(&a).unwrap())),
+						_				  => None
+						
+					};
+
+					let current_player_value = row.take("current_player");
+					let current_id:u64 = match current_player_value {
+						Some(mysql::Value::UInt(n)) => n,
+						Some(mysql::Value::Int(n)) => n as u64,
+						Some(mysql::Value::Float(n)) => n as u64,
+						_				         => 0
+					};
+
                     GameModel{
                         id: row.take("id").unwrap(),
                         creator_id: row.take("creator").unwrap(),
                         creator_name: row.take("name").unwrap(),
-                        started: started == 1
+                        started: started == 1,
+                        next_player_name: current_name,
+                        next_player_id: Some(current_id)
                     }
                 },
-                _ => GameModel{ id: 0, creator_id:0, creator_name:String::from(""), started: false }
+                _ => GameModel{ id: 0, creator_id:0, creator_name:String::from(""), started: false, next_player_name: None, next_player_id: None }
             }
         }).collect()
 

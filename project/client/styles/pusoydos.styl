@@ -3,6 +3,8 @@ cl-gray = #67727a
 cl-blue = #6991ac
 cl-light = #c3d7df
 cl-white = #f5f5f5
+cl-green = #89bd75
+cl-darkgreen = #2a8600
 
 cl-card-fore = #fff
 
@@ -80,11 +82,48 @@ a, a:visited
         h3
             margin-left 15px
         margin 30px 0
+    .my-game
+        margin-bottom 8px
+        .cta
+            margin-top 12px
+        .id
+            background-color cl-blue
+            color white
+            width 20px
+            height 20px
+            border-radius 10px
+            text-align center
+            small
+                padding-top 3px
+                display block
+    .game-container
+        padding 8px 12px
+        background-color cl-light
+        border-bottom 6px solid cl-blue
+        &.my-go
+            background-color cl-green
+            color cl-white
+            border-bottom 6px solid cl-darkgreen
+            .id
+                background-color cl-darkgreen
+            .action-button
+                background-color cl-darkgreen
+        @media (min-width: 48em)
+            margin 4px
+            height 82%
+
+    .summary
+        padding 12px
+        text-align center
 
  
 a.button-primary, .button-primary
     background-color cl-light
     color cl-blue
+
+.action-button
+    background-color cl-blue
+    color cl-white
 
 .facebook-color
     color cl-facebook

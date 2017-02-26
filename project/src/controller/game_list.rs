@@ -40,6 +40,7 @@ impl GameList {
         data.add("num_games", &num_games);
         data.add("open_games", &open_games);
         data.add("num_open_games", &num_open_games);
+		data.add("id", &id);
         data.add("logged_in", &true);
 
         self.tera.render("game_list.html", data)
