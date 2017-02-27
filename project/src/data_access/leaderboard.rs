@@ -21,7 +21,7 @@ impl Leaderboard {
 
         let result = self.pool.prep_exec(r"SELECT game.id, winners
                                         FROM pusoy_dos.game
-                                        JOIN pusoy_dos.round ON round.id = game.id
+                                        JOIN pusoy_dos.round ON round.game = game.id
                                         WHERE game.complete = 1", ()).unwrap(); 
 
         let mut map = HashMap::new();
