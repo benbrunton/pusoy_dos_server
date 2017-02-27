@@ -60,28 +60,21 @@
 
         <div class="open-games game-list">
             <h3><i class="fa fa-globe"></i>&nbsp;&nbsp;Public Games</h3>
+            <div class="list text-center">
             {% if num_open_games > 0 %}
-                <table class="pure-table pure-table-horizontal">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Owner</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
+                <div>
                         {% for game in open_games %}
-                            <tr>
-                                <td>{{ game.id }}</td>
-                                <td>{{ game.creator_name }}</td>
-                                <td><a href="/game/{{ game.id }}">join</a></td>
-                            </tr>
+                            <div class="pure-g open-game">
+                                <div class="pure-u-1-8 id"><small>{{ game.id }}</small></div>
+                                <div class="pure-u-5-8">{{ game.creator_name }}</div>
+                                <div class="pure-u-1-4"><a class="pure-button" href="/game/{{ game.id }}">join</a></div>
+                            </div>
                         {% endfor %}
-                    </tbody>
-                </table>
+                </div>
             {% else %}
-                <p>No available games</p>
+                <p><em>No available games</em></p>
             {% endif %}
+            </div>
         </div>
 
       <div class="game-menu">
