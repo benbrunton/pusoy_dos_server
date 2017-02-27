@@ -7,7 +7,8 @@ pub struct Game{
 	pub creator_name: String,
     pub started: bool,
     pub next_player_name: Option<String>,
-    pub next_player_id: Option<u64>
+    pub next_player_id: Option<u64>,
+    pub num_players: u64
 }
 // last - move
 // winners
@@ -39,6 +40,8 @@ impl Serialize for Game {
         try!(serializer.serialize_map_key(&mut state, "next_player_id"));
         try!(serializer.serialize_map_value(&mut state, 
                 self.next_player_id.unwrap_or(0)));
+        try!(serializer.serialize_map_key(&mut state, "num_players"));
+        try!(serializer.serialize_map_value(&mut state, self.num_players));
 
         serializer.serialize_map_end(state)
     }

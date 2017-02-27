@@ -24,9 +24,11 @@ impl Game {
                                                 u1.name name, 
                                                 started, 
                                                 current_player, 
-                                                u2.name current_name
+                                                u2.name current_name,
+                                                c num_players
                                         FROM pusoy_dos.game
                                             INNER JOIN pusoy_dos.user u1 ON creator = u1.id
+                                            LEFT JOIN (SELECT game, COUNT(*) c FROM pusoy_dos.user_game GROUP BY game) a ON a.game = game.id
                                             LEFT JOIN pusoy_dos.round r ON game.id = r.game
                                             LEFT JOIN pusoy_dos.user u2 ON r.current_player = u2.id
                                         WHERE game.id = :id", 
@@ -64,7 +66,8 @@ impl Game {
                             creator_name: game_data.get("name").unwrap(),
                             started: started == 1,
                             next_player_name: current_name,
-                            next_player_id: Some(current_id)
+                            next_player_id: Some(current_id),
+                            num_players: game_data.get("num_players").unwrap()
                         })
                     },
                     _ => {
@@ -103,7 +106,8 @@ impl Game {
             creator_name: String::from("current user"),
             started: false,
             next_player_name: None,
-            next_player_id: None
+            next_player_id: None,
+            num_players: 0
          }
     }
 
@@ -131,12 +135,14 @@ impl Game {
                                     current_player, 
                                     u2.name current_name,
 									user_game.user user,
-									complete
+									complete,
+                                    c num_players
 							FROM pusoy_dos.user_game
 							JOIN pusoy_dos.game ON pusoy_dos.game.id = game
 							JOIN pusoy_dos.user u1 ON creator = u1.id
 							LEFT JOIN pusoy_dos.round r ON game.id = r.game
 							LEFT JOIN pusoy_dos.user u2 ON r.current_player = u2.id
+                            LEFT JOIN (SELECT game, COUNT(*) c FROM pusoy_dos.user_game GROUP BY game) a ON a.game = game.id
                     WHERE user = :user AND complete = 0", user)
     }
 
@@ -147,9 +153,11 @@ impl Game {
                             creator,
                             name,
 							'unknown' as current_name,
-							0 as current_id
+							0 as current_id,
+                            c num_players
                 FROM pusoy_dos.game 
                 JOIN pusoy_dos.user ON creator = user.id
+                LEFT JOIN (SELECT game, COUNT(*) c FROM pusoy_dos.user_game GROUP BY game) a ON a.game = game.id
                 LEFT JOIN pusoy_dos.user_game ON user_game.game = game.id AND user = :user
                     WHERE user_game.user IS NULL AND started = 0", user)
 
@@ -217,10 +225,11 @@ impl Game {
                         creator_name: row.take("name").unwrap(),
                         started: started == 1,
                         next_player_name: current_name,
-                        next_player_id: Some(current_id)
+                        next_player_id: Some(current_id),
+                        num_players: row.take("num_players").unwrap_or(0)
                     }
                 },
-                _ => GameModel{ id: 0, creator_id:0, creator_name:String::from(""), started: false, next_player_name: None, next_player_id: None }
+                _ => GameModel{ id: 0, creator_id:0, creator_name:String::from(""), started: false, next_player_name: None, next_player_id: None, num_players: 0 }
             }
         }).collect()
 

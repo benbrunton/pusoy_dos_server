@@ -94,6 +94,10 @@ a:visited {
 .game-panel .my-game .cta {
   margin-top: 12px;
 }
+.game-panel .my-game .cta .action-button {
+  font-size: 0.7em;
+  float: right;
+}
 .game-panel .my-game .id {
   background-color: #6991ac;
   color: #fff;
@@ -101,6 +105,7 @@ a:visited {
   height: 20px;
   border-radius: 10px;
   text-align: center;
+  display: inline-block;
 }
 .game-panel .my-game .id small {
   padding-top: 1px;
@@ -132,9 +137,11 @@ a:visited {
   background-color: #effaff;
   color: #6991ac;
 }
+.game-panel .data {
+  text-align: right;
+}
 .game-panel .summary {
   padding: 12px;
-  text-align: center;
 }
 .game-panel .waiting {
   margin-top: 8px;
@@ -224,6 +231,9 @@ a.action-button,
   padding: 12px 0;
   margin: 0 10px;
   border-bottom: 1px solid #c3d7df;
+}
+.open-game .small-btn {
+  font-size: 0.7em;
 }
 .text-center {
   text-align: center;
