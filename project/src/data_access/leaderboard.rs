@@ -49,24 +49,28 @@ impl Leaderboard {
 
         let mut leaderboard = vec!();
         for (uid, count) in map.iter() {
-            let name = self.get_username(*uid).unwrap();
+            let (name, played) = self.get_user_details(*uid).unwrap();
+            let dec:f32 = *count as f32 / played as f32;
+            let perc = dec * 100.0;
 
-            leaderboard.push((uid, count, name));
+            leaderboard.push((uid, count, name, played, perc as u64));
         }
 
-        leaderboard.sort_by(|&(_, b1, _), &(_, b2, _)| b2.cmp(b1) );
+        leaderboard.sort_by(|&(_, _, _, _, e1), &(_, _, _, _, e2)| e2.cmp(&e1) );
 
 
         let mut sorted_lb = vec!();
         let mut count = 1;
 
-        for (a,b,c) in leaderboard {
+        for (a,b,c,d,e) in leaderboard {
 
             sorted_lb.push(LeaderboardModel{
                 id: *a as u64,
                 name: c,
                 position: count,
-                wins: *b as u64
+                wins: *b as u64,
+                played: d as u64,
+                win_percentage: e as u64
             });
 
             count += 1;
@@ -78,8 +82,11 @@ impl Leaderboard {
  
     }
 
-    fn get_username(&self, id:u16) -> Option<String> {
-        let mut result = self.pool.prep_exec(r"SELECT name FROM pusoy_dos.user
+    fn get_user_details(&self, id:u16) -> Option<(String, u64)> {
+        let mut result = self.pool.prep_exec(r"SELECT name, c FROM pusoy_dos.user
+                                            JOIN (SELECT user, COUNT(*) c 
+                                                FROM pusoy_dos.user_game GROUP BY user) a 
+                                                ON a.user = user.id
                                             WHERE id = :id",
                                             params!{
                                                 "id" => id
@@ -88,10 +95,12 @@ impl Leaderboard {
         let row = result.next();
         match row {
             Some(row) => {
-                let name = row.unwrap().get("name");
-                name
+                let mut r = row.unwrap();
+                let name = r.get("name").unwrap();
+                let played = r.get("c").unwrap();
+                Some((name, played))
             },
-            _ => Some(String::from("Unknown name"))
+            _ => None
         }
 
     }

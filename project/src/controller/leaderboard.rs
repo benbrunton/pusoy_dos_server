@@ -24,7 +24,7 @@ impl Leaderboard {
         }
     }
 
-    fn get_page(&self, id:u64) -> TeraResult<String> {
+    fn get_page(&self, _:u64) -> TeraResult<String> {
 
         let lb = self.leaderboard.get_leaderboard().unwrap();
         let mut data = Context::new(); 

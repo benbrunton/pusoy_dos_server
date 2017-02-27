@@ -5,7 +5,9 @@ pub struct Leaderboard{
     pub id: u64,
     pub name: String,
 	pub position: u64,
-    pub wins: u64
+    pub wins: u64,
+    pub played: u64,
+    pub win_percentage: u64
 }
 
 impl Serialize for Leaderboard {
@@ -37,6 +39,10 @@ impl Serialize for Leaderboard {
 		try!(serializer.serialize_map_value(&mut state, self.position));
         try!(serializer.serialize_map_key(&mut state, "wins"));
 		try!(serializer.serialize_map_value(&mut state, self.wins));
+        try!(serializer.serialize_map_key(&mut state, "played"));
+		try!(serializer.serialize_map_value(&mut state, self.played));
+        try!(serializer.serialize_map_key(&mut state, "win_percentage"));
+		try!(serializer.serialize_map_value(&mut state, self.win_percentage));
 
         serializer.serialize_map_end(state)
     }
