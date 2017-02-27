@@ -128,6 +128,10 @@ a:visited {
     height: 82%;
   }
 }
+.game-panel .game-container.wait {
+  background-color: #effaff;
+  color: #6991ac;
+}
 .game-panel .summary {
   padding: 12px;
   text-align: center;

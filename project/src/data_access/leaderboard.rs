@@ -33,10 +33,12 @@ impl Leaderboard {
                     let winners:Vec<u16> = json::decode(&winners_serialised)
                             .expect("unable to decode winners");
 
-                    let winner = winners[0];
+                    if winners.len() > 0 {
+                        let winner = winners[0];
 
-                    let count = map.entry(winner).or_insert(0);
-                     *count += 1;
+                        let count = map.entry(winner).or_insert(0);
+                         *count += 1;
+                    }
 
                 },
                 _ => ()
