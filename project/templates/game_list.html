@@ -23,7 +23,7 @@
 									{% if game.started %}
 									<span>
 										
-										{{game.next_player_name}}'s move
+										<strong>{{game.next_player_name}}</strong>'s move
 
 										{%if id == game.next_player_id %}
 											<i class="fa fa-thumbs-o-up"></i>
@@ -34,7 +34,7 @@
 
 									{% else %}
 									<span>
-										Waiting for {{game.creator_name}} to start the game
+										Waiting for <strong>{{game.creator_name}}</strong> to start the game
 									</span>
 									{% endif %}
 
