@@ -1,6 +1,7 @@
 use iron::prelude::*;
 use iron::middleware::Handler;
 use tera::{Tera, Context, TeraResult};
+use std::cmp::Ordering;
 
 use data_access::game::Game as GameData;
 use config::Config;
@@ -29,10 +30,20 @@ impl GameList {
         // todo - base context that can be configured with
         // common attributes - e.g. logged_in
         let mut data = Context::new(); 
-        let games = self.game_data.get_valid_games(id);
+        let mut games = self.game_data.get_valid_games(id);
         let num_games = games.len();
         let open_games = self.game_data.get_open_games(id);
         let num_open_games = open_games.len();
+
+        games.sort_by(|a, b| {
+            if a.next_player_id.unwrap() == id && b.next_player_id.unwrap() != id {
+                Ordering::Less
+            } else if b.next_player_id.unwrap() == id && a.next_player_id.unwrap() != id {
+                Ordering::Greater
+            } else {
+                Ordering::Equal
+            }
+        });
 
         info!("{:?}", games);
 
