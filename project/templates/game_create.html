@@ -2,11 +2,35 @@
 {% block title %}Games{% endblock title %}
 {% block content %}
 
-    <h2>New Game</h2>
-    <form action="/new-game" method="POST">
-    
-        <button class="pure-button" type="submit">Create</a>
-    </form>
+    <div class="new-game-form">
+        <h2>New Game</h2>
+        <form action="/new-game" method="POST">
+
+            <div class="form-group">
+                <label>Max Players:
+                    <select name="max-players" disabled>
+                        <option value="-1">Unlimited</option>
+                    </select>
+                </label><sup>*</sup>
+
+            </div>
+
+            <div class="form-group">
+                <label>Decks:
+                    <input name="decks" disabled value="1" type="number">
+                </label><sup>*</sup>
+            </div>
+
+            <div class="button-section"> 
+                <button class="new-game-btn pure-button" type="submit">Create</a>
+            </div>
+        </form>
+
+        <div>
+           <p><sup>*</sup><em>coming soon</em></p>
+        </div>
+
+    </div>
 
 {% endblock content %}
 

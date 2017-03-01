@@ -247,8 +247,26 @@ a.action-button,
   padding: 10px;
   background-color: #f5f5f5;
 }
+.new-game-form form {
+  max-width: 350px;
+  padding: 20px;
+  margin: 0 auto;
+  border: 1px solid #c3d7df;
+}
+.your-game,
+.pregame-joined,
+.new-game-form {
+  margin: 0 20px;
+}
 .not-loaded .hide-on-load {
   display: none;
+}
+.button-section {
+  margin-top: 18px;
+  text-align: center;
+}
+.form-group {
+  padding: 12px 0;
 }
 .leaderboard {
   width: 100%;

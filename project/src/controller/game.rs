@@ -65,6 +65,7 @@ impl Game {
                 info!("genuine game page being rendered");
                 data.add("id", &game_model.id);
                 data.add("num_users", &users.len());
+                data.add("users", &users);
             },
             None => ()
         };

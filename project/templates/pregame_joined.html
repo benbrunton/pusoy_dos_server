@@ -1,6 +1,24 @@
 {% extends "base.html" %}
 {% block title %}Welcome{% endblock title %}
 {% block content %}
-<h2>Joined</h2>
-<p>Waiting for game to begin...</p>
+<div class="pregame-joined">
+    <h2>Joined</h2>
+    <p>Waiting for game to begin...</p>
+
+
+        <div>
+            <p><strong>Players:</strong> {{ num_users }} </p>
+        </div>
+
+        <div class="player-list">
+
+            {% for user in users %}
+                <div><i class="fa fa-user"></i>
+                    {{ user.name }}
+                </div>
+
+            {% endfor %}
+
+        </div>
+</div>
 {% endblock content %}
