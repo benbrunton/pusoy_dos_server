@@ -15,7 +15,8 @@ var playerTemplate = `<div class="user" :class="player.next ? 'next' : ''">
                             v-if="!player.stillIn" class="name">{{player.name}}</strike>
                         <span v-else :class="player.loggedIn ? 'logged-in-player' : ''" 
                                 class="name">{{ player.name }} 
-                                <small>( {{player.cardCount }} )</small></span>
+                                </span>
+                        <small>( {{player.cardCount }} )</small>
                         <span class="icons">
                             <span v-if="player.winner">
                                 <i class="win-trophy fa fa-trophy"></i>
