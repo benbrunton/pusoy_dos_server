@@ -168,6 +168,7 @@ a.action-button,
 }
 .inplay .user {
   padding: 5px 5px;
+  padding-left: 8px;
   color: #c3d7df;
   background-color: #6991ac;
   border-left: 6px solid #d75c37;
@@ -178,8 +179,36 @@ a.action-button,
   border-left: 6px solid #6991ac;
   color: #f5f5f5;
 }
+.inplay h3 {
+  padding: 12px;
+  background-color: #6991ac;
+  color: #f5f5f5;
+  margin: 10px -10px;
+  border-bottom: 6px solid #d75c37;
+}
 .inplay .player-list {
   margin-bottom: 20px;
+}
+.inplay .table-header {
+  background-color: #c3d7df;
+  color: #6991ac;
+  border-top: 6px solid #d75c37;
+  margin: 15px -10px 10px;
+}
+.inplay .table-header h4 {
+  padding: 12px;
+  margin: 0;
+}
+.inplay .hand-header,
+.inplay .move-header {
+  background-color: #c3d7df;
+  color: #6991ac;
+  margin: 15px -10px 10px;
+}
+.inplay .hand-header h4,
+.inplay .move-header h4 {
+  padding: 12px;
+  margin: 0;
 }
 .inplay .my-cards-container {
   overflow-x: auto;

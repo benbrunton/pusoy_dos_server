@@ -2,7 +2,7 @@
 {% block title %}Game {{ id }}{% endblock title %}
 {% block content %}
 <div id="inplay" class="inplay not-loaded">
-    <h2>Game {{id}}</h2>    
+    <h3>Game {{id}}</h3> 
     
     <div>
         <div class="player-list">
@@ -15,11 +15,13 @@
             <status v-bind:players="playerList"></status>
         </div>
 
-        <h4>
-            <span v-if="lastMove.length > 0">Move to beat</span>
-            <span v-else>New Move</span>
-            <span v-if="reversed" class="reversed">(order reversed)</span>
-        </h4>
+        <div class="table-header">
+            <h4>
+                <span v-if="lastMove.length > 0">Move to beat</span>
+                <span v-else>Empty Table</span>
+                <span v-if="reversed" class="reversed">(order reversed)</span>
+            </h4>
+        </div>
 
         <div class="last-move card-set" v-if="lastMove.length > 0">
             <table-card v-for="card in lastMove" v-bind:card="card"></table-card>
@@ -29,7 +31,9 @@
         </div>
      
         <div v-if="myGo" class="move">
-            <h4>my move</h4>
+            <div class="move-header">
+                <h4>My Move</h4>
+            </div>
             <h5 class="text-center move-placeholder" v-if="selectedCards.length < 1">
                 <i class="fa fa-circle-thin"></i>
             </h5>
@@ -45,7 +49,9 @@
 
 
         <div>
-            <h4>my hand</h4>
+            <div class="hand-header">
+                <h4>My Hand</h4>
+            </div>
             <div class="my-cards-container">
                 <div class="my-cards card-set">
                     <player-card v-for="card in myCards" v-bind:card="card"></player-card>
