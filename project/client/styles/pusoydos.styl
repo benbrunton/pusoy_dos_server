@@ -153,9 +153,21 @@ a.action-button, .action-button
 
 .player-list
     .logged-in-player
-        font-weight bold
+        font-style italic
 
 .inplay
+    .user
+        padding 5px 5px
+        color cl-light
+        background-color cl-blue
+        border-left 6px solid cl-red
+        margin-bottom 6px
+        &.next
+            background-color cl-green
+            border-left 6px solid cl-blue
+            color cl-white
+    .player-list
+        margin-bottom 20px
     padding 0 10px
     overflow-x hidden
     .my-cards-container
@@ -205,6 +217,8 @@ a.action-button, .action-button
     .win-trophy
         margin-left 5px
         color gold
+    .next-icon
+        color cl-darkgreen
 
 .open-game
     padding 12px 0
@@ -232,7 +246,7 @@ a.action-button, .action-button
     margin 0 auto
     border 1px solid cl-light
 
-.your-game, .pregame-joined, .new-game-form
+.game-lobby
     margin 0 20px
 
 .not-loaded .hide-on-load

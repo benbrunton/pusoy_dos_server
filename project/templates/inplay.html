@@ -2,13 +2,12 @@
 {% block title %}Game {{ id }}{% endblock title %}
 {% block content %}
 <div id="inplay" class="inplay not-loaded">
-    
+    <h2>Game {{id}}</h2>    
     
     <div>
-        <h4><i class="fa fa-users"></i></h4>
-        <ul class="player-list">
+        <div class="player-list">
             <player v-for="player in playerList" v-bind:player="player"></player>
-        </ul>
+        </div>
 
 
 

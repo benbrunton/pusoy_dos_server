@@ -160,11 +160,26 @@ a.action-button,
   color: #3b5998;
 }
 .player-list .logged-in-player {
-  font-weight: bold;
+  font-style: italic;
 }
 .inplay {
   padding: 0 10px;
   overflow-x: hidden;
+}
+.inplay .user {
+  padding: 5px 5px;
+  color: #c3d7df;
+  background-color: #6991ac;
+  border-left: 6px solid #d75c37;
+  margin-bottom: 6px;
+}
+.inplay .user.next {
+  background-color: #89bd75;
+  border-left: 6px solid #6991ac;
+  color: #f5f5f5;
+}
+.inplay .player-list {
+  margin-bottom: 20px;
 }
 .inplay .my-cards-container {
   overflow-x: auto;
@@ -227,6 +242,9 @@ a.action-button,
   margin-left: 5px;
   color: #ffd700;
 }
+.inplay .next-icon {
+  color: #2a8600;
+}
 .open-game {
   padding: 12px 0;
   margin: 0 10px;
@@ -253,9 +271,7 @@ a.action-button,
   margin: 0 auto;
   border: 1px solid #c3d7df;
 }
-.your-game,
-.pregame-joined,
-.new-game-form {
+.game-lobby {
   margin: 0 20px;
 }
 .not-loaded .hide-on-load {

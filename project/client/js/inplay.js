@@ -1,13 +1,27 @@
 console.log('Pusoy Dos:: in play');
 
-var playerTemplate = '<li>' +
-                        '<strike :class="player.loggedIn ? \'logged-in-player\' : \'\'" v-if="!player.stillIn" class="name">{{player.name}}</strike>' +
-                        '<span v-else :class="player.loggedIn ? \'logged-in-player\' : \'\'" class="name">{{ player.name }} <small>( {{player.cardCount }} )</small></span>' +
-                        '<span class="icons">' +
-                            '<span v-if="player.winner"><i class="win-trophy fa fa-trophy"></i></span>' +
-                            '<span v-if="player.next">*</span></li>' +
-                        '</span>' +
-                      '</li>';
+var playerTemplate = `<div class="user" :class="player.next ? 'next' : ''">
+                        <span v-if="player.next" class="next-icon">
+                            <i class="fa fa-arrow-circle-right"></i>
+                        </span>
+                        <span v-else-if="player.loggedIn">
+                            <i class="fa fa-user-circle-o"></i>
+                        </span>
+                        <span v-else><i class="fa fa-user"></i></span>
+                        <span>&nbsp;</span>
+                        <strike 
+                            :class="player.loggedIn ? 
+                                'logged-in-player' : ''" 
+                            v-if="!player.stillIn" class="name">{{player.name}}</strike>
+                        <span v-else :class="player.loggedIn ? 'logged-in-player' : ''" 
+                                class="name">{{ player.name }} 
+                                <small>( {{player.cardCount }} )</small></span>
+                        <span class="icons">
+                            <span v-if="player.winner">
+                                <i class="win-trophy fa fa-trophy"></i>
+                            </span>
+                        </span>
+                      </div>`;
 
 Vue.component('player', {
     props: ['player'],
@@ -55,7 +69,7 @@ Vue.component('player-card', {
 
 Vue.component('status', {
     props: ['players'],
-    template:'<div class="text-center"><div v-if="hasWon">You Won!</div><span v-if="userTurn">your turn</span><span v-else>Waiting for {{nextUser}}</span>',
+    template:'<div class="text-center"><div v-if="hasWon">You Won!</div><span v-if="userTurn">your turn</span><span v-else>Waiting for <strong>{{nextUser}}</strong></span>',
     computed: {
         hasWon: function(){
             var hasWon = false;

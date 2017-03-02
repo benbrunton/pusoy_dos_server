@@ -1,12 +1,30 @@
 {% extends "base.html" %}
 {% block title %}Game {{ id }}{% endblock title %}
 {% block content %}
+<div class="game-lobby">
 
+    <h2>Game {{id}} - accepting players </h2>
 
-<h2>Pregame not joined</h2>
+    <div>
+        <p><strong>Players:</strong> {{ num_users }} </p>
+    </div>
 
-<form action="/game/{{ id }}/join" method="POST">
-    <input type="submit" value="Join">
-</form>
+    <div class="player-list">
+
+        {% for user in users %}
+            <div><i class="fa fa-user"></i>
+                {{ user.name }}
+            </div>
+
+        {% endfor %}
+
+    </div>
+
+    <div class="button-section">
+        <form action="/game/{{ id }}/join" method="POST">
+            <input type="submit" value="Join">
+        </form>
+    </div>
+</div>
 
 {% endblock content %}
