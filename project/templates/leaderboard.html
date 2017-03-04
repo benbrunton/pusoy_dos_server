@@ -9,9 +9,10 @@
         <tr>
             <th>#</th>
             <th>Name</th>
-            <th>W</th>
             <th>P</th>
-            <th>%</th>
+            <th>W</th>
+            <th>L</th>
+            <th>rating<th>
         </tr>
     </thead>
 
@@ -20,9 +21,10 @@
 						<tr>
 							<td>{{ user.position }}</td>
 							<td>{{ user.name }}</td>
-                            <td>{{ user.wins }}</td>
                             <td>{{ user.played }}</td>
-                            <td>{{ user.win_percentage }}%</td>
+                            <td>{{ user.wins }}</td>
+                            <td>{{ user.losses }}</td>
+                            <td>{{ user.rating }}</td>
 						</tr>
 				  	{% endfor %}	
 

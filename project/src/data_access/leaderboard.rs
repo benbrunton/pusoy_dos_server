@@ -2,6 +2,10 @@ use model::leaderboard::Leaderboard as LeaderboardModel;
 use mysql;
 use rustc_serialize::json;
 use std::collections::HashMap;
+use hyper::client::Client;
+use rustc_serialize::json::Json;
+use std::collections::BTreeMap;
+use std::io::Read;
 
 #[derive(Clone)]
 pub struct Leaderboard{
@@ -19,89 +23,55 @@ impl Leaderboard {
 
     pub fn get_leaderboard(&self) -> Option<Vec<LeaderboardModel>> {
 
-        let result = self.pool.prep_exec(r"SELECT game.id, winners
-                                        FROM pusoy_dos.game
-                                        JOIN pusoy_dos.round ON round.game = game.id
-                                        WHERE game.complete = 1", ()).unwrap(); 
+        let leaderboard = self.fetch_json(String::from("http://localhost:8080/stats/leaderboard/")).unwrap();
 
-        let mut map = HashMap::new();
-        for row in result {
-            match row{
-                Ok(mut game_data) => {
-                    let winners_serialised = game_data.take::<String, &str>("winners")
-                            .expect("unable to get winners from db");
-                    let winners:Vec<u16> = json::decode(&winners_serialised)
-                            .expect("unable to decode winners");
-
-                    if winners.len() > 0 {
-                        let winner = winners[0];
-
-                        let count = map.entry(winner).or_insert(0);
-                         *count += 1;
-                    }
-
-                },
-                _ => ()
+        let mut pos = 0;
+        let model_list = leaderboard.iter().map(|ref x| {
+            let y = x.as_object().unwrap();
+            pos = pos + 1;
+            LeaderboardModel{
+                name: String::from(y.get("name").unwrap()
+                        .as_string().unwrap_or("unknown")),
+                position: pos,
+                wins: y.get("wins").unwrap()
+                        .as_u64().unwrap_or(0),
+                played: y.get("played").unwrap()
+                        .as_u64().unwrap_or(0),
+                losses: y.get("losses").unwrap()
+                        .as_u64().unwrap_or(0),
+                rating: y.get("rating").unwrap()
+                        .as_f64().unwrap_or(0.0)
             }
-        }
-
-        info!("{:?}", map);
-
-        let mut leaderboard = vec!();
-        for (uid, count) in map.iter() {
-            let (name, played) = self.get_user_details(*uid).unwrap();
-            let dec:f32 = *count as f32 / played as f32;
-            let perc = dec * 100.0;
-
-            leaderboard.push((uid, count, name, played, perc as u64));
-        }
-
-        leaderboard.sort_by(|&(_, _, _, _, e1), &(_, _, _, _, e2)| e2.cmp(&e1) );
+        }).collect();
 
 
-        let mut sorted_lb = vec!();
-        let mut count = 1;
-
-        for (a,b,c,d,e) in leaderboard {
-
-            sorted_lb.push(LeaderboardModel{
-                id: *a as u64,
-                name: c,
-                position: count,
-                wins: *b as u64,
-                played: d as u64,
-                win_percentage: e as u64
-            });
-
-            count += 1;
-
-        }
-
-        Some(sorted_lb)
-
- 
+        Some(model_list)
     }
 
-    fn get_user_details(&self, id:u16) -> Option<(String, u64)> {
-        let mut result = self.pool.prep_exec(r"SELECT name, c FROM pusoy_dos.user
-                                            JOIN (SELECT user, COUNT(*) c 
-                                                FROM pusoy_dos.user_game GROUP BY user) a 
-                                                ON a.user = user.id
-                                            WHERE id = :id",
-                                            params!{
-                                                "id" => id
-                                            }).unwrap();
+    fn fetch_json(&self, url:String) -> Result<Vec<Json>, String>{
 
-        let row = result.next();
-        match row {
-            Some(row) => {
-                let mut r = row.unwrap();
-                let name = r.get("name").unwrap();
-                let played = r.get("c").unwrap();
-                Some((name, played))
+        let client = Client::new();
+
+        info!("requesting json from : {:?}", url);
+
+        let res = client.get(&url).send();
+
+        match res {
+            Err(e) => {
+                let err = format!("Error requesting json: {:?}", e);
+                warn!("{}", &err);
+                return Err(err.clone())
             },
-            _ => None
+            _ => ()
         }
+
+        let mut r = res.unwrap();
+        let mut buffer = String::new();
+        let _ = r.read_to_string(&mut buffer);
+
+        let data = Json::from_str(&buffer).unwrap();
+
+        Ok(data.as_array().unwrap().clone())
 
     }
 
