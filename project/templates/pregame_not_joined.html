@@ -22,9 +22,15 @@
 
     <div class="button-section">
         <form action="/game/{{ id }}/join" method="POST">
-            <input type="submit" value="Join">
+            <input id="js-join-game" type="submit" value="Join">
         </form>
     </div>
 </div>
+
+<script>
+document.getElementById("js-join-game").addEventListener("click", function(){
+    ga('send', 'event', 'Game', 'join');
+}, false);
+</script>
 
 {% endblock content %}

@@ -20,8 +20,10 @@ A multiplayer [Pusoy Dos](https://en.wikipedia.org/wiki/Pusoy_dos) server writte
 - [docker](https://www.docker.com/)
 
 ## Todo
+- [ ] - Prevent double join of games
 - [ ] - Fix datetimes in DB
 - [ ] - Card count Joker bug
+- [ ] - Additional stats
 - [ ] - Push notifications
 - [ ] - Round history ( moved, passed )
 - [ ] - Nice Move! even when move is invalid

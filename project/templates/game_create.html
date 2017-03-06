@@ -22,7 +22,7 @@
             </div>
 
             <div class="button-section"> 
-                <button class="new-game-btn pure-button" type="submit">Create</a>
+                <button id="js-create-game" class="new-game-btn pure-button" type="submit">Create</a>
             </div>
         </form>
 
@@ -31,6 +31,13 @@
         </div>
 
     </div>
+
+<script>
+document.getElementById("js-create-game").addEventListener("click", function(){
+    ga('send', 'event', 'Game', 'create');
+}, false);
+</script>
+
 
 {% endblock content %}
 
