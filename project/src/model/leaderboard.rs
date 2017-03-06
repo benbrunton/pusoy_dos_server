@@ -40,7 +40,7 @@ impl Serialize for Leaderboard {
         try!(serializer.serialize_map_key(&mut state, "played"));
 		try!(serializer.serialize_map_value(&mut state, self.played));
         try!(serializer.serialize_map_key(&mut state, "losses"));
-		try!(serializer.serialize_map_value(&mut state, self.played));
+		try!(serializer.serialize_map_value(&mut state, self.losses));
 
         try!(serializer.serialize_map_key(&mut state, "rating"));
 		try!(serializer.serialize_map_value(&mut state, self.rating));
