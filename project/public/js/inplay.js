@@ -131,6 +131,13 @@ Vue.component('submit-move', {
     methods: {
         submit: function(){
             this.submitted = true;
+
+            try{
+                ga('send', 'event', 'Game', 'take-move');
+            } catch (e) {
+                console.log(e);
+             }
+
             var o = this;
             post('/api/v1/submit-move/' + pd.gameId, app.selectedCards,
                 function(result){
