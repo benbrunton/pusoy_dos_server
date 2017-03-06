@@ -20,7 +20,6 @@ A multiplayer [Pusoy Dos](https://en.wikipedia.org/wiki/Pusoy_dos) server writte
 - [docker](https://www.docker.com/)
 
 ## Todo
-- [ ] - Prevent double join of games
 - [ ] - Fix datetimes in DB
 - [ ] - Card count Joker bug
 - [ ] - Additional stats
@@ -45,8 +44,6 @@ A multiplayer [Pusoy Dos](https://en.wikipedia.org/wiki/Pusoy_dos) server writte
 - [ ] - deployment
 - [ ] - display datetime of interactions
 - [ ] - error pages
-
-## Backlog
 - [ ] - private games
 - [ ] - Social sharing features
 - [ ] - client side move validation
