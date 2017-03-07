@@ -33,7 +33,7 @@ impl User {
                                             FROM pusoy_dos.user_game
                                             JOIN pusoy_dos.user on pusoy_dos.user_game.user = user.id
                                             WHERE pusoy_dos.user_game.game = :id
-                                            ORDER BY user.id", params!{
+                                            ORDER BY user_game.id", params!{
                                                 "id" => id
                                             }).unwrap();
 
