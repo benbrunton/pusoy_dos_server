@@ -20,6 +20,10 @@ A multiplayer [Pusoy Dos](https://en.wikipedia.org/wiki/Pusoy_dos) server writte
 - [docker](https://www.docker.com/)
 
 ## Todo
+- [ ] - Rotation order bug
+- [ ] - Event Log
+- [ ] - About page
+----
 - [ ] - Fix datetimes in DB
 - [ ] - Card count Joker bug
 - [ ] - Additional stats

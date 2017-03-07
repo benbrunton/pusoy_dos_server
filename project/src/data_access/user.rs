@@ -32,7 +32,8 @@ impl User {
         let result = self.pool.prep_exec(r"SELECT user.id, user.name, user.provider_type, user.provider_id, user.creation_date
                                             FROM pusoy_dos.user_game
                                             JOIN pusoy_dos.user on pusoy_dos.user_game.user = user.id
-                                            WHERE pusoy_dos.user_game.game = :id", params!{
+                                            WHERE pusoy_dos.user_game.game = :id
+                                            ORDER BY user.id", params!{
                                                 "id" => id
                                             }).unwrap();
 
