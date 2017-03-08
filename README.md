@@ -26,38 +26,40 @@ A multiplayer [Pusoy Dos](https://en.wikipedia.org/wiki/Pusoy_dos) server writte
 ----
 - [ ] - Fix datetimes in DB
 - [ ] - Card count Joker bug
-- [ ] - Additional stats
+- [ ] - Leading player
+- [ ] - CSRF protection
+- [ ] - VM security audit
+----
+- [ ] - Private games
+- [ ] - Private leaderboard
+- [ ] - additional auth providers - { Google, Twitter, Github, Reddit }
+----
 - [ ] - Push notifications
+- [ ] - move timeout (auto-pass)
+- [ ] - multiple decks
+- [ ] - Social sharing features
 - [ ] - Round history ( moved, passed )
 - [ ] - Nice Move! even when move is invalid
+- [ ] - Additional stats
 - [ ] - Redirect to homepage when user logged out
 - [ ] - End game screens
-- [ ] - Nice front page & additional info
 - [ ] - improved game menus
  - [ ] - game lobby (including notifications etc)
  - [ ] - Join game
  - [ ] - create game
  - [ ] - Joker modal
 - [ ] - game rule options
-- [ ] - multiple decks
-- [ ] - additional auth providers - { Google, Twitter, Github, Reddit }
 - [ ] - Store sessions in redis
-- [ ] - Additional performance audit and improvements
 - [x] - real time updates
-- [ ] - Tighten up security around all endpoints { permissions middleware? }
 - [ ] - deployment
 - [ ] - display datetime of interactions
 - [ ] - error pages
-- [ ] - private games
-- [ ] - Social sharing features
 - [ ] - client side move validation
 - [ ] - help with moves
 - [ ] - user profiles
-- [ ] - move timeout (auto-pass)
 - [ ] - mobile apps
 - [ ] - CLI application
 - [ ] - Changelog from github
-- [ ] - Give desktop some attention
 - [ ] - Integrations (slack?)
 
 ## Contributing

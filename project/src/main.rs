@@ -46,7 +46,8 @@ use controller::{
         inplay,
         game_move,
         post_game,
-        leaderboard
+        leaderboard,
+        about
     };
 use config::Config;
 use util::session::SessionMiddleware;
@@ -88,6 +89,7 @@ fn main() {
     let logout_controller = logout::LogoutController::new(&config);
     let game_create_controller = game_create::GameCreate::new(&config, game_data.clone());
     let new_game_controller = new_game::NewGame::new(&TERA);
+    let about = about::About::new(&TERA);
     let game_controller = game::Game::new(&config, &TERA, game_data.clone(), user_data.clone());
     let game_join = game_join::GameJoin::new(&config, game_data.clone());
     let begin_game = begin_game::BeginGame::new(&config, game_data.clone(), round_data.clone());
@@ -109,6 +111,7 @@ fn main() {
     router.get("/play/:id", inplay_controller, "inplay");
     router.post("/play/:id", move_controller, "move");
     router.get("/leaderboard", leaderboard, "leaderboard");
+    router.get("/about", about, "about");
  
     match config.get("mode") {
         Some(mode) => {
