@@ -21,8 +21,6 @@ A multiplayer [Pusoy Dos](https://en.wikipedia.org/wiki/Pusoy_dos) server writte
 
 ## Todo
 - [ ] - Event Log
-- [ ] - About page
-- [ ] - Leaderboard bug
 ----
 - [ ] - Fix datetimes in DB
 - [ ] - Card count Joker bug
