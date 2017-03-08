@@ -184,7 +184,8 @@ impl Game {
 
         let result = self.pool.prep_exec(r"SELECT user
                             FROM pusoy_dos.user_game
-                            WHERE game = :game",
+                            WHERE game = :game
+                            ORDER BY user_game.id",
                             params!{
                                 "game" => id
                             }).unwrap();
