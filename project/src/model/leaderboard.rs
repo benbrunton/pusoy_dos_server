@@ -29,6 +29,7 @@ impl Serialize for Leaderboard {
         try!(serializer.serialize_map_value(&mut state, started));
 */
 
+        let rating = format!("{:.2}", self.rating);
 
         let mut state = try!(serializer.serialize_map(Some(2)));
         try!(serializer.serialize_map_key(&mut state, "name"));
@@ -43,7 +44,7 @@ impl Serialize for Leaderboard {
 		try!(serializer.serialize_map_value(&mut state, self.losses));
 
         try!(serializer.serialize_map_key(&mut state, "rating"));
-		try!(serializer.serialize_map_value(&mut state, self.rating));
+		try!(serializer.serialize_map_value(&mut state, rating));
 
         serializer.serialize_map_end(state)
     }
