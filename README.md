@@ -19,19 +19,23 @@ A multiplayer [Pusoy Dos](https://en.wikipedia.org/wiki/Pusoy_dos) server writte
 - [mysql](https://www.mysql.com/)
 - [docker](https://www.docker.com/)
 
-## Todo
+## Roadmap
+
 - [ ] - Event Log
-----
 - [ ] - Fix datetimes in DB
 - [ ] - Card count Joker bug
 - [ ] - Leading player
 - [ ] - CSRF protection
 - [ ] - VM security audit
-----
+
+
+
 - [ ] - Private games
 - [ ] - Private leaderboard
 - [ ] - additional auth providers - { Google, Twitter, Github, Reddit }
-----
+
+
+
 - [ ] - Push notifications
 - [ ] - move timeout (auto-pass)
 - [ ] - multiple decks
