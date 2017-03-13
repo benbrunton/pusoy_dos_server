@@ -20,6 +20,7 @@ extern crate mount;
 extern crate bodyparser;
 extern crate time;
 extern crate rand;
+extern crate chrono;
 
 #[macro_use] extern crate pusoy_dos;
 
@@ -80,6 +81,7 @@ fn main() {
     let game_data = data_access::game::Game::new(pool.clone());
     let round_data = data_access::round::Round::new(pool.clone());
     let leaderboard_data = data_access::leaderboard::Leaderboard::new(pool.clone());
+    let event_data = data_access::event::Event::new(pool.clone());
 
     let mut router = Router::new();
 
@@ -124,7 +126,10 @@ fn main() {
 
     let (logger_before, logger_after) = Logger::new(None);
 
-    let api_router = api::router::new(round_data.clone(), user_data.clone(), game_data.clone());
+    let api_router = api::router::new(round_data.clone(), 
+                                    user_data.clone(), 
+                                    game_data.clone(), 
+                                    event_data.clone());
 
     let mut page_chain = Chain::new(router);
     let mut api_chain = Chain::new(api_router);

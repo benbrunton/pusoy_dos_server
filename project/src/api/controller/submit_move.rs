@@ -13,6 +13,7 @@ use bodyparser;
 
 use data_access::round::Round as RoundData;
 use data_access::game::Game as GameData;
+use data_access::event::Event as EventData;
 
 use pusoy_dos::game::game::Game;
 use pusoy_dos::cards::types::*;
@@ -23,15 +24,17 @@ use pusoy_dos::cards::card::{ Card, PlayerCard };
 #[derive(Clone)]
 pub struct SubmitMove{
     round_data: RoundData,
-    game_data: GameData
+    game_data: GameData,
+    event_data: EventData
 }
 
 impl SubmitMove {
 
-    pub fn new(round_data: RoundData, game_data: GameData) -> SubmitMove{
+    pub fn new(round_data: RoundData, game_data: GameData, event_data: EventData) -> SubmitMove{
         SubmitMove{
             round_data: round_data,
-            game_data: game_data
+            game_data: game_data,
+            event_data: event_data
         }
     }
 
@@ -68,6 +71,8 @@ impl SubmitMove {
             Ok(updated_game) => {
                 info!("valid move - updating game");
                 self.round_data.update_round(id, updated_game.clone());
+                let event_descr = format!("user {} played {:?}", user_id, cards.clone());
+                self.event_data.insert_game_event(id, event_descr);
 
                 let updated_round = updated_game.round.export();
                 if updated_round.players.len() < 2 {

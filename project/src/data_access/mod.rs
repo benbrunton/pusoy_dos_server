@@ -3,3 +3,4 @@ pub mod session;
 pub mod game;
 pub mod round;
 pub mod leaderboard;
+pub mod event;
