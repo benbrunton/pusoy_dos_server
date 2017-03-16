@@ -50,6 +50,13 @@ pub fn convert_move_to_display_cards(last_move:Move) -> Vec<DCard> {
     
 }
 
+pub fn convert_vec_to_display_cards(card_vec:Vec<PlayerCard>) -> Vec<DCard> {
+    card_vec.iter().map(|ref c|{
+        let card = c.to_owned();
+        DCard(card)
+    }).collect()
+}
+
 fn trick_to_cards(trick:Trick) -> Vec<DCard> {
     let c = trick.cards;
     vec!(DCard(PlayerCard::Card(c[0])),

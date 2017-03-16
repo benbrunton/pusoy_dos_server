@@ -71,8 +71,9 @@ impl SubmitMove {
             Ok(updated_game) => {
                 info!("valid move - updating game");
                 self.round_data.update_round(id, updated_game.clone());
-                let event_descr = format!("user {} played {:?}", user_id, cards.clone());
-                self.event_data.insert_game_event(id, event_descr);
+                let played_cards = helpers::convert_vec_to_display_cards(cards.clone());
+                let event_descr = serde_json::to_string(&played_cards).unwrap();
+                self.event_data.insert_game_event(user_id, id, event_descr);
 
                 let updated_round = updated_game.round.export();
                 if updated_round.players.len() < 2 {

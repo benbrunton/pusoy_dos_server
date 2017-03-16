@@ -19,7 +19,7 @@ docker-rm:
 	docker rm pd_server
 
 sh:
-	docker exec -it pd_server sh
+	docker exec -it pd_server bash
 
 edit:
 	vim Makefile
