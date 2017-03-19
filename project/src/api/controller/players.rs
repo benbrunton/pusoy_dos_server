@@ -51,6 +51,7 @@ impl Players {
         let next_player_id = next_player.get_id();
         let reversed = round.reversed;
 
+        info!("getting game events");
         let events = self.event_data.get_game_events(game_id);
 
         let players = self.user_data.get_users_by_game(game_id);

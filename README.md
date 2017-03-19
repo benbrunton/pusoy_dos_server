@@ -21,7 +21,6 @@ A multiplayer [Pusoy Dos](https://en.wikipedia.org/wiki/Pusoy_dos) server writte
 
 ## Roadmap
 
-- [ ] - Event Log
 - [ ] - Fix datetimes in DB
 - [ ] - Card count Joker bug
 - [ ] - Leading player

@@ -35,6 +35,7 @@ impl Event {
     }
 
     pub fn get_game_events(&self, game: u64) -> Vec<EventModel> {
+        info!("getting events for game: {}", game);
         let event_query_result = self.pool.prep_exec(r"
                 SELECT event.id, 
                         user.name user_name, 
@@ -52,29 +53,40 @@ impl Event {
                 "game" => game
             }).expect("error accessing event table");
 
+        info!("unwrapping query result");
         event_query_result.map(|result| {
 
             match result {
                 Ok(mut row) => {
 
                     let user_name = row.take("user_name").unwrap_or(String::from("Unknown user"));
+                    debug!("getting user id");
                     let user_id = row.take("user_id").unwrap_or(0);
+                    debug!("getting provider type");
                     let provider_type = row.take("user_type")
                                             .unwrap_or(String::from("unknown"));
-                    let provider_id = row.take("user_prov_id").unwrap_or(0);
+                    debug!("getting provider id");
+                    let provider_id:String = row.take("user_prov_id").expect("provider_id not retrieved from db");
 
+                    debug!("getting timespec");
                     let user_ts: Timespec = row.take("user_date").unwrap();
+                    debug!("creating datetime");
                     let user_creation_date: DateTime<UTC> = DateTime::from_utc(
                             NaiveDateTime::from_timestamp(user_ts.sec, user_ts.nsec as u32),
                             UTC);
 
+                    debug!("getting message");
 				    let body = row.take("body").unwrap_or(String::from(""));
 
+                    debug!("creating timespec");
                     let ts: Timespec = row.take("creation_date").unwrap();
+                    
+                    debug!("creating event datetime");
                     let stored_date: DateTime<UTC> = DateTime::from_utc(
                             NaiveDateTime::from_timestamp(ts.sec, ts.nsec as u32),
                             UTC);
 
+                    debug!("creating user model");
                     let user = UserModel{
                         id: user_id,
                         name: user_name,
