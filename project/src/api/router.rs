@@ -12,7 +12,7 @@ pub fn new(round_data:RoundData, user_data:UserData, game_data:GameData, event_d
 
     let mut router = Router::new();
 
-    let players_controller = players::Players::new(round_data.clone(), user_data);
+    let players_controller = players::Players::new(round_data.clone(), user_data, event_data.clone());
     let last_move_controller = last_move::LastMove::new(round_data.clone());
     let my_cards_controller = my_cards::MyCards::new(round_data.clone());
     let submit_move_controller = submit_move::SubmitMove::new(

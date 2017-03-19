@@ -13,19 +13,22 @@ use helpers;
 
 use data_access::round::Round as RoundData;
 use data_access::user::User as UserData;
+use data_access::event::Event as EventData;
 
 use pusoy_dos::game::game::Game;
 
 pub struct Players{
     round_data: RoundData,
-    user_data: UserData
+    user_data: UserData,
+    event_data: EventData
 }
 
 impl Players {
-    pub fn new(round_data: RoundData, user_data: UserData) -> Players {
+    pub fn new(round_data: RoundData, user_data: UserData, event_data: EventData) -> Players {
         Players {
             round_data: round_data,
-            user_data: user_data
+            user_data: user_data,
+            event_data: event_data
         }
     }
 
@@ -48,12 +51,23 @@ impl Players {
         let next_player_id = next_player.get_id();
         let reversed = round.reversed;
 
+        let events = self.event_data.get_game_events(game_id);
+
         let players = self.user_data.get_users_by_game(game_id);
 
         let content_type = "application/json".parse::<Mime>().unwrap();
         // TODO - winning player condition
         let output_players = players.iter().map(|ref player|{
             let mut p = Map::new();
+
+            for event in &events {
+                if event.match_user_id(player.id) {
+                    p.insert("move".to_string(), Value::String(event.get_message()));
+                    p.insert("move_time".to_string(), Value::String(event.get_time()));
+                    break;
+                }
+            }
+
             p.insert("id".to_string(), Value::U64(player.id));
             p.insert("name".to_string(), Value::String(player.name.clone()));
             p.insert("next".to_string(), Value::Bool(player.id == next_player_id));
