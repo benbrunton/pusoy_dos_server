@@ -23,18 +23,12 @@ A multiplayer [Pusoy Dos](https://en.wikipedia.org/wiki/Pusoy_dos) server writte
 
 - [ ] - Fix datetimes in DB
 - [ ] - Card count Joker bug
-- [ ] - Leading player
+- [ ] - Admin process
 - [ ] - CSRF protection
 - [ ] - VM security audit
-
-
-
 - [ ] - Private games
 - [ ] - Private leaderboard
 - [ ] - additional auth providers - { Google, Twitter, Github, Reddit }
-
-
-
 - [ ] - Push notifications
 - [ ] - move timeout (auto-pass)
 - [ ] - multiple decks
