@@ -47,7 +47,7 @@ impl Event {
                 FROM pusoy_dos.event
                 LEFT JOIN pusoy_dos.user on user.id = event.user
                 WHERE game = :game
-                ORDER BY event.creation_date",
+                ORDER BY event.creation_date DESC",
             params!{
                 "game" => game
             }).expect("error accessing event table");

@@ -1,27 +1,36 @@
 console.log('Pusoy Dos:: in play');
 
-var playerTemplate = `<div class="user" :class="player.next ? 'next' : ''">
-                        <span v-if="player.next" class="next-icon">
-                            <i class="fa fa-arrow-circle-right"></i>
-                        </span>
-                        <span v-else-if="player.loggedIn">
-                            <i class="fa fa-user-circle-o"></i>
-                        </span>
-                        <span v-else><i class="fa fa-user"></i></span>
-                        <span>&nbsp;</span>
-                        <strike 
-                            :class="player.loggedIn ? 
-                                'logged-in-player' : ''" 
-                            v-if="!player.stillIn" class="name">{{player.name}}</strike>
-                        <span v-else :class="player.loggedIn ? 'logged-in-player' : ''" 
-                                class="name">{{ player.name }} 
-                                </span>
-                        <small>( {{player.cardCount }} )</small>
-                        <span class="icons">
-                            <span v-if="player.winner">
-                                <i class="win-trophy fa fa-trophy"></i>
+var playerTemplate = `<div class="player">
+                          <div class="user" :class="player.next ? 'next' : ''">
+                            <span v-if="player.next" class="next-icon">
+                                <i class="fa fa-arrow-circle-right"></i>
                             </span>
-                        </span>
+                            <span v-else-if="player.loggedIn">
+                                <i class="fa fa-user-circle-o"></i>
+                            </span>
+                            <span v-else><i class="fa fa-user"></i></span>
+                            <span>&nbsp;</span>
+                            <strike 
+                                :class="player.loggedIn ? 
+                                    'logged-in-player' : ''" 
+                                v-if="!player.stillIn" class="name">{{player.name}}</strike>
+                            <span v-else :class="player.loggedIn ? 'logged-in-player' : ''" 
+                                    class="name">{{ player.name }} 
+                                    </span>
+                            <small>( {{player.cardCount }} )</small>
+                            <span class="icons">
+                                <span v-if="player.winner">
+                                    <i class="win-trophy fa fa-trophy"></i>
+                                </span>
+                            </span>
+                          </div>
+                        <div class="last-move" v-if="player.move">
+                            <small class="datetime">{{player.move_time}}</small>
+                            <span class="move card-set">
+
+                                <table-card v-for="card in player.move" v-bind:card="card"></table-card>
+                            </span>
+                        </div>
                       </div>`;
 
 Vue.component('player', {
@@ -221,6 +230,15 @@ function grab(url, prop){
             app.playerList.forEach(function(player){
                 if(player.loggedIn && player.next){
                     app.myGo = true;
+                }
+
+                // hack to decode player.move
+                if(player.move){
+                    try{
+                        player.move = JSON.parse(player.move);
+                    }catch(e){
+
+                    }
                 }
 
                 // hack to display when order is reversed

@@ -38,7 +38,7 @@ impl Event{
     }
 
     pub fn get_time(&self) -> String {
-        format!("{}", self.time.format("%Y-%m-%d %H:%M:%S"))
+        format!("{}", self.time.format("%H:%M %d/%m/%Y"))
     }
 
     pub fn display(&self) -> BTreeMap<String, String> {
