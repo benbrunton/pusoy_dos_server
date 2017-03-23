@@ -4,6 +4,7 @@ use model::game::Game as GameModel;
 use rustc_serialize::json;
 use hyper::client::Client;
 use hyper::header::Headers;
+use chrono::prelude::*;
 use mysql;
 
 #[derive(RustcDecodable, RustcEncodable)]
@@ -101,15 +102,21 @@ impl Game {
         
     }
 
-    pub fn create_game(&self, user:u64) -> GameModel {
+    pub fn create_game(&self, user:u64, max_move_duration:u64, max_players:u64, decks:u64) -> GameModel {
         info!("User {} created new game", user);
 
+        let utc: DateTime<UTC> = UTC::now();
+        let creation_date = format!("{}", utc.format("%Y-%m-%d][%H:%M:%S"));
+
         let query_result = self.pool.prep_exec(r"INSERT INTO pusoy_dos.game
-                ( creator )
+                ( creator, creation_date, max_move_duration, max_players)
             VALUES
-                (:user)",
+                (:user, :creation_date, :max_move_duration, :max_players)",
             params!{
-                "user" => user
+                "user" => user,
+                "creation_date" => creation_date,
+                "max_move_duration" => max_move_duration,
+                "max_players" => max_players
             }).unwrap();
 
          let new_game = query_result.last_insert_id();
@@ -128,6 +135,9 @@ impl Game {
     }
 
     pub fn join_game(&self, user:u64, new_game:u64) -> Result<(), String>{
+
+        // TODO - if game matches max_players then it should start
+        // if game exceeds max players then this should fail
 
          self.pool.prep_exec(r"INSERT INTO pusoy_dos.user_game
                                     (game, user)

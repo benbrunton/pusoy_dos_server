@@ -21,6 +21,7 @@ extern crate bodyparser;
 extern crate time;
 extern crate rand;
 extern crate chrono;
+extern crate schedule_recv;
 
 #[macro_use] extern crate pusoy_dos;
 
@@ -60,8 +61,10 @@ use iron_logger::Logger;
 use tera::Tera;
 use std::net::{Ipv4Addr, SocketAddr, IpAddr};
 use std::path::Path;
+use std::thread;
 use staticfile::Static;
 use mount::Mount;
+use schedule_recv::periodic_ms;
 
 lazy_static!{
 
@@ -152,15 +155,33 @@ fn main() {
 
     let mut chain = Chain::new(mount);
     chain.link_before(logger_before);
-
-    
     chain.link_after(logger_after);
+
+
+
+    info!("setting up scheduled jobs..");
+    let tick = periodic_ms(2000);
+
+    let handle = thread::spawn(move || {
+        loop{
+            tick.recv().unwrap();
+            info!("YO! WE GOT A FUCKING MESSAGE!");
+        }
+
+    });
+
+    //handle.join().unwrap();
+
+
+    info!("setting up server");
     let port = config.get("port");
     // todo - a little error checking around this
     // will save a fair amount of debugging
     let ip = IpAddr::V4(Ipv4Addr::new(0, 0, 0, 0));
     let host = SocketAddr::new(ip, port.unwrap().parse::<u16>().unwrap());
     Iron::new(chain).http(host).unwrap();
+
+
 
 }
 
