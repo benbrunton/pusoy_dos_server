@@ -1,6 +1,23 @@
 (function(){
     'use strict';
 
+    const applicationServerPublicKey = 'BFFMF4R7hS3cjTlKIoZ82Tk4mJrCi9IIS990_ypcaz79LRJxKowFI7T-T7oxcJfsBABAEqq2lnXAo_UMGheAmpk';
+
+    function urlB64ToUint8Array(base64String) {
+        const padding = '='.repeat((4 - base64String.length % 4) % 4);
+        const base64 = (base64String + padding)
+            .replace(/\-/g, '+')
+            .replace(/_/g, '/');
+
+        const rawData = window.atob(base64);
+        const outputArray = new Uint8Array(rawData.length);
+
+        for (let i = 0; i < rawData.length; ++i) {
+            outputArray[i] = rawData.charCodeAt(i);
+        }
+        return outputArray;
+    }
+
     if (!('serviceWorker' in navigator && 'PushManager' in window)) {
         console.warn('Push messaging is not supported');
         return;
@@ -8,31 +25,34 @@
 
     console.log('Service Worker and Push is supported');
 
-    // TODO - check whether permissions have been granted or dismissed before
-    Promise.all([ 
-        navigator.permissions.query({name:'push', userVisibleOnly:true}),
-        navigator.serviceWorker.register('/public/js/sw.js')])
-        .then(init)
+    navigator.serviceWorker.register('sw.js')
+        .then(function(swRegistration) {
+            console.log('Service Worker registered', swRegistration);
+
+            init(swRegistration);
+        })
         .catch(function(error) {
-            console.error('Service Worker Error', error);
+            console.log('Service Worker error', error);
         });
 
-    function init(result){
+    function init(swRegistration) {
 
-        let pushPermission = result[0];
-        let swReg = result[1];
+        swRegistration.pushManager.getSubscription()
+            .then(function(subscription) {
+                let isSubscribed = !(subscription === null);
 
-        if(pushPermission.state === 'granted'){
-            console.log('permission is already granted');
-            return;
-        }
-
-        addNotice()
-            .addEventListener('click', function() {
-                this.disabled = true;
-                subscribeUser(swReg);
-            });
-
+                if (!isSubscribed) {
+                    console.log('user not subscribed');
+                    addNotice()
+                        .addEventListener('click', function() {
+                            this.disabled = true;
+                            subscribeUser(swRegistration);
+                        });
+                } else {
+                    console.log('user subscribed');
+                    updateSubscriptionOnServer(subscription);
+                }
+            })
     }
 
     function addNotice(){
@@ -49,20 +69,50 @@
 
 
     function subscribeUser(swRegistration) {
-        swRegistration.pushManager.subscribe({userVisibleOnly: true})
+        const applicationServerKey = urlB64ToUint8Array(applicationServerPublicKey);
+        swRegistration.pushManager.subscribe({
+            userVisibleOnly: true,
+            applicationServerKey: applicationServerKey,
+        })
             .then(function(subscription) {
-                console.log('User is subscribed.');
+                console.log('User is subscribed');
+
                 updateSubscriptionOnServer(subscription);
-          })
-          .catch(function(err) {
-            // TODO: could do with doing a bit more than this...
-            console.log('Failed to subscribe the user: ', err);
-          });
+            })
+            .catch(function(error) {
+                console.log('Subscription Failed: ', error);
+            });
+    }
+
+    function unsubscribeUser(swRegistration) {
+        swRegistration.pushManager.getSubscription()
+            .then(function(subscription) {
+                if (subscription) {
+                    return subscription.unsubscribe();
+                }
+            })
+            .catch(function(error) {
+                console.log('Error unsubscribing');
+            })
+            .then(function() {
+                updateSubscriptionOnServer(null);
+                console.log('User is unsubscribed');
+            });
     }
 
     function updateSubscriptionOnServer(subscription) {
       // TODO: Send subscription to application server
-
+        fetch('http://localhost:8080', {
+            method: 'post',
+            headers: { 'Content-type': 'application/json' },
+            body: JSON.stringify({ subscription: subscription })
+        })
+            .then(function(res) {
+                console.log(res);
+            })
+            .catch(function(error) {
+                console.log(error);
+            });
 
       if (subscription) {
         console.log(subscription);
@@ -70,6 +120,5 @@
       }
 
     }
-    
 }());
 

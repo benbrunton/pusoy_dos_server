@@ -34,14 +34,14 @@ mod helpers;
 mod api;
 
 use controller::{
-        home_page, 
-        auth, 
-        game, 
-        game_list, 
-        game_create, 
-        new_game, 
-        test_auth, 
-        logout, 
+        home_page,
+        auth,
+        game,
+        game_list,
+        game_create,
+        new_game,
+        test_auth,
+        logout,
         game_join,
         begin_game,
         inplay,
@@ -70,7 +70,7 @@ lazy_static!{
 
 
 fn main() {
-    
+
     env_logger::init().unwrap();
 
     let config = Config::new();
@@ -114,7 +114,7 @@ fn main() {
     router.post("/play/:id", move_controller, "move");
     router.get("/leaderboard", leaderboard, "leaderboard");
     router.get("/about", about, "about");
- 
+
     match config.get("mode") {
         Some(mode) => {
             if mode == "dev" {
@@ -126,9 +126,9 @@ fn main() {
 
     let (logger_before, logger_after) = Logger::new(None);
 
-    let api_router = api::router::new(round_data.clone(), 
-                                    user_data.clone(), 
-                                    game_data.clone(), 
+    let api_router = api::router::new(round_data.clone(),
+                                    user_data.clone(),
+                                    game_data.clone(),
                                     event_data.clone());
 
     let mut page_chain = Chain::new(router);
@@ -147,13 +147,14 @@ fn main() {
     mount
         .mount("/", page_chain)
         .mount("/api/v1/", api_chain)
-        .mount("/public/", Static::new(Path::new("public")));
+        .mount("/public/", Static::new(Path::new("public")))
+        .mount("/sw.js", Static::new(Path::new("public/js/sw.js")));
 
 
     let mut chain = Chain::new(mount);
     chain.link_before(logger_before);
 
-    
+
     chain.link_after(logger_after);
     let port = config.get("port");
     // todo - a little error checking around this
