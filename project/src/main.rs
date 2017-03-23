@@ -54,6 +54,7 @@ use controller::{
 use config::Config;
 use util::session::SessionMiddleware;
 use util::nocache::NoCacheMiddleware;
+use util::move_limit_task;
 
 use iron::prelude::*;
 use router::Router;
@@ -160,17 +161,17 @@ fn main() {
 
 
     info!("setting up scheduled jobs..");
-    let tick = periodic_ms(2000);
+    let tick = periodic_ms(60000);
 
     let handle = thread::spawn(move || {
         loop{
             tick.recv().unwrap();
             info!("YO! WE GOT A FUCKING MESSAGE!");
+
+            move_limit_task::execute(game_data.clone());
         }
 
     });
-
-    //handle.join().unwrap();
 
 
     info!("setting up server");

@@ -361,7 +361,7 @@ impl Game {
                                         FROM pusoy_dos.game
                                         WHERE started = 1
                                         AND complete = 0
-                                        AND max_move_duration != NULL
+                                        AND max_move_duration IS NOT NULL
                                         AND max_move_duration != 1", ())
             .map(|result|{
                 
