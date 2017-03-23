@@ -347,5 +347,40 @@ impl Game {
 
     }
 
+    pub fn get_started_games_with_move_limit(&self) -> Vec<(u64, u64)> {
+        /*
+            1 = Unlimited
+            2 = 10 minutes
+            3 = 1 hour
+            4 = 4 hours
+            5 = 8 hours
+            6 = 1 day
+            7 = 3 days
+        */
+        self.pool.prep_exec(r"SELECT id, max_move_duration
+                                        FROM pusoy_dos.game
+                                        WHERE started = 1
+                                        AND complete = 0
+                                        AND max_move_duration != NULL
+                                        AND max_move_duration != 1", ())
+            .map(|result|{
+                
+                result.map(|x| x.unwrap() ).map(|mut row| {
+                    let move_duration = row.take("max_move_duration").unwrap_or(0);
+                    let duration = match move_duration{
+                        2 => 10,
+                        3 => 60,
+                        4 => 60 * 4,
+                        5 => 60 * 8,
+                        6 => 60 * 24,
+                        7 => 60 * 24 * 3,
+                        _ => 0
+                    };
+                    (row.take("id").unwrap_or(0), duration)
+                }).collect()
+            }).unwrap()
+                
+    }
+
 }
 
