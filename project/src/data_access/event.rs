@@ -120,4 +120,33 @@ impl Event {
                                                     
     }
 
+    pub fn get_last_game_event(&self, game_id: u64) -> Option<DateTime<UTC>> {
+        info!("getting last event for game: {}", game_id);
+        let mut result = self.pool.prep_exec(r"
+                SELECT event.creation_date
+                FROM pusoy_dos.event
+                LEFT JOIN pusoy_dos.user on user.id = event.user
+                WHERE game = :game
+                ORDER BY event.creation_date DESC
+                LIMIT 1",
+            params!{
+                "game" => game_id
+            }).expect("error accessing event table");
+
+        let row = result.next();
+        match row {
+            None => None,
+            Some(r) => {
+                let ts: Timespec = r.unwrap().get("creation_date").unwrap();
+                let stored_date: DateTime<UTC> = DateTime::from_utc(
+                        NaiveDateTime::from_timestamp(ts.sec, ts.nsec as u32),
+                        UTC);
+
+                Some(stored_date)
+            }
+        }
+
+
+    }
+
 }

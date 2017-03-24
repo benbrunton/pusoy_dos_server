@@ -166,9 +166,8 @@ fn main() {
     let handle = thread::spawn(move || {
         loop{
             tick.recv().unwrap();
-            info!("YO! WE GOT A FUCKING MESSAGE!");
 
-            move_limit_task::execute(game_data.clone());
+            move_limit_task::execute(game_data.clone(), event_data.clone(), round_data.clone());
         }
 
     });
