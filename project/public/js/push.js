@@ -12,7 +12,7 @@
         var rawData = window.atob(base64);
         var outputArray = new Uint8Array(rawData.length);
 
-        for (let i = 0; i < rawData.length; ++i) {
+        for (var i = 0; i < rawData.length; ++i) {
             outputArray[i] = rawData.charCodeAt(i);
         }
         return outputArray;
@@ -44,7 +44,7 @@
 
         swRegistration.pushManager.getSubscription()
             .then(function(subscription) {
-                let isSubscribed = !(subscription === null);
+                var isSubscribed = !(subscription === null);
 
                 if (!isSubscribed) {
                     //console.log('user not subscribed');
@@ -61,11 +61,11 @@
     }
 
     function addNotice(){
-        let enableHeader = document.createElement('div');
+        var enableHeader = document.createElement('div');
         enableHeader.innerHTML = '<button class="enable-notifications pure-button action-button">Allow Notifications</button>';
 
-        let container = document.querySelector('.container');
-        let pushButton = enableHeader.querySelector('.enable-notifications');
+        var container = document.querySelector('.container');
+        var pushButton = enableHeader.querySelector('.enable-notifications');
 
         container.insertBefore(enableHeader, container.firstChild);
 
