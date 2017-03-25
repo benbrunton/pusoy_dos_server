@@ -1,5 +1,15 @@
 'use strict';
 
+//page should be able to clear notifications by sending message to sw
+self.addEventListener('message', function(event){
+    return self.registration.getNotifications()
+        .then(function(notifications) {
+            for (var i = 0; i < notifications.length; i++) {
+                notifications[i].close();
+            }
+        });
+});
+
 self.addEventListener('push', function(event) {
     //console.log('[Service Worker] Push received');
     //console.log('[Service Worker] Push data: ', event.data.text());
@@ -23,6 +33,10 @@ self.addEventListener('push', function(event) {
                     .then(function(notifications) {
 
                         var data = event.data.json();
+                        var ddata = data.data;
+                        if (typeof ddata === 'string') {
+                            ddata = JSON.parse(ddata);
+                        }
 
                         var title = data.title || 'Pusoy Dos';
                         var options = {
@@ -30,24 +44,31 @@ self.addEventListener('push', function(event) {
                             icon: data.icon || '/public/img/push_icon.png',
                             tag: data.tag || null,
                             actions: data.actions || [],
-                            data: data.data || null,
+                            data: ddata || null,
                             renotify: true,
                         };
 
                         if (notifications.length) {
-                            if (!notifications[0].data.moves) {
-                                notifications[0].data.moves = 2;
-                            } else {
-                                notifications[0].data.moves++;
+                            var ndata = notifications[0].data;
+                            if (typeof ndata === 'string') {
+                                ndata = JSON.parse(notifications[0].data);
                             }
-                            title = 'You have ' + notifications[0].data.moves + ' moves to make';
-                            options = {
-                                body: 'Click here to see your games',
-                                icon: data.icon || '/public/img/push_icon.png',
-                                tag: 'moves',
-                                data: notifications[0].data,
-                                renotify: true,
-                            };
+
+                            if (ndata.game !== ddata.game) {
+                                if (!ndata.moves) {
+                                    ndata.moves = 2;
+                                } else {
+                                    ndata.moves++;
+                                }
+                                title = 'You have ' + ndata.moves + ' moves to make';
+                                options = {
+                                    body: 'Click here to see your games',
+                                    icon: data.icon || '/public/img/push_icon.png',
+                                    tag: 'moves',
+                                    data: ndata,
+                                    renotify: true,
+                                };
+                            }
                         }
 
                         return self.registration.showNotification(title, options);
@@ -73,16 +94,17 @@ self.addEventListener('notificationclick', function(event) {
     event.waitUntil(clients.matchAll({
         type: 'window'
     })
-        .then(function(clients) {
-            for (var i = 0; i < clients.length; i++) {
-                if ('focus' in clients[i] && 'navigate' in clients[i]) {
-                    clients[i].navigate(url)
-                    return clients[i].focus();
+        .then(function(client) {
+            for (var i = 0; i < client.length; i++) {
+                if ('focus' in client[i] && 'navigate' in client[i]) {
+                    client[i].navigate(url)
+                    return client[i].focus();
                 }
             }
 
-            if (clients.openWindow) {
-                clients.openWindow(url);
-            }
+            return clients.openWindow(url).then(function(client) {
+                client.navigate(url);
+                client.focus();
+            });
         }));
 });

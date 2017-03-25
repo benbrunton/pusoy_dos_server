@@ -83,6 +83,8 @@ fn main() {
     let leaderboard_data = data_access::leaderboard::Leaderboard::new(pool.clone());
     let event_data = data_access::event::Event::new(pool.clone());
 
+    let notification_data = data_access::notification::Notification::new(pool.clone());
+
     let mut router = Router::new();
 
     let auth_controller = auth::AuthController::new(&config, user_data.clone());
@@ -129,7 +131,8 @@ fn main() {
     let api_router = api::router::new(round_data.clone(),
                                     user_data.clone(),
                                     game_data.clone(),
-                                    event_data.clone());
+                                    event_data.clone(),
+                                    notification_data.clone());
 
     let mut page_chain = Chain::new(router);
     let mut api_chain = Chain::new(api_router);

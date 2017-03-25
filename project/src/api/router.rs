@@ -6,20 +6,26 @@ use data_access::game::Game as GameData;
 use data_access::user::User as UserData;
 use data_access::event::Event as EventData;
 
-use api::controller::{ players, last_move, my_cards, submit_move, game_events };
+use data_access::notification::Notification as NotificationData;
 
-pub fn new(round_data:RoundData, user_data:UserData, game_data:GameData, event_data:EventData) -> Router {
+use api::controller::{ players, last_move, my_cards, submit_move, game_events, update_notifications };
+
+pub fn new(round_data:RoundData, user_data:UserData, game_data:GameData, event_data:EventData, notification_data:NotificationData) -> Router {
 
     let mut router = Router::new();
 
-    let players_controller = players::Players::new(round_data.clone(), user_data, event_data.clone());
+    let players_controller = players::Players::new(round_data.clone(), user_data.clone(), event_data.clone());
     let last_move_controller = last_move::LastMove::new(round_data.clone());
     let my_cards_controller = my_cards::MyCards::new(round_data.clone());
     let submit_move_controller = submit_move::SubmitMove::new(
-                                        round_data.clone(), 
+                                        round_data.clone(),
                                         game_data.clone(),
-                                        event_data.clone());
+                                        event_data.clone(),
+                                        user_data.clone(),
+                                        notification_data.clone());
     let game_events_controller = game_events::GameEvents::new(event_data.clone());
+
+    let update_notifications_controller = update_notifications::UpdateNotifications::new(notification_data.clone());
 
     router.get("/players/:id", players_controller, "api_players");
     router.get("/last-move/:id", last_move_controller, "api_last_move");
@@ -27,5 +33,6 @@ pub fn new(round_data:RoundData, user_data:UserData, game_data:GameData, event_d
     router.post("/submit-move/:id", submit_move_controller, "api_submit_move");
     router.get("/game-events/:id", game_events_controller, "api_game_events");
 
+    router.post("/update-notifications", update_notifications_controller, "api_update_notifications");
     router
 }

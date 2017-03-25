@@ -31,7 +31,10 @@ app.get('/', function (req, res) {
 });
 
 app.post('/', function (req, res) {
-  const subscription = req.body.subscription;
+  let subscription = req.body.subscription;
+  if (typeof subscription === 'string') {
+    subscription = JSON.parse(subscription);
+  }
   const payload = {
     title: req.body.title || 'Pusoy Dos',
     body: req.body.body || 'Missing message!',
@@ -43,7 +46,6 @@ app.post('/', function (req, res) {
 
   webpush.sendNotification(subscription, JSON.stringify(payload), options)
     .then((request) => {
-      //console.log(request);
       res.status(request.statusCode).send(request.body);
     })
     .catch((error) => {
@@ -51,6 +53,6 @@ app.post('/', function (req, res) {
     });
 });
 
-app.listen(8080, function() {
+app.listen(8888, function() {
   console.log('listening...');
 });

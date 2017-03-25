@@ -28,7 +28,6 @@
     navigator.serviceWorker.register('/sw.js')
         .then(function(swRegistration) {
             //console.log('Service Worker registered', swRegistration);
-
             init(swRegistration);
         })
         .catch(function(error) {
@@ -41,6 +40,8 @@
             //console.log('Push Blocked');
             return;
         }
+
+        navigator.serviceWorker.controller.postMessage("Hello SW!");
 
         swRegistration.pushManager.getSubscription()
             .then(function(subscription) {
@@ -106,6 +107,30 @@
     }
 
     function updateSubscriptionOnServer(subscription) {
+
+        var subcookie;
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i].replace('=','±').split('±');
+            if (cookie[0] === 'pushsub') {
+                subcookie = cookie[1];
+                break;
+            }
+        }
+
+        if (subcookie === JSON.stringify(subscription)) {
+            return;
+        }
+
+        //otherwise update subscription on server and in cookie
+        document.cookie = 'pushsub=' + JSON.stringify(subscription);
+        fetch('/api/v1/update-notifications', {
+            credentials: 'include',
+            method: 'post',
+            body: JSON.stringify({ subscription: subscription })
+        });
+        return;
+
         var game = Math.floor(Math.random() * 100);
         var body = {
             subscription: subscription,

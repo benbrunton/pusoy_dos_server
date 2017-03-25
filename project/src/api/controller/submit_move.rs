@@ -4,6 +4,9 @@ use iron::middleware::Handler;
 use iron::mime::Mime;
 use router::Router;
 
+use hyper::client::Client;
+use hyper::header::Headers;
+
 use rustc_serialize::json;
 use std::collections::BTreeMap;
 use serde_json;
@@ -14,6 +17,8 @@ use bodyparser;
 use data_access::round::Round as RoundData;
 use data_access::game::Game as GameData;
 use data_access::event::Event as EventData;
+use data_access::user::User as UserData;
+use data_access::notification::Notification as NotificationData;
 
 use pusoy_dos::game::game::Game;
 use pusoy_dos::cards::types::*;
@@ -25,21 +30,25 @@ use pusoy_dos::cards::card::{ Card, PlayerCard };
 pub struct SubmitMove{
     round_data: RoundData,
     game_data: GameData,
-    event_data: EventData
+    event_data: EventData,
+    user_data: UserData,
+    notification_data: NotificationData
 }
 
 impl SubmitMove {
 
-    pub fn new(round_data: RoundData, game_data: GameData, event_data: EventData) -> SubmitMove{
+    pub fn new(round_data: RoundData, game_data: GameData, event_data: EventData, user_data: UserData, notification_data: NotificationData) -> SubmitMove{
         SubmitMove{
             round_data: round_data,
             game_data: game_data,
-            event_data: event_data
+            event_data: event_data,
+            user_data: user_data,
+            notification_data: notification_data
         }
     }
 
-    pub fn execute(&self, user_id: u64, 
-                        id: u64, 
+    pub fn execute(&self, user_id: u64,
+                        id: u64,
                         json:Option<serde_json::Value>) -> Response {
 
 
@@ -55,7 +64,7 @@ impl SubmitMove {
         info!("loading game: {}", id);
 
         let round = round_result.expect("error with round result");
-        let reversed = round.reversed; 
+        let reversed = round.reversed;
         info!("game reversed: {:?}", reversed);
         let game = Game::load(round.clone()).expect("error loading game");
         info!("game loaded");
@@ -76,16 +85,49 @@ impl SubmitMove {
                 self.event_data.insert_game_event(user_id, id, event_descr);
 
                 let updated_round = updated_game.round.export();
+
                 if updated_round.players.len() < 2 {
                     let _ = self.game_data.complete_game(id);
-                } 
+                    //TODO Send game ended notification
+                } else {
+                    //TODO NOTIFY NEXT PLAYER IT IS HIS TURN
+                    let user_sub = self.notification_data.get_user_subscription(updated_round.current_player);
+                    match user_sub {
+                        Some(subscription) => {
+                            let client = Client::new();
+                            let mut body = BTreeMap::new();
+                            let player = match self.user_data.get_username_from_id(user_id) {
+                                Some(username) => username,
+                                _ => "".to_owned()
+                            };
+
+                            let cards_played = helpers::cards_played_summary(cards.clone());
+
+                            body.insert("subscription", subscription);
+                            body.insert("title", format!("Your move in game #{}", id));
+                            body.insert("body", format!("{} played {}", player, cards_played));
+                            body.insert("data", format!("{{ \"game\": {} }}", id));
+                            body.insert("tag", "moves".to_owned());
+
+                            let mut headers = Headers::new();
+                            headers.set_raw("content-type", vec!(b"application/json".to_vec()));
+                            let res = client.post("http://localhost:8888")
+                                .body(&json::encode(&body).unwrap())
+                                .headers(headers)
+                                .send();
+                        },
+                        _ => {
+                            //No sub do nothing
+                        }
+                    }
+                }
             },
             _ => {
                 info!("invalid_move!");
                 return self.output_error();
             }
         }
- 
+
         self.output_success()
     }
 
@@ -111,7 +153,7 @@ impl SubmitMove {
         Response::with((content_type, status::InternalServerError, json_error))
 
     }
-    
+
     fn get_body(&self, req: &mut Request) -> Option<serde_json::Value> {
 
         match req.get::<bodyparser::Json>(){
@@ -126,7 +168,7 @@ impl SubmitMove {
                 .unwrap()
                 .iter()
                 .map(|ref obj| {
-    
+
             let obj = obj.as_object().unwrap();
             let suit = obj.get("suit").unwrap().as_str().unwrap();
             let rank = obj.get("rank").unwrap().as_str().unwrap();
@@ -167,7 +209,7 @@ impl SubmitMove {
             "A"  => Rank::Ace,
             _    => panic!("invalid rank supplied in move : {}", rank)
         }
-             
+
     }
 
     fn get_suit(&self, suit:&str) -> Suit {
