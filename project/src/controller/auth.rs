@@ -103,7 +103,7 @@ impl AuthController {
     fn get_profile(&self, access_token: String) -> Result<BTreeMap<String, Json>, Result<Response, IronError>> {
 
 
-        let profile_url = format!("https://graph.facebook.com/v2.7/me?access_token={}&fields=id,name", access_token);
+        let profile_url = format!("https://graph.facebook.com/v2.7/me?access_token={}&fields=id,name,email", access_token);
 
         let profile_response = self.fetch_json(profile_url);
 
@@ -172,6 +172,9 @@ impl Handler for AuthController {
 
         let id = profile.get("id").unwrap().as_string().unwrap();
         let name = profile.get("name").unwrap().as_string().unwrap();
+
+        debug!("FACEBOOK RESPONSE");
+        debug!("{:?}", profile);
 
         info!("{}", id);
         info!("{}", name);

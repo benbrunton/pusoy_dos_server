@@ -2,6 +2,9 @@ use iron::prelude::*;
 use iron::{status, modifiers, Url};
 use iron::middleware::Handler;
 
+use urlencoded::UrlEncodedBody;
+use std::collections::HashMap;
+
 use config::Config;
 use data_access::game::Game as GameData;
 use util::session::Session;
@@ -17,11 +20,25 @@ impl GameCreate {
         GameCreate{ hostname: hostname, game_data: game_data }
     }
 
-    fn insert_new_game(&self, id: u64) -> Result<(), String>{
+    fn insert_new_game(&self, id: u64, 
+                hashmap:Option<HashMap<String, Vec<String>>>) -> Result<(), String>{
 
-        self.game_data.create_game(id);
+        let params = hashmap.expect("unable to get params from POST");
+        let move_duration_raw = params.get("max-move-duration").expect("expected max_move_duration").get(0).unwrap();
+        let move_duration = move_duration_raw.parse::<u64>().expect("expected int");
+        self.game_data.create_game(id, move_duration, 4, 0);
         Ok(())
     }
+
+
+    fn get_hashmap(&self, req: &mut Request) -> Option<HashMap<String, Vec<String>>> {
+
+        match req.get_ref::<UrlEncodedBody>(){
+            Ok(hashmap) => Some(hashmap.to_owned().to_owned()),
+            _ => None
+        }
+    }
+
 }
 
 impl Handler for GameCreate {
@@ -33,10 +50,12 @@ impl Handler for GameCreate {
             _             => None
         };
 
+        let ref hashmap = self.get_hashmap(req);
+
         let mut success = false;
         match session_user_id {
             Some(id) => { 
-                let _ = self.insert_new_game(id);
+                let _ = self.insert_new_game(id, hashmap.to_owned());
                 success = true;
             },
             _ => ()        

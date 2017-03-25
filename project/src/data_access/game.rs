@@ -4,6 +4,7 @@ use model::game::Game as GameModel;
 use rustc_serialize::json;
 use hyper::client::Client;
 use hyper::header::Headers;
+use chrono::prelude::*;
 use mysql;
 
 #[derive(RustcDecodable, RustcEncodable)]
@@ -41,7 +42,8 @@ impl Game {
                                                 started, 
                                                 current_player, 
                                                 u2.name current_name,
-                                                c num_players
+                                                c num_players,
+                                                game.max_move_duration
                                         FROM pusoy_dos.game
                                             INNER JOIN pusoy_dos.user u1 ON creator = u1.id
                                             LEFT JOIN (SELECT game, COUNT(*) c FROM pusoy_dos.user_game GROUP BY game) a ON a.game = game.id
@@ -76,6 +78,14 @@ impl Game {
 							_				         => 0
 						};
 
+                        let max_move_duration = match game_data.take("max_move_duration") {
+                            Some(mysql::Value::UInt(n)) => n,
+                            Some(mysql::Value::Int(n)) => n as u64,
+                            Some(mysql::Value::Float(n)) => n as u64,
+                            _				         => 0
+                        };
+
+
                         Some(GameModel{
                             id: game_data.get("id").unwrap(),
                             creator_id: game_data.get("creator").unwrap(),
@@ -83,7 +93,8 @@ impl Game {
                             started: started == 1,
                             next_player_name: current_name,
                             next_player_id: Some(current_id),
-                            num_players: game_data.get("num_players").unwrap()
+                            num_players: game_data.get("num_players").unwrap(),
+                            max_move_duration: self.get_max_move_duration(max_move_duration)
                         })
                     },
                     _ => {
@@ -101,15 +112,21 @@ impl Game {
         
     }
 
-    pub fn create_game(&self, user:u64) -> GameModel {
+    pub fn create_game(&self, user:u64, max_move_duration:u64, max_players:u64, decks:u64) -> GameModel {
         info!("User {} created new game", user);
 
+        let utc: DateTime<UTC> = UTC::now();
+        let creation_date = format!("{}", utc.format("%Y-%m-%d][%H:%M:%S"));
+
         let query_result = self.pool.prep_exec(r"INSERT INTO pusoy_dos.game
-                ( creator )
+                ( creator, creation_date, max_move_duration, max_players)
             VALUES
-                (:user)",
+                (:user, :creation_date, :max_move_duration, :max_players)",
             params!{
-                "user" => user
+                "user" => user,
+                "creation_date" => creation_date,
+                "max_move_duration" => max_move_duration,
+                "max_players" => max_players
             }).unwrap();
 
          let new_game = query_result.last_insert_id();
@@ -123,11 +140,15 @@ impl Game {
             started: false,
             next_player_name: None,
             next_player_id: None,
-            num_players: 0
+            num_players: 0,
+            max_move_duration: self.get_max_move_duration(max_move_duration)
          }
     }
 
     pub fn join_game(&self, user:u64, new_game:u64) -> Result<(), String>{
+
+        // TODO - if game matches max_players then it should start
+        // if game exceeds max players then this should fail
 
          self.pool.prep_exec(r"INSERT INTO pusoy_dos.user_game
                                     (game, user)
@@ -152,7 +173,8 @@ impl Game {
                                     u2.name current_name,
 									user_game.user user,
 									complete,
-                                    c num_players
+                                    c num_players,
+                                    game.max_move_duration
 							FROM pusoy_dos.user_game
 							JOIN pusoy_dos.game ON pusoy_dos.game.id = game
 							JOIN pusoy_dos.user u1 ON creator = u1.id
@@ -170,7 +192,8 @@ impl Game {
                             name,
 							'unknown' as current_name,
 							0 as current_id,
-                            c num_players
+                            c num_players,
+                            game.max_move_duration
                 FROM pusoy_dos.game 
                 JOIN pusoy_dos.user ON creator = user.id
                 LEFT JOIN (SELECT game, COUNT(*) c FROM pusoy_dos.user_game GROUP BY game) a ON a.game = game.id
@@ -321,6 +344,13 @@ impl Game {
 						_				         => 0
 					};
 
+                    let max_move_duration = match row.take("max_move_duration") {
+                        Some(mysql::Value::UInt(n)) => n,
+						Some(mysql::Value::Int(n)) => n as u64,
+						Some(mysql::Value::Float(n)) => n as u64,
+						_				         => 0
+                    };
+
                     GameModel{
                         id: row.take("id").unwrap(),
                         creator_id: row.take("creator").unwrap(),
@@ -328,13 +358,61 @@ impl Game {
                         started: started == 1,
                         next_player_name: current_name,
                         next_player_id: Some(current_id),
-                        num_players: row.take("num_players").unwrap_or(0)
+                        num_players: row.take("num_players").unwrap_or(0),
+                        max_move_duration: self.get_max_move_duration(max_move_duration)
                     }
                 },
-                _ => GameModel{ id: 0, creator_id:0, creator_name:String::from(""), started: false, next_player_name: None, next_player_id: None, num_players: 0 }
+                _ => GameModel{ id: 0, creator_id:0, creator_name:String::from(""), started: false, next_player_name: None, next_player_id: None, num_players: 0, max_move_duration: String::from("")}
             }
         }).collect()
 
+    }
+
+    pub fn get_started_games_with_move_limit(&self) -> Vec<(u64, u64)> {
+        /*
+            1 = Unlimited
+            2 = 10 minutes
+            3 = 1 hour
+            4 = 4 hours
+            5 = 8 hours
+            6 = 1 day
+            7 = 3 days
+        */
+        self.pool.prep_exec(r"SELECT id, max_move_duration
+                                        FROM pusoy_dos.game
+                                        WHERE started = 1
+                                        AND complete = 0
+                                        AND max_move_duration IS NOT NULL
+                                        AND max_move_duration != 1", ())
+            .map(|result|{
+                
+                result.map(|x| x.unwrap() ).map(|mut row| {
+                    let move_duration = row.take("max_move_duration").unwrap_or(0);
+                    let duration = match move_duration{
+                        2 => 10,
+                        3 => 60,
+                        4 => 60 * 4,
+                        5 => 60 * 8,
+                        6 => 60 * 24,
+                        7 => 60 * 24 * 3,
+                        _ => 0
+                    };
+                    (row.take("id").unwrap_or(0), duration)
+                }).collect()
+            }).unwrap()
+                
+    }
+
+    fn get_max_move_duration(&self, code: u64) -> String {
+        match code{
+           2 => "10 minutes".to_string(),
+           3 => "1 hour".to_string(),
+           4 => "4 hours".to_string(),
+           5 => "8 hours".to_string(),
+           6 => "1 day".to_string(),
+           7 => "3 days".to_string(),
+           _ => "No limit".to_string() 
+        }
     }
 
 }

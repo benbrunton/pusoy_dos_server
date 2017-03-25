@@ -49,7 +49,8 @@
                                         <div class="pure-u-1-2 data">
                                             <div>
                                                 
-                                                Players: {{game.num_players}}
+                                                <p>Players: {{game.num_players}}</p>
+                                                <p>Max Move Wait: {{game.max_move_duration}}</p>
 
                                                 <div class="cta">
 
@@ -84,8 +85,9 @@
                             <div class="pure-g open-game">
                                 <div class="pure-u-1-8 id"><small>{{ game.id }}</small></div>
                                 <div class="pure-u-3-8">{{ game.creator_name }}</div>
-                                <div class="pure-u-1-4">{{game.num_players}} players</div>
-                                <div class="pure-u-1-4"><a class="pure-button small-btn" href="/game/{{ game.id }}">join</a></div>
+                                <div class="pure-u-1-8">{{game.num_players}} players</div>
+                                <div class="pure-u-1-4">{{game.max_move_duration}}</div>
+                                <div class="pure-u-1-8"><a class="pure-button small-btn" href="/game/{{ game.id }}">join</a></div>
                             </div>
                         {% endfor %}
                 </div>

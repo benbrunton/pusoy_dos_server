@@ -5,6 +5,22 @@
     <div class="new-game-form">
         <h2>New Game</h2>
         <form action="/new-game" method="POST">
+            <input type="hidden" name="_csrf_token" value="{{ csrf }}">
+
+            <div class="form-group">
+                <label>Max wait time:
+                    <select name="max-move-duration">
+                        <option value="1">Unlimited</option>
+                        <option value="2">10 minutes</option>
+                        <option value="3">1 hour</option>
+                        <option value="4">4 hours</option>
+                        <option value="5">8 hours</option>
+                        <option value="6">1 day</option>
+                        <option value="7">3 days</option>
+                    </select>
+                </label>
+                <p>Players that exceed the maximum wait time, will automatically pass.</p>
+            </div>
 
             <div class="form-group">
                 <label>Max Players:

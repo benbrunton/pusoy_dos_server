@@ -16,8 +16,10 @@ impl <'a> NewGame {
     }
 
     fn get_page(&self) -> TeraResult<String> {
+        let csrf_token = "blah";
         let mut data = Context::new(); 
         data.add("logged_in", &true);
+        data.add("csrf", &csrf_token);
         self.tera.render("game_create.html", data)
     }
 }

@@ -22,6 +22,9 @@ A multiplayer [Pusoy Dos](https://en.wikipedia.org/wiki/Pusoy_dos) server writte
 ## Roadmap
 
 - [ ] - Fix datetimes in DB
+ - [ ] - maximum move wait / move timeout ( auto pass )
+ - [ ] - time to begin game
+- [ ] - Delete players from pregame
 - [ ] - Card count Joker bug
 - [ ] - Admin process
 - [ ] - CSRF protection
@@ -30,10 +33,8 @@ A multiplayer [Pusoy Dos](https://en.wikipedia.org/wiki/Pusoy_dos) server writte
 - [ ] - Private leaderboard
 - [ ] - additional auth providers - { Google, Twitter, Github, Reddit }
 - [ ] - Push notifications
-- [ ] - move timeout (auto-pass)
 - [ ] - multiple decks
 - [ ] - Social sharing features
-- [ ] - Round history ( moved, passed )
 - [ ] - Nice Move! even when move is invalid
 - [ ] - Additional stats
 - [ ] - Redirect to homepage when user logged out
