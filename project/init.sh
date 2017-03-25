@@ -7,6 +7,8 @@ service mysql start
 mysql < /project/mysql/setup.sql
 mysql < /project/mysql/20170225.sql
 mysql < /project/mysql/20170303.sql
+mysql < /project/mysql/20170306.sql
+mysql < /project/mysql/20170320.game_options.sql
 mysql < /project/mysql/20170325.sql
 
 #cargo test # ensure dependencies are set up
