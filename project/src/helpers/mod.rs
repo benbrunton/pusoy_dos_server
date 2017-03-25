@@ -5,7 +5,7 @@ use iron::{status, modifiers, Url};
 use iron::mime::Mime;
 use tera::TeraResult;
 
-use pusoy_dos::game::player_move::{Move, Trick};
+use pusoy_dos::game::player_move::{Move, Trick, TrickType, build_move};
 use pusoy_dos::cards::card::PlayerCard;
 use serde::{Serialize, Serializer};
 
@@ -35,19 +35,35 @@ pub fn render(result: TeraResult<String>) -> Response{
     Response::with((content_type, status::Ok, result.unwrap()))
 }
 
+pub fn cards_played_summary(last_move: Vec<PlayerCard>) -> String {
+    match build_move(last_move).unwrap() {
+        Move::Pass                  => "Pass".to_owned(),
+        Move::Single(card)          => format!("a {}{}", card.rank, card.suit),
+        Move::Pair(card, _)         => format!("a pair of {}s", card.rank),
+        Move::Prial(card, _, _)     => format!("a prail of {}s", card.rank),
+        Move::FiveCardTrick(trick)  => match trick.trick_type {
+            TrickType::Straight => "a straight".to_owned(),
+            TrickType::Flush => "a flush".to_owned(),
+            TrickType::FullHouse => "a full house".to_owned(),
+            TrickType::FourOfAKind => "four of a kind".to_owned(),
+            TrickType::StraightFlush => "a straight flush".to_owned(),
+            TrickType::FiveOfAKind => "five of a kind".to_owned()
+        }
+    }
+}
 
 pub fn convert_move_to_display_cards(last_move:Move) -> Vec<DCard> {
     match last_move {
         Move::Pass                  => vec!(),
         Move::Single(card)          => vec!(DCard(PlayerCard::Card(card))),
-        Move::Pair(c1, c2)          => vec!(DCard(PlayerCard::Card(c1)), 
+        Move::Pair(c1, c2)          => vec!(DCard(PlayerCard::Card(c1)),
                                             DCard(PlayerCard::Card(c2))),
-        Move::Prial(c1, c2, c3)     => vec!(DCard(PlayerCard::Card(c1)), 
-                                            DCard(PlayerCard::Card(c2)), 
+        Move::Prial(c1, c2, c3)     => vec!(DCard(PlayerCard::Card(c1)),
+                                            DCard(PlayerCard::Card(c2)),
                                             DCard(PlayerCard::Card(c3))),
         Move::FiveCardTrick(trick)  => trick_to_cards(trick)
     }
-    
+
 }
 
 pub fn convert_vec_to_display_cards(card_vec:Vec<PlayerCard>) -> Vec<DCard> {
@@ -84,11 +100,11 @@ impl Serialize for DCard {
         let card = self.0;
         let (rank, suit, suit_display, joker) = match card {
             PlayerCard::Card(c) |
-            PlayerCard::Wildcard(c)  => (format!("{}", c.rank), 
+            PlayerCard::Wildcard(c)  => (format!("{}", c.rank),
                                     format!("{:?}", c.suit),
                                     format!("{}", c.suit),
                                     false),
-            PlayerCard::Joker(n)    => (String::from(""), 
+            PlayerCard::Joker(n)    => (String::from(""),
                                     format!("joker {}", n),
                                     String::from("🃏"),
                                     true)

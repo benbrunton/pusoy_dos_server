@@ -4,12 +4,12 @@ use mysql;
 
 #[derive(Clone)]
 pub struct User{
-    pool: mysql::Pool 
+    pool: mysql::Pool
 }
 
 impl User {
     pub fn new(pool: mysql::Pool) -> User {
-        
+
         User {
             pool: pool
         }
@@ -28,7 +28,7 @@ impl User {
     }
 
     pub fn get_users_by_game(&self, id:u64) -> Vec<UserModel> {
-        info!("getting users from game: {}", id);        
+        info!("getting users from game: {}", id);
         let result = self.pool.prep_exec(r"SELECT user.id, user.name, user.provider_type, user.provider_id, user.creation_date
                                             FROM pusoy_dos.user_game
                                             JOIN pusoy_dos.user on pusoy_dos.user_game.user = user.id
@@ -80,10 +80,10 @@ impl User {
     fn retrieve_user(&self, user:PartUser) -> Option<UserModel> {
 
         // must be mutable because Row::take (used below) is a mutable action
-        let mut user_record = self.pool.prep_exec(r"SELECT id, 
-                                                    name, 
-                                                    creation_date, 
-                                                    provider_id, 
+        let mut user_record = self.pool.prep_exec(r"SELECT id,
+                                                    name,
+                                                    creation_date,
+                                                    provider_id,
                                                     provider_type
                                 FROM pusoy_dos.user
                                 WHERE provider_id = :id
@@ -112,6 +112,26 @@ impl User {
 
             _ => {
                 info!("No user found for {}", user.name);
+                None
+            }
+        };
+
+        retrieved_user
+    }
+
+    pub fn get_username_from_id(&self, id: u64) -> Option<String> {
+        let mut user_record = self.pool.prep_exec(r"SELECT name
+                                                  FROM pusoy_dos.user
+                                                  WHERE id = :id",
+                                                  params!{
+                                                       "id" => id
+                                                  }).unwrap();
+        let retrieved_user = match user_record.next() {
+            Some(result) => {
+                let mut row = result.unwrap();
+                row.take("name").unwrap()
+            },
+            _ => {
                 None
             }
         };
