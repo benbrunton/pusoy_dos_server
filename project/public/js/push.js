@@ -1,18 +1,18 @@
 (function(){
     'use strict';
 
-    var applicationServerPublicKey = 'BKriLwzXwDTwU6erJI69Bo-tH-3G2Ia1hFkN_rA5P6m05ZofcPPR6v1RcXcy7_FZNEgQK1uv91YB6APex3Fduik';
+    const applicationServerPublicKey = 'BFFMF4R7hS3cjTlKIoZ82Tk4mJrCi9IIS990_ypcaz79LRJxKowFI7T-T7oxcJfsBABAEqq2lnXAo_UMGheAmpk';
 
     function urlB64ToUint8Array(base64String) {
-        var padding = '='.repeat((4 - base64String.length % 4) % 4);
-        var base64 = (base64String + padding)
+        const padding = '='.repeat((4 - base64String.length % 4) % 4);
+        const base64 = (base64String + padding)
             .replace(/\-/g, '+')
             .replace(/_/g, '/');
 
-        var rawData = window.atob(base64);
-        var outputArray = new Uint8Array(rawData.length);
+        const rawData = window.atob(base64);
+        const outputArray = new Uint8Array(rawData.length);
 
-        for (var i = 0; i < rawData.length; ++i) {
+        for (let i = 0; i < rawData.length; ++i) {
             outputArray[i] = rawData.charCodeAt(i);
         }
         return outputArray;
@@ -23,50 +23,44 @@
         return;
     }
 
-    //console.log('Service Worker and Push is supported');
+    console.log('Service Worker and Push is supported');
 
-    navigator.serviceWorker.register('/sw.js')
+    navigator.serviceWorker.register('sw.js')
         .then(function(swRegistration) {
-            //console.log('Service Worker registered', swRegistration);
+            console.log('Service Worker registered', swRegistration);
+
             init(swRegistration);
         })
         .catch(function(error) {
-            //console.log('Service Worker error', error);
+            console.log('Service Worker error', error);
         });
 
     function init(swRegistration) {
 
-        if (Notification.permission === 'denied') {
-            //console.log('Push Blocked');
-            return;
-        }
-
-        navigator.serviceWorker.controller.postMessage("Hello SW!");
-
         swRegistration.pushManager.getSubscription()
             .then(function(subscription) {
-                var isSubscribed = !(subscription === null);
+                let isSubscribed = !(subscription === null);
 
                 if (!isSubscribed) {
-                    //console.log('user not subscribed');
+                    console.log('user not subscribed');
                     addNotice()
                         .addEventListener('click', function() {
                             this.disabled = true;
                             subscribeUser(swRegistration);
                         });
                 } else {
-                    //console.log('user subscribed');
-                    setTimeout(updateSubscriptionOnServer.bind(this, subscription), 2000);
+                    console.log('user subscribed');
+                    updateSubscriptionOnServer(subscription);
                 }
             })
     }
 
     function addNotice(){
-        var enableHeader = document.createElement('div');
+        let enableHeader = document.createElement('div');
         enableHeader.innerHTML = '<button class="enable-notifications pure-button action-button">Allow Notifications</button>';
 
-        var container = document.querySelector('.container');
-        var pushButton = enableHeader.querySelector('.enable-notifications');
+        let container = document.querySelector('.container');
+        let pushButton = enableHeader.querySelector('.enable-notifications');
 
         container.insertBefore(enableHeader, container.firstChild);
 
@@ -75,13 +69,13 @@
 
 
     function subscribeUser(swRegistration) {
-        var applicationServerKey = urlB64ToUint8Array(applicationServerPublicKey);
+        const applicationServerKey = urlB64ToUint8Array(applicationServerPublicKey);
         swRegistration.pushManager.subscribe({
             userVisibleOnly: true,
             applicationServerKey: applicationServerKey,
         })
             .then(function(subscription) {
-                //console.log('User is subscribed');
+                console.log('User is subscribed');
 
                 updateSubscriptionOnServer(subscription);
             })
@@ -102,57 +96,29 @@
             })
             .then(function() {
                 updateSubscriptionOnServer(null);
-                //console.log('User is unsubscribed');
+                console.log('User is unsubscribed');
             });
     }
 
     function updateSubscriptionOnServer(subscription) {
-
-        var subcookie;
-        var cookies = document.cookie.split(';');
-        for (var i = 0; i < cookies.length; i++) {
-            var cookie = cookies[i].replace('=','±').split('±');
-            if (cookie[0] === 'pushsub') {
-                subcookie = cookie[1];
-                break;
-            }
-        }
-
-        if (subcookie === JSON.stringify(subscription)) {
-            return;
-        }
-
-        //otherwise update subscription on server and in cookie
-        document.cookie = 'pushsub=' + JSON.stringify(subscription);
-        fetch('/api/v1/update-notifications', {
-            credentials: 'include',
-            method: 'post',
-            body: JSON.stringify({ subscription: subscription })
-        });
-        return;
-
-        var game = Math.floor(Math.random() * 100);
-        var body = {
-            subscription: subscription,
-            title: 'Your Move in game #' + game,
-            body: 'Dean McGinty played Pair 2s',
-            data: { game: game },
-            actions: [
-                { action: 'pass', title: 'Pass' }
-            ],
-            tag: 'moves',
-        }
+      // TODO: Send subscription to application server
         fetch('http://localhost:8080', {
             method: 'post',
             headers: { 'Content-type': 'application/json' },
-            body: JSON.stringify(body)
+            body: JSON.stringify({ subscription: subscription })
         })
             .then(function(res) {
-                //console.log(res);
+                console.log(res);
             })
             .catch(function(error) {
-                //console.log(error);
+                console.log(error);
             });
+
+      if (subscription) {
+        console.log(subscription);
+    //    console.log(JSON.stringify(subscription));
+      }
+
     }
 }());
 
