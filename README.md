@@ -21,11 +21,13 @@ A multiplayer [Pusoy Dos](https://en.wikipedia.org/wiki/Pusoy_dos) server writte
 
 ## Roadmap
 
+- [ ] - Prevent passing on empty table
+- [ ] - multiple decks
 - [ ] - Fix datetimes in DB
  - [ ] - time to begin game
  - [ ] - User creation datetime
  - [ ] - Game created datetime
-- [ ] - Delete players from pregame
+- [ ] - Show Played Jokers
 - [ ] - Card count Joker bug
 - [ ] - Admin process
 - [ ] - CSRF protection
@@ -34,26 +36,17 @@ A multiplayer [Pusoy Dos](https://en.wikipedia.org/wiki/Pusoy_dos) server writte
 - [ ] - Private groups/games
 - [ ] - Private leaderboard
 - [ ] - additional auth providers - { Google, Twitter, Github, Reddit }
-- [ ] - multiple decks
 - [ ] - Social sharing features
 - [ ] - Nice Move! even when move is invalid
 - [ ] - Additional stats
 - [ ] - Redirect to homepage when user logged out
 - [ ] - End game screens
-- [ ] - improved game menus
- - [ ] - game lobby (including notifications etc)
- - [ ] - Join game
- - [ ] - create game
- - [ ] - Joker modal
-- [ ] - game rule options
- - [ ] - number of decks
- - [ ] - max players
-- [ ] - Store sessions in redis and only send in response headers when new
-- [ ] - deployment/pipeline improvements
+- [ ] - max players auto start
+- [ ] - optimise sessions
 - [ ] - error pages
+- [ ] - deployment/pipeline improvements
 - [ ] - client side move validation
-- [ ] - help with moves
-- [ ] - user profiles
+- [ ] - move assistance
 
 ## Contributing
 Contributions are encouraged and welcome via Pull Request. 
