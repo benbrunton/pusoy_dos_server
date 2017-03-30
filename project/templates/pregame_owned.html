@@ -11,8 +11,19 @@
     <div class="player-list">
 
         {% for user in users %}
-            <div><i class="fa fa-user"></i>
-                {{ user.name }}
+            <div>
+            {% if current_user == user.id %}
+                <i class="fa fa-user-circle-o"></i>
+                You
+            {% else %}
+                <form method="POST" action="/game/{{id}}/delete/{{user.id}}">
+                    <i class="fa fa-user"></i>
+                    {{ user.name }}
+
+                    <button type="submit" class="pure-button small-btn">
+                        <i class="fa fa-trash"></i>
+                    </button>
+            {% endif %}
             </div>
 
         {% endfor %}

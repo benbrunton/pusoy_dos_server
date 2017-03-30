@@ -12,6 +12,7 @@ cl-card-fore = #fff
 cl-facebook = #3b5998
 
 decorative-border-width = 6px
+max-width = 850px
 
 html, button, input, select, textarea,
     .pure-g [class *= "pure-u"] {
@@ -27,7 +28,7 @@ a, a:visited
     color inherit
 
 .container
-    max-width 850px
+    max-width max-width
     margin 0 auto
 
 .app-header
@@ -43,6 +44,9 @@ a, a:visited
     .nav
         background-color cl-light
         color cl-blue
+        .nav-inner
+            max-width max-width
+            margin 0 auto
     
 
 .app-content
@@ -250,8 +254,9 @@ a.action-button, .action-button
     padding 12px 0
     margin 0 10px
     border-bottom 1px solid cl-light
-    .small-btn
-        font-size 0.7em
+
+.small-btn
+    font-size 0.7em
 
 
 .text-center

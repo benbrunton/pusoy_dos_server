@@ -37,6 +37,10 @@ a:visited {
   background-color: #c3d7df;
   color: #6991ac;
 }
+.app-header .nav .nav-inner {
+  max-width: 850px;
+  margin: 0 auto;
+}
 .app-content a:hover {
   text-decoration: underline;
 }
@@ -287,7 +291,7 @@ a.action-button,
   margin: 0 10px;
   border-bottom: 1px solid #c3d7df;
 }
-.open-game .small-btn {
+.small-btn {
   font-size: 0.7em;
 }
 .text-center {

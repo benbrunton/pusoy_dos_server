@@ -52,14 +52,18 @@ impl Game {
         }
 
         let content_type = "text/html".parse::<Mime>().unwrap();
-        let page = self.render_page(game_state, &game, users);
+        let page = self.render_page(game_state, &game, user, users);
         Response::with((content_type, status::Ok, page))
     }
 
-    fn render_page(&self, state: GameState, game: &Option<GameModel>, users: Vec<UserModel>) -> String {
+    fn render_page(&self, state: GameState, game: &Option<GameModel>, user_id: u64, users: Vec<UserModel>) -> String {
         let mut data = Context::new();
+
         data.add("logged_in", &true);
+        data.add("current_user", &user_id);
         
+        info!("rendering page for user {}", user_id);
+
         match *game {
             Some(ref game_model) => {
                 info!("genuine game page being rendered");

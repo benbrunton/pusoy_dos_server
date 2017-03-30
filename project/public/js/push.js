@@ -25,7 +25,7 @@
 
     console.log('Service Worker and Push is supported');
 
-    navigator.serviceWorker.register('sw.js')
+    navigator.serviceWorker.register('/sw.js')
         .then(function(swRegistration) {
             console.log('Service Worker registered', swRegistration);
 

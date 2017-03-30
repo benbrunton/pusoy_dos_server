@@ -31,7 +31,6 @@ impl Event {
                 "creation_date" =>  format!("{}", utc.format("%Y-%m-%d][%H:%M:%S"))
             }).unwrap();
 
-        info!("{:?}", a);
     }
 
     pub fn get_game_events(&self, game: u64) -> Vec<EventModel> {
