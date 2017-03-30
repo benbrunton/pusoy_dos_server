@@ -49,6 +49,7 @@ use controller::{
         game_move,
         post_game,
         leaderboard,
+        remove_user,
         about
     };
 use config::Config;
@@ -105,6 +106,7 @@ fn main() {
     let move_controller = game_move::GameMove::new(&config, round_data.clone(), game_data.clone());
     let post_game_controller = post_game::PostGame::new(&TERA);
     let leaderboard = leaderboard::Leaderboard::new(&config, &TERA, leaderboard_data.clone());
+    let remove_user = remove_user::RemoveUser::new(&config, &TERA, game_data.clone());
 
     router.get("/", home_page_controller, "index");
     router.get("/auth", auth_controller, "auth_callback");
@@ -120,6 +122,7 @@ fn main() {
     router.post("/play/:id", move_controller, "move");
     router.get("/leaderboard", leaderboard, "leaderboard");
     router.get("/about", about, "about");
+    router.post("/game/:id/remove/:user", remove_user, "remove_user");
 
     match config.get("mode") {
         Some(mode) => {

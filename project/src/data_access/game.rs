@@ -162,6 +162,18 @@ impl Game {
         Ok(())
     }
 
+    pub fn remove_user(&self, user:u64, game:u64) -> Result<(), String>{
+
+        self.pool.prep_exec(r"DELETE FROM pusoy_dos.user_game
+                                WHERE game = :game AND user = :user",
+                                params!{
+                                    "game" => game,
+                                    "user" => user    
+                                }).unwrap();
+
+        Ok(())
+    }
+
     pub fn get_valid_games(&self, user:u64) -> Vec<GameModel> {
         info!("Getting games for user {}", user);
 

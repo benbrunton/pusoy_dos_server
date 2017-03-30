@@ -13,6 +13,7 @@ pub mod game_move;
 pub mod post_game;
 pub mod leaderboard;
 pub mod about;
+pub mod remove_user;
 
 pub mod test_auth;
 
