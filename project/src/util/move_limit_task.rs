@@ -17,16 +17,18 @@ pub fn execute(game_data: GameData, event_data: EventData, round_data:RoundData)
     for &(id, duration) in games.iter() {
 
         if duration == 0 {
-            break;
+            continue;
         }
 
         let date = event_data.get_last_game_event(id); 
+        info!("got date for {}", id);
+        info!(">> {:?}", date);
 
         match date {
             Some(d) => {
 
                 if utc.signed_duration_since(d).num_minutes() < duration as i64 {
-                    break;
+                    continue;
                 }
                 
                 let round_result = round_data.get(id);
@@ -34,7 +36,7 @@ pub fn execute(game_data: GameData, event_data: EventData, round_data:RoundData)
                 match round_result {
                     None => {
                         info!("no round found for game {}", id);
-                        break;
+                        continue;
                     },
                     _ => ()
                 }
@@ -49,7 +51,7 @@ pub fn execute(game_data: GameData, event_data: EventData, round_data:RoundData)
                 match next_player_result {
                     None => {
                         info!("aint no next player {}", id);
-                        break;
+                        continue;
                     },
                     _ => ()
                 }
@@ -68,7 +70,7 @@ pub fn execute(game_data: GameData, event_data: EventData, round_data:RoundData)
                     },
                     _ => {
                         info!("invalid_move!");
-                        break;
+                        continue;
                     }
                 }
 
@@ -77,4 +79,6 @@ pub fn execute(game_data: GameData, event_data: EventData, round_data:RoundData)
         }
            
     }
+
+    info!("completed sweep of expired moves");
 }
