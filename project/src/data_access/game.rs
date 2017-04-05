@@ -188,6 +188,7 @@ impl Game {
                                     current_player, 
                                     u2.name current_name,
 									user_game.user user,
+                                    decks,
 									complete,
                                     c num_players,
                                     game.max_move_duration
@@ -206,6 +207,7 @@ impl Game {
         self.get_game_list(r"SELECT pusoy_dos.game.id, 
                             creator,
                             name,
+                            decks,
 							'unknown' as current_name,
 							0 as current_id,
                             c num_players,

@@ -84,8 +84,9 @@
                         {% for game in open_games %}
                             <div class="pure-g open-game">
                                 <div class="pure-u-1-8 id"><small>{{ game.id }}</small></div>
-                                <div class="pure-u-3-8">{{ game.creator_name }}</div>
+                                <div class="pure-u-1-4">{{ game.creator_name }}</div>
                                 <div class="pure-u-1-8">{{game.num_players}} players</div>
+                                <div class="pure-u-1-8">{{game.decks}} decks</div>
                                 <div class="pure-u-1-4">{{game.max_move_duration}}</div>
                                 <div class="pure-u-1-8"><a class="pure-button small-btn" href="/game/{{ game.id }}">join</a></div>
                             </div>
