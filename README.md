@@ -35,12 +35,7 @@ Navigate to http://localhost:3010
 
 ## Roadmap
 
-- [ ] - Prevent passing on empty table
-- [ ] - multiple decks
-- [ ] - Fix datetimes in DB
- - [ ] - time to begin game
- - [ ] - User creation datetime
- - [ ] - Game created datetime
+- [ ] - User creation datetime
 - [ ] - Show Played Jokers
 - [ ] - Card count Joker bug
 - [ ] - Admin process
