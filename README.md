@@ -35,25 +35,30 @@ Navigate to http://localhost:3010
 
 ## Roadmap
 
-- [ ] - User creation datetime
-- [ ] - Show Played Jokers
-- [ ] - Card count Joker bug
-- [ ] - Admin process
-- [ ] - CSRF protection
-- [ ] - User settings/profile
-- [ ] - VM security audit ( close some ports etc )
-- [ ] - Private groups/games
-- [ ] - Private leaderboard
-- [ ] - additional auth providers - { Google, Twitter, Github, Reddit }
-- [ ] - Social sharing features
-- [ ] - Nice Move! even when move is invalid
-- [ ] - Additional stats
-- [ ] - Redirect to homepage when user logged out
-- [ ] - End game screens
+- [ ] - user creation datetime
+- [ ] - show played jokers
+- [ ] - card count joker bug
+- [ ] - auto pass when logged in bug
+- [ ] - update number of decks after game creation
+- [ ] - display number of decks on game list
+- [ ] - display time left in time limit games
+- [ ] - nice move! even when move is invalid
+- [ ] - user settings/profile
 - [ ] - max players auto start
+- [ ] - private groups/games
+- [ ] - private leaderboard
+- [ ] - csrf protection and other post validation
+- [ ] - collect email addresses
+- [ ] - additional auth providers - { google, twitter, github, reddit }
+- [ ] - social sharing features
+- [ ] - additional stats
+- [ ] - redirect to homepage when user logged out
+- [ ] - end game screens
+- [ ] - vm security audit ( close some ports etc )
 - [ ] - optimise sessions
 - [ ] - error pages
 - [ ] - deployment/pipeline improvements
+- [ ] - admin process
 - [ ] - client side move validation
 - [ ] - move assistance
 
