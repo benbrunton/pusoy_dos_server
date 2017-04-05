@@ -26,7 +26,9 @@ impl GameCreate {
         let params = hashmap.expect("unable to get params from POST");
         let move_duration_raw = params.get("max-move-duration").expect("expected max_move_duration").get(0).unwrap();
         let move_duration = move_duration_raw.parse::<u64>().expect("expected int");
-        self.game_data.create_game(id, move_duration, 4, 0);
+        let decks_raw = params.get("decks").expect("expected decks").get(0).unwrap();
+        let decks = decks_raw.parse::<u64>().expect("expected decks int");
+        self.game_data.create_game(id, move_duration, 4, decks);
         Ok(())
     }
 

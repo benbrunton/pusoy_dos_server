@@ -9,7 +9,8 @@ pub struct Game{
     pub next_player_name: Option<String>,
     pub next_player_id: Option<u64>,
     pub num_players: u64,
-    pub max_move_duration: String
+    pub max_move_duration: String,
+    pub decks: u64
 }
 
 impl Serialize for Game {
@@ -42,6 +43,8 @@ impl Serialize for Game {
         try!(serializer.serialize_map_value(&mut state, self.num_players));
         try!(serializer.serialize_map_key(&mut state, "max_move_duration"));
         try!(serializer.serialize_map_value(&mut state, &self.max_move_duration));
+        try!(serializer.serialize_map_key(&mut state, "decks"));
+        try!(serializer.serialize_map_value(&mut state, self.decks));
 
         serializer.serialize_map_end(state)
     }

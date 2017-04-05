@@ -12,8 +12,6 @@
                     <select name="max-move-duration">
                         <option value="1">Unlimited</option>
                         <option value="2">10 minutes</option>
-                        <option value="3">1 hour</option>
-                        <option value="4">4 hours</option>
                         <option value="5">8 hours</option>
                         <option value="6">1 day</option>
                         <option value="7">3 days</option>
@@ -33,12 +31,19 @@
 
             <div class="form-group">
                 <label>Decks:
-                    <input name="decks" disabled value="1" type="number">
-                </label><sup>*</sup>
+                    <select name="decks">
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                    </select>
+                </label>
             </div>
 
             <div class="button-section"> 
-                <button id="js-create-game" class="new-game-btn pure-button" type="submit">Create</a>
+                <button id="js-create-game" class="new-game-btn pure-button" type="submit">
+                    Create
+                </button>
             </div>
         </form>
 

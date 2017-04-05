@@ -43,7 +43,8 @@ impl Game {
                                                 current_player, 
                                                 u2.name current_name,
                                                 c num_players,
-                                                game.max_move_duration
+                                                game.max_move_duration,
+                                                game.decks
                                         FROM pusoy_dos.game
                                             INNER JOIN pusoy_dos.user u1 ON creator = u1.id
                                             LEFT JOIN (SELECT game, COUNT(*) c FROM pusoy_dos.user_game GROUP BY game) a ON a.game = game.id
@@ -94,7 +95,8 @@ impl Game {
                             next_player_name: current_name,
                             next_player_id: Some(current_id),
                             num_players: game_data.get("num_players").unwrap(),
-                            max_move_duration: self.get_max_move_duration(max_move_duration)
+                            max_move_duration: self.get_max_move_duration(max_move_duration),
+                            decks: game_data.get("decks").unwrap()
                         })
                     },
                     _ => {
@@ -119,14 +121,15 @@ impl Game {
         let creation_date = format!("{}", utc.format("%Y-%m-%d][%H:%M:%S"));
 
         let query_result = self.pool.prep_exec(r"INSERT INTO pusoy_dos.game
-                ( creator, creation_date, max_move_duration, max_players)
+                ( creator, creation_date, max_move_duration, max_players, decks)
             VALUES
-                (:user, :creation_date, :max_move_duration, :max_players)",
+                (:user, :creation_date, :max_move_duration, :max_players, :decks)",
             params!{
                 "user" => user,
                 "creation_date" => creation_date,
                 "max_move_duration" => max_move_duration,
-                "max_players" => max_players
+                "max_players" => max_players,
+                "decks" => decks
             }).unwrap();
 
          let new_game = query_result.last_insert_id();
@@ -141,7 +144,8 @@ impl Game {
             next_player_name: None,
             next_player_id: None,
             num_players: 0,
-            max_move_duration: self.get_max_move_duration(max_move_duration)
+            max_move_duration: self.get_max_move_duration(max_move_duration),
+            decks: decks
          }
     }
 
@@ -371,10 +375,11 @@ impl Game {
                         next_player_name: current_name,
                         next_player_id: Some(current_id),
                         num_players: row.take("num_players").unwrap_or(0),
-                        max_move_duration: self.get_max_move_duration(max_move_duration)
+                        max_move_duration: self.get_max_move_duration(max_move_duration),
+                        decks: row.take("decks").unwrap_or(0)
                     }
                 },
-                _ => GameModel{ id: 0, creator_id:0, creator_name:String::from(""), started: false, next_player_name: None, next_player_id: None, num_players: 0, max_move_duration: String::from("")}
+                _ => GameModel{ id: 0, creator_id:0, creator_name:String::from(""), started: false, next_player_name: None, next_player_id: None, num_players: 0, max_move_duration: String::from(""), decks: 0}
             }
         }).collect()
 

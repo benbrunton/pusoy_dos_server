@@ -25,13 +25,25 @@ impl BeginGame{
         }
     }
 
-    fn begin_game(&self, /*user*/_:u64, game_id:u64) {
+    fn begin_game(&self, user:u64, game_id:u64) {
+
+        let game_data = self.game_data.get_game(game_id);
+
+        match game_data {
+            None => return,
+            Some(game) => {
+                if game.creator_id != user {
+                    return;
+                }
+            }
+        }
 
         // todo - validate that this user can begin the game
         let _ = self.game_data.start_game(game_id);        
         let users = self.game_data.get_players(game_id);
+        let game = self.game_data.get_game(game_id).unwrap();
         // create a new game
-        let new_game = CardGame::setup(users).unwrap();
+        let new_game = CardGame::setup(users, game.decks as usize).unwrap();
         self.round_data.create_round(game_id, new_game);
 
     }
