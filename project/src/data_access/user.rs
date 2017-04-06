@@ -1,3 +1,5 @@
+use time::Timespec;
+use chrono::prelude::*;
 
 use model::user::{PartUser, User as UserModel};
 use mysql;
@@ -58,14 +60,16 @@ impl User {
 
     fn insert_user(&self, user:PartUser) -> UserModel {
         info!("Creating new user : {}", user.name);
+        let utc: DateTime<UTC> = UTC::now();
         let query_result = self.pool.prep_exec(r"INSERT INTO pusoy_dos.user
-                ( name, provider_id, provider_type)
+                ( name, provider_id, provider_type, creation_date)
             VALUES
-                (:name, :id, :type)",
+                (:name, :id, :type, :creation_date)",
             params!{
                 "name" => user.name.clone(),
                 "id" => user.provider_id.clone(),
-                "type" => user.provider_type.clone()
+                "type" => user.provider_type.clone(),
+                "creation_date" =>  format!("{}", utc.format("%Y-%m-%d][%H:%M:%S"))
             }).unwrap();
 
             UserModel{
@@ -73,7 +77,7 @@ impl User {
                 name: user.name.clone(),
                 provider_type: user.provider_type.clone(),
                 provider_id: user.provider_id.clone(),
-                creation_date: String::from("000")
+                creation_date: String::from(format!("{}", utc.format("%Y-%m-%d][%H:%M:%S")))
             }
     }
 
