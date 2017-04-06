@@ -35,7 +35,6 @@ Navigate to http://localhost:3010
 
 ## Roadmap
 
-- [ ] - user creation datetime
 - [ ] - show played jokers
 - [ ] - card count joker bug
 - [ ] - auto pass when logged in bug
