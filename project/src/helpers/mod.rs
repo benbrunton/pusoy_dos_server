@@ -99,11 +99,14 @@ impl Serialize for DCard {
 
         let card = self.0;
         let (rank, suit, suit_display, joker) = match card {
-            PlayerCard::Card(c) |
-            PlayerCard::Wildcard(c)  => (format!("{}", c.rank),
+            PlayerCard::Card(c) => (format!("{}", c.rank),
                                     format!("{:?}", c.suit),
                                     format!("{}", c.suit),
                                     false),
+            PlayerCard::Wildcard(c)  => (format!("{}", c.rank),
+                                    format!("{:?}", c.suit),
+                                    format!("{}", c.suit),
+                                    true),
             PlayerCard::Joker(n)    => (String::from(""),
                                     format!("joker {}", n),
                                     String::from("🃏"),

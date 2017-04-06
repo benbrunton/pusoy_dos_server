@@ -40,7 +40,12 @@ Vue.component('player', {
 
 Vue.component('table-card', {
     props: ['card'],
-    template: '<span class="card" :class="card.suit.toLowerCase() + \' \' + card.rank.toLowerCase()">{{card.rank + card.suitDisplay}}</span>'
+    template: `<span 
+                class="card" 
+                :class="card.suit.toLowerCase() + \' \' 
+                    + card.rank.toLowerCase() + \' j\' + card.joker ">
+                    {{card.rank + card.suitDisplay}}
+                </span>`
 });
 
 

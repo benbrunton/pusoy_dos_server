@@ -35,10 +35,10 @@ Navigate to http://localhost:3010
 
 ## Roadmap
 
-- [ ] - show played jokers
 - [ ] - card count joker bug
 - [ ] - auto pass when logged in bug
 - [ ] - update number of decks after game creation
+= [ ] - show when user wins hand
 - [ ] - display number of decks on game list
 - [ ] - display time left in time limit games
 - [ ] - nice move! even when move is invalid

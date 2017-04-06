@@ -209,6 +209,9 @@ a.action-button,
 .inplay .last-move {
   margin-left: 10px;
 }
+.inplay .last-move .card.jtrue {
+  background-color: #ccc;
+}
 .inplay .hand-header,
 .inplay .move-header,
 .inplay .table-header {
