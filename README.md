@@ -35,23 +35,26 @@ Navigate to http://localhost:3010
 
 ## Roadmap
 
+- [ ] - improve joker modal
+- [ ] - increase session duration
 - [ ] - card count joker bug
 - [ ] - auto pass when logged in bug
 - [ ] - update number of decks after game creation
-= [ ] - show when user wins hand
+- [ ] - show when user wins hand
 - [ ] - display number of decks on game list
 - [ ] - display time left in time limit games
+- [ ] - display times in local on client
 - [ ] - nice move! even when move is invalid
-- [ ] - user settings/profile
 - [ ] - max players auto start
+- [ ] - additional notifications
 - [ ] - private groups/games
 - [ ] - private leaderboard
+- [ ] - user settings/profile
 - [ ] - csrf protection and other post validation
 - [ ] - collect email addresses
 - [ ] - additional auth providers - { google, twitter, github, reddit }
 - [ ] - social sharing features
 - [ ] - additional stats
-- [ ] - redirect to homepage when user logged out
 - [ ] - end game screens
 - [ ] - vm security audit ( close some ports etc )
 - [ ] - optimise sessions
@@ -60,6 +63,7 @@ Navigate to http://localhost:3010
 - [ ] - admin process
 - [ ] - client side move validation
 - [ ] - move assistance
+- [ ] - cookie consent
 
 ## Contributing
 Contributions are encouraged and welcome via Pull Request.

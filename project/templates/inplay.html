@@ -60,36 +60,40 @@
         </div>
 
         <div v-if="jokerModal" class="joker-modal hide-on-load">
-           <h4>you need to set a rank and suit for your joker</h4>
-            <div class="form-element">
-                <label>rank:</label>
-                <select id="rank" v-model="jokerRank" class="pure-input-1-2"> 
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                    <option value="5">5</option>
-                    <option value="6">6</option>
-                    <option value="7">7</option>
-                    <option value="8">8</option>
-                    <option value="9">9</option>
-                    <option value="10">10</option>
-                    <option value="J">Jack</option>
-                    <option value="Q">Queen</option>
-                    <option value="K">King</option>
-                    <option value="A">Ace</option>
-                    <option value="2">2</option>
-                </select>
-            </div>
+            <div class="modal-inner">
+               <h4>What would you like to play your joker as?</h4>
+                <div class="form-element">
+                    <label>rank:</label>
+                    <select id="rank" v-model="jokerRank" class="pure-input-1-2"> 
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                        <option value="7">7</option>
+                        <option value="8">8</option>
+                        <option value="9">9</option>
+                        <option value="10">10</option>
+                        <option value="J">Jack</option>
+                        <option value="Q">Queen</option>
+                        <option value="K">King</option>
+                        <option value="A">Ace</option>
+                        <option value="2">2</option>
+                    </select>
+                </div>
 
-            <div class="form-element">
-                <label>suit:</label>
-                <select id="suit" v-model="jokerSuit" class="pure-input-1-2">
-                    <option v-bind:value="{className: 'Clubs', display:'♣'}">♣</option>
-                    <option v-bind:value="{className: 'Hearts', display:'♥'}">♥</option>
-                    <option v-bind:value="{className: 'Diamonds', display:'♦'}">♦</option>
-                    <option v-bind:value="{className: 'Spades', display:'♠'}">♠</option>
-                </select>
+                <div class="form-element">
+                    <label>suit:</label>
+                    <select id="suit" v-model="jokerSuit" class="pure-input-1-2">
+                        <option v-bind:value="{className: 'Clubs', display:'♣'}">♣</option>
+                        <option v-bind:value="{className: 'Hearts', display:'♥'}">♥</option>
+                        <option v-bind:value="{className: 'Diamonds', display:'♦'}">♦</option>
+                        <option v-bind:value="{className: 'Spades', display:'♠'}">♠</option>
+                    </select>
+                </div>
+                <button v-on:click="setJoker" class="pure-button action-button">
+                    Place Joker
+                </button>
             </div>
-            <button v-on:click="setJoker" class="pure-button action-button">OK</button>
         </div>
            
     </div>	
