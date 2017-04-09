@@ -1,14 +1,22 @@
 var googleUser = {};
-var initGoogleAuth = function(appId) {
+var initGoogleAuth = function() {
     gapi.load('auth2', function(){
         // Retrieve the singleton for the GoogleAuth library and set up the client.
         auth2 = gapi.auth2.init({
-            client_id: appId,
+            client_id: '467471910617-vo4g6ojobn4o2tu25vo38ofurfis0jqj.apps.googleusercontent.com',
             cookiepolicy: 'single_host_origin',
-            // Request scopes in addition to 'profile' and 'email'
-            //scope: 'additional_scope'
         });
-        googleAttachSignin(document.getElementById('google-signin-button'));
+
+        var signInButton = document.getElementById('google-signin-button');
+        if (signInButton) {
+            googleAttachSignin(document.getElementById('google-signin-button'));
+        }
+
+        var logoutButton = document.getElementById('logout-button');
+        if (logoutButton) {
+            console.log('logout button click handler bound');
+            logoutButton.addEventListener('click', googleSignOut);
+        }
     });
 };
 
@@ -23,16 +31,12 @@ function googleAttachSignin(element) {
 function onSignIn(googleUser) {
   var profile = googleUser.getBasicProfile();
   var id_token = googleUser.getAuthResponse().id_token;
-  console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
-  console.log('ID Token: ' + id_token);
-  console.log('Name: ' + profile.getName());
 
-  window.location.href = "http://localhost:3010/google-auth?username=" + profile.getName() + '&auth_token=' + id_token + '&id=' + profile.getId();
+  window.location.href = "/google-auth?username=" + profile.getName() + '&auth_token=' + id_token + '&id=' + profile.getId();
 }
 
 function googleSignOut() {
     var auth2 = gapi.auth2.getAuthInstance();
     auth2.signOut().then(function () {
-    console.log('User signed out.');
 });
 }

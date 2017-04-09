@@ -92,6 +92,10 @@ impl GoogleAuthController {
         Ok(true)
     }
 
+    fn validate_access_token(&self, token: String) -> bool {
+        false
+    }
+
     fn extract_profile_info(&self, req: &Request) -> BTreeMap<String, String> {
         let mut profile = BTreeMap::new();
         profile.insert(String::from("id"), query::get(req.url.to_string(), "id").unwrap());
