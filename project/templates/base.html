@@ -23,7 +23,6 @@
     <meta name="msapplication-TileColor" content="#ffffff">
     <meta name="msapplication-TileImage" content="/public/img/favicon/ms-icon-144x144.png">
     <meta name="theme-color" content="#ffffff">
-    <meta name="google-signin-client_id" content="{{ google_app_id }}">
     <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
     <link rel="stylesheet" href="/public/vendor/purecss/pure-min.css">
     <link rel="stylesheet" href="/public/vendor/purecss/grids-responsive-min.css">
@@ -34,6 +33,7 @@
     <link rel="manifest" href="/public/manifest.json">
     <script src="https://apis.google.com/js/platform.js" async defer></script>
     <script src="https://apis.google.com/js/api:client.js"></script>
+    <script src="/public/js/google-auth.js"></script>   
     <script>
         window.pd = {};
     </script>
@@ -137,42 +137,6 @@
     {% if logged_in %}
          <script src="/public/js/push.js"></script> 
     {% endif %}
-
-    <script>
-    var googleUser = {};
-    var startApp = function() {
-        gapi.load('auth2', function(){
-            // Retrieve the singleton for the GoogleAuth library and set up the client.
-            auth2 = gapi.auth2.init({
-                client_id: '{{ google_app_id }}',
-                cookiepolicy: 'single_host_origin',
-                // Request scopes in addition to 'profile' and 'email'
-                //scope: 'additional_scope'
-            });
-            googleAttachSignin(document.getElementById('google-signin-button'));
-        });
-    };
-
-    function googleAttachSignin(element) {
-        console.log(element.id);
-        auth2.attachClickHandler(element, {},
-            function(googleUser) {
-                document.getElementById('name').innerText = "Signed in: " +
-                    googleUser.getBasicProfile().getName();
-                }, function(error) {
-                alert(JSON.stringify(error, undefined, 2));
-            });
-    }
-
-    function googleSignOut() {
-        var auth2 = gapi.auth2.getAuthInstance();
-        auth2.signOut().then(function () {
-        console.log('User signed out.');
-    });
-  }
-    
-    startApp();
-    </script>
 
     <script>
       (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
