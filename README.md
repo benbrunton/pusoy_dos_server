@@ -35,6 +35,7 @@ Navigate to http://localhost:3010
 
 ## Roadmap
 
+- [ ] - allow auto skip on empty table
 - [ ] - improve joker modal
 - [ ] - increase session duration
 - [ ] - card count joker bug
