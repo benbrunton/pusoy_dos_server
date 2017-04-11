@@ -1,3 +1,4 @@
+/// Web controller which manages Google OAuth login requests and token authentication.
 use iron::prelude::*;
 use iron::{status, modifiers, Url};
 use iron::middleware::Handler;
@@ -6,6 +7,8 @@ use config::Config;
 use std::io::Read;
 use rustc_serialize::json::Json;
 use std::collections::BTreeMap;
+use time;
+use regex::Regex;
 
 use query;
 use data_access::user::User as UserData;
@@ -20,6 +23,8 @@ pub struct GoogleAuthController {
 }
 
 impl GoogleAuthController {
+    /// Creates a new `GoogleAuthController` using `&Config` to retrieve app configuration
+    /// and `user_data` to fetch user information.
     pub fn new(config: &Config, user_data: UserData) -> GoogleAuthController {
         let google_secret = config.get("google_secret").unwrap();
         let google_app_id = config.get("google_app_id").unwrap();
@@ -33,6 +38,8 @@ impl GoogleAuthController {
         }
     }
 
+    /// Fetch a JSON document from `url` and return it as a key-value map, where value will
+    /// typically be just a string
     fn fetch_json(&self, url: String) -> Result<BTreeMap<String, Json>, String> {
 
         let client = Client::new();
@@ -60,12 +67,12 @@ impl GoogleAuthController {
 
     }
 
-    fn get_access_token(&self, req: &mut Request) -> Result<bool, Result<Response, IronError>> {
+    /// Handle a Google OAuth sign-in request and retrieve the OAuth access token from Google Auth API and return it
+    fn get_access_token(&self, req: &mut Request) -> Result<BTreeMap<String, Json>, Result<Response, IronError>> {
 
-        let google_secret = self.google_secret.clone();
-        let client_id = self.google_app_id.clone();
+        // First stage of Google OAuth is performed client-side via a JavaScript API.
+        // All left to do is sent the user's ID to Google API to obtain the session token.
         let hostname = self.hostname.clone();
-        let redirect = format!("{}/auth", hostname);
         let auth_token = query::get(req.url.to_string(), "auth_token");
 
         if auth_token == None {
@@ -87,15 +94,43 @@ impl GoogleAuthController {
             _ => (),
         }
 
+        let g_t = google_token_response.unwrap();
         info!("got access token");
 
-        Ok(true)
+        Ok(g_t)
     }
 
-    fn validate_access_token(&self, token: String) -> bool {
-        false
+    /// Verify response obtained from Google Auth API is integral and correct.
+    fn validate_access_token(&self, token: BTreeMap<String, Json>) -> bool {
+
+        let now = time::get_time();
+        let iss = token.get("iss").unwrap().as_string().unwrap();
+        let aud = token.get("aud").unwrap().as_string().unwrap();
+        let kid = token.get("kid").unwrap().as_string().unwrap(); // Google's public key
+        let expiry_time = token.get("exp").unwrap().as_string().unwrap().parse::<i64>().unwrap(); // Token's expiry time
+
+        // Check verification was performed by Google
+        let iss_re = Regex::new(r"(https://)?accounts.google.com").unwrap();
+        if !iss_re.is_match(iss) {
+            return false
+        }
+
+        // Check token hasn't expired
+        if expiry_time < now.sec {
+            return false
+        }
+
+        // Check response was crafted exclusively for our app
+        if aud != self.google_app_id {
+            return false
+        }
+
+        // TODO -- Add Google OAuth pubkey verification too
+
+        true
     }
 
+    /// Extract user information from OAuth profile and return it as a map
     fn extract_profile_info(&self, req: &Request) -> BTreeMap<String, String> {
         let mut profile = BTreeMap::new();
         profile.insert(String::from("id"), query::get(req.url.to_string(), "id").unwrap());
@@ -129,10 +164,12 @@ impl GoogleAuthController {
 }
 
 impl Handler for GoogleAuthController {
+    /// Handle HTTP request to authenticate using a Google OAuth provider
     fn handle(&self, req: &mut Request) -> IronResult<Response> {
 
         info!("GoogleAuthController handler");
 
+        // Retrieve token to authenticate user
         let access_token_response = self.get_access_token(req);
         info!("{:?}", access_token_response);
 
@@ -143,12 +180,15 @@ impl Handler for GoogleAuthController {
 
         let access_token = access_token_response.unwrap();
 
-        if !access_token {
-            return self.google_error();
+        info!("verifying authentication token");
+        // Check session token received is OK
+        if !self.validate_access_token(access_token) {
+            return self.google_error()
         }
 
         info!("loading profile");
 
+        // Load user's basic profile info
         let profile = self.extract_profile_info(req);
 
         let id = profile.get("id").unwrap();
@@ -160,6 +200,8 @@ impl Handler for GoogleAuthController {
         info!("{}", id);
         info!("{}", name);
 
+        // Create a user model out of the information obtained and commit their details to the
+        // database if not already there.
         let user = PartUser {
             name: name.clone(),
             provider_id: id.clone(),

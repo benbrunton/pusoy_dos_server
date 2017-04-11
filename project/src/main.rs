@@ -26,6 +26,7 @@ extern crate time;
 extern crate rand;
 extern crate chrono;
 extern crate schedule_recv;
+extern crate regex;
 
 #[macro_use]
 extern crate pusoy_dos;
