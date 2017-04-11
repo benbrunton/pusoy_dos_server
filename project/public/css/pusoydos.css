@@ -335,8 +335,15 @@ a.action-button,
 .form-group {
   padding: 12px 0;
 }
+.leaderboard-container {
+  overflow-x: auto;
+}
 .leaderboard {
   width: 100%;
+}
+.leaderboard .min-wid {
+  padding: 0.5em 0.2em;
+  text-align: center;
 }
 .index .blurb {
   margin-top: 50px;

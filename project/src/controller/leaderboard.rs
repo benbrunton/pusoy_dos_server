@@ -26,10 +26,18 @@ impl Leaderboard {
 
     fn get_page(&self, _:u64) -> TeraResult<String> {
 
-        let lb = self.leaderboard.get_leaderboard().unwrap();
+        let lb_result = self.leaderboard.get_leaderboard();
         let mut data = Context::new(); 
         data.add("logged_in", &true);
-        data.add("leaderboard", &lb);
+
+        match lb_result {
+            Some(lb) => {
+                data.add("leaderboard", &lb);
+            },
+            _ => {
+            }
+
+        }
 
         self.tera.render("leaderboard.html", data)
     }

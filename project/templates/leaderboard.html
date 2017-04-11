@@ -4,33 +4,39 @@
 
 <h2>Leaderboard</h2>
 
-<table class="pure-table pure-table-horizontal leaderboard">
-    <thead>
-        <tr>
-            <th>#</th>
-            <th>Name</th>
-            <th>P</th>
-            <th>W</th>
-            <th>L</th>
-            <th>rating</th>
-        </tr>
-    </thead>
+{% if leaderboard %}
+<div class="leaderboard-container">
+    <table class="pure-table pure-table-horizontal leaderboard">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th class="min-wid">P</th>
+                <th class="min-wid">W</th>
+                <th class="min-wid">L</th>
+                <th>rating</th>
+            </tr>
+        </thead>
 
-    <tbody>
-					{% for user in leaderboard %}
-						<tr>
-							<td>{{ user.position }}</td>
-							<td>{{ user.name }}</td>
-                            <td>{{ user.played }}</td>
-                            <td>{{ user.wins }}</td>
-                            <td>{{ user.losses }}</td>
-                            <td>{{ user.rating }}</td>
-						</tr>
-				  	{% endfor %}	
+        <tbody>
+                        {% for user in leaderboard %}
+                            <tr>
+                                <td>{{ user.position }}</td>
+                                <td>{{ user.name }}</td>
+                                <td class="min-wid">{{ user.played }}</td>
+                                <td class="min-wid">{{ user.wins }}</td>
+                                <td class="min-wid">{{ user.losses }}</td>
+                                <td>{{ user.rating }}</td>
+                            </tr>
+                        {% endfor %}	
 
-    </tbody>
+        </tbody>
 
-</table>
+    </table>
+</div>
+{% else %}
+<p><em>Unable to load leaderboard</em></p>
+{% endif %}
 
 {% endblock content %}
 

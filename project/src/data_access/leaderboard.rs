@@ -20,29 +20,37 @@ impl Leaderboard {
 
     pub fn get_leaderboard(&self) -> Option<Vec<LeaderboardModel>> {
 
-        let leaderboard = self.fetch_json(String::from("http://localhost:8080/stats/leaderboard/")).unwrap();
+        let leaderboard_req = self.fetch_json(
+                            String::from("http://localhost:8080/stats/leaderboard/"));
 
-        let mut pos = 0;
-        let model_list = leaderboard.iter().map(|ref x| {
-            let y = x.as_object().unwrap();
-            pos = pos + 1;
-            LeaderboardModel{
-                name: String::from(y.get("name").unwrap()
-                        .as_string().unwrap_or("unknown")),
-                position: pos,
-                wins: y.get("wins").unwrap()
-                        .as_u64().unwrap_or(0),
-                played: y.get("played").unwrap()
-                        .as_u64().unwrap_or(0),
-                losses: y.get("losses").unwrap()
-                        .as_u64().unwrap_or(0),
-                rating: y.get("rating").unwrap()
-                        .as_f64().unwrap_or(0.0)
-            }
-        }).collect();
+        match leaderboard_req {
+            Ok(leaderboard) => {
+                let mut pos = 0;
+                let model_list = leaderboard.iter().map(|ref x| {
+                    let y = x.as_object().unwrap();
+                    pos = pos + 1;
+                    LeaderboardModel{
+                        name: String::from(y.get("name").unwrap()
+                                .as_string().unwrap_or("unknown")),
+                        position: pos,
+                        wins: y.get("wins").unwrap()
+                                .as_u64().unwrap_or(0),
+                        played: y.get("played").unwrap()
+                                .as_u64().unwrap_or(0),
+                        losses: y.get("losses").unwrap()
+                                .as_u64().unwrap_or(0),
+                        rating: y.get("rating").unwrap()
+                                .as_f64().unwrap_or(0.0)
+                    }
+                }).collect();
 
 
-        Some(model_list)
+                Some(model_list)
+            },
+            _ => None
+
+        }
+
     }
 
     fn fetch_json(&self, url:String) -> Result<Vec<Json>, String>{

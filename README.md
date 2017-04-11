@@ -57,6 +57,7 @@ Navigate to http://localhost:3010
 - [ ] - social sharing features
 - [ ] - additional stats
 - [ ] - end game screens
+- [ ] - Five of a kind optional reversal
 - [ ] - vm security audit ( close some ports etc )
 - [ ] - optimise sessions
 - [ ] - error pages
