@@ -49,11 +49,11 @@
 
                 if (!isSubscribed) {
                     //console.log('user not subscribed');
-                    addNotice()
-                        .addEventListener('click', function() {
-                            this.disabled = true;
+                    //addNotice()
+                     //   .addEventListener('click', function() {
+                      //      this.disabled = true;
                             subscribeUser(swRegistration);
-                        });
+                       // });
                 } else {
                     //console.log('user subscribed');
                     setTimeout(updateSubscriptionOnServer.bind(this, subscription), 2000);
@@ -65,10 +65,9 @@
         var enableHeader = document.createElement('div');
         enableHeader.innerHTML = '<button class="enable-notifications pure-button action-button">Allow Notifications</button>';
 
-        var container = document.querySelector('.container');
         var pushButton = enableHeader.querySelector('.enable-notifications');
 
-        container.insertBefore(enableHeader, container.firstChild);
+        document.body.insertBefore(enableHeader, document.body.firstChild);
 
         return pushButton;
     }

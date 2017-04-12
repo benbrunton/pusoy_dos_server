@@ -35,9 +35,6 @@ Navigate to http://localhost:3010
 
 ## Roadmap
 
-- [ ] - allow auto skip on empty table
-- [ ] - improve allow notifications button
-- [ ] - improve joker modal
 - [ ] - increase session duration
 - [ ] - card count joker bug
 - [ ] - auto pass when logged in bug
@@ -55,7 +52,7 @@ Navigate to http://localhost:3010
 - [ ] - user settings/profile
 - [ ] - csrf protection and other post validation
 - [ ] - collect email addresses
-- [ ] - additional auth providers - { google, twitter, github, reddit }
+- [ ] - additional auth providers - { twitter, github, reddit }
 - [ ] - social sharing features
 - [ ] - additional stats
 - [ ] - end game screens
@@ -68,6 +65,7 @@ Navigate to http://localhost:3010
 - [ ] - client side move validation
 - [ ] - move assistance
 - [ ] - cookie consent
+- [ ] - return joker to hand as joker
 
 ## Contributing
 Contributions are encouraged and welcome via Pull Request.

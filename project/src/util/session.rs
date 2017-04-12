@@ -7,6 +7,7 @@ use iron::typemap::Key;
 use hyper::header::{Cookie, SetCookie};
 use cookie::Cookie as CookiePair;
 use uuid::Uuid;
+use time::Tm;
 
 use data_access::session::Session as SessionStore;
 
@@ -103,6 +104,22 @@ impl <'a> SessionMiddleware{
 		let str_key = format!("{}", key);
 		let mut cookie = CookiePair::new("pd_session".to_owned(), str_key);
         cookie.path = Some("/".to_owned());
+        // TODO - this is a bit ridiculous, but if we have to 
+        // update then I guess that's a success :D
+        let expireTm = Tm{
+            tm_sec: 0,
+            tm_min: 0,
+            tm_hour: 0,
+            tm_mday: 1,
+            tm_mon: 0,
+            tm_year: 137,
+            tm_wday: 0,
+            tm_yday: 0,
+            tm_isdst: 0,
+            tm_utcoff: 0,
+            tm_nsec: 0
+        };
+        cookie.expires = Some(expireTm);
 		let mut res = Response::new();
 		res.status = r.status;
 		res.body = r.body;

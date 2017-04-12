@@ -312,6 +312,7 @@ a.action-button,
   align-items: center;
   justify-content: center;
   background-color: #f5f5f5;
+  box-sizing: border-box;
 }
 .joker-modal .form-element {
   margin: 20px 0;
