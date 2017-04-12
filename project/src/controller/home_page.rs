@@ -51,7 +51,7 @@ impl HomePageController {
 
     fn get_homepage(&self) -> TeraResult<String> {
         let fb = format!("https://www.facebook.com/v2.\
-                          7/dialog/oauth?client_id={}&redirect_uri={}/auth",
+                          7/dialog/oauth?client_id={}&redirect_uri={}/fb-auth",
                          self.fb_app_id,
                          self.hostname);
         let mut data = Context::new();

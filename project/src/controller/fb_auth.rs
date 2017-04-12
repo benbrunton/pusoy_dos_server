@@ -65,7 +65,7 @@ impl FacebookAuthController {
         let fb_secret = self.fb_secret.clone();
         let client_id = self.fb_app_id.clone();
         let hostname = self.hostname.clone();
-        let redirect = format!("{}/auth", hostname);
+        let redirect = format!("{}/fb-auth", hostname);
         let code = query::get(req.url.to_string(), "code");
 
         if code == None {

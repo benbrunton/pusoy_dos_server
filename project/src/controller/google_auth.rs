@@ -26,9 +26,9 @@ impl GoogleAuthController {
     /// Creates a new `GoogleAuthController` using `&Config` to retrieve app configuration
     /// and `user_data` to fetch user information.
     pub fn new(config: &Config, user_data: UserData) -> GoogleAuthController {
-        let google_secret = config.get("google_secret").unwrap();
-        let google_app_id = config.get("google_app_id").unwrap();
-        let hostname = config.get("hostname").unwrap();
+        let google_secret = config.get("google_secret").expect("no google secret found");
+        let google_app_id = config.get("google_app_id").expect("no google app id found");
+        let hostname = config.get("hostname").expect("no hostname found");
 
         GoogleAuthController {
             google_secret: google_secret,

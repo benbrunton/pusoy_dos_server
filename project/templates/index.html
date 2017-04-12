@@ -3,25 +3,26 @@
 {% block content %}
     <div class="index">
         <div class="login">
-            <h2>Login</h2>
+            <h2>Login with</h2>
             <div class="login-providers pure-g">
 
-                <div class="pure-u-1-3">
-                    <p>
-                        <a href="{{ fb_login }}">
-                            <i class="fa fa-facebook-official fa-3x facebook-color" aria-hidden="true"></i>
+                <div class="pure-u-11-24">
+                        <a id="fb-signin-button" class="pure-button" href="{{ fb_login }}">
+                            <i class="fa fa-facebook-official fa-3x facebook-color" 
+                                aria-hidden="true"></i>
                         </a>
-                    </p>
+                        <p class="text-center">Facebook</p>
                 </div>
-                <div class="pure-u-1-3">
-                    <p>
-                        <a id="google-signin-button" href="#">
-                            <i class="fa fa-google fa-3x facebook-color" aria-hidden="true"></i>
+                <div class="pure-u-1-12 text-center"><p>or</p></div>
+                <div class="pure-u-11-24">
+                        <a id="google-signin-button" class="pure-button" href="#">
+                            <i class="fa fa-google fa-3x facebook-color" 
+                                aria-hidden="true"></i>
                         </a>
-                    </p>
+                        <p class="text-center">Google</p>
                 </div>
                 {% if dev_mode %}
-                <div class="pure-u-1-3">
+                <div >
                     <p>
                         <a href="/test_auth">
                             <i class="fa fa-user-circle fa-3x facebook-color" aria-hidden="true"></i>
