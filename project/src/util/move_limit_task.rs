@@ -3,7 +3,7 @@ use data_access::event::Event as EventData;
 use data_access::round::Round as RoundData;
 
 use chrono::prelude::*;
-use pusoy_dos::game::game::Game;
+use pusoy_dos::game::game::{ Game, GameDefinition };
 
 pub fn execute(game_data: GameData, event_data: EventData, round_data:RoundData) {
 
@@ -45,6 +45,7 @@ pub fn execute(game_data: GameData, event_data: EventData, round_data:RoundData)
 
                 let round = round_result.expect("error with round result");
 
+
                 let game = Game::load(round.clone()).expect("error loading game");
                 let next_player_result = game.get_next_player();
 
@@ -58,21 +59,20 @@ pub fn execute(game_data: GameData, event_data: EventData, round_data:RoundData)
                 
                 let next_player = next_player_result.unwrap().get_id();
 
-                let valid_move = game.player_move(next_player, vec!());
+                let game_def = round.clone();
+                let new_round = game_def.round.skip(next_player).expect("expected skip to work");
 
-                match valid_move {
-                    Ok(updated_game) => {
-                        round_data.update_round(id, updated_game.clone());
-                        event_data.insert_game_event(next_player, id, "[]".to_string());
+                let new_game_def = GameDefinition{ 
+                    players: game_def.players.clone(),
+                    round: new_round,
+                    winners: game_def.winners.clone(),
+                    reversed: game_def.reversed
+                };
 
-                        info!("auto passed game {}", id);
+                round_data.update_round(id, new_game_def.clone());
 
-                    },
-                    _ => {
-                        info!("invalid_move!");
-                        continue;
-                    }
-                }
+                // todo - could indicate auto pass
+                event_data.insert_game_event(next_player, id, "[]".to_string());
 
             },
             _ => ()

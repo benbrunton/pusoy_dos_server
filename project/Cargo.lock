@@ -466,7 +466,7 @@ dependencies = [
 [[package]]
 name = "pusoy_dos"
 version = "0.1.0"
-source = "git+https://github.com/benbrunton/pusoy-dos#5e401ede7b370149596dfecd79d6368b1390d1e7"
+source = "git+https://github.com/benbrunton/pusoy-dos#d30813254278d1b10859c86dcc9662c4586bd1b3"
 dependencies = [
  "rand 0.3.15 (registry+https://github.com/rust-lang/crates.io-index)",
  "rustc-serialize 0.3.23 (registry+https://github.com/rust-lang/crates.io-index)",

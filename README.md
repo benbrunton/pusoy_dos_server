@@ -36,6 +36,7 @@ Navigate to http://localhost:3010
 ## Roadmap
 
 - [ ] - allow auto skip on empty table
+- [ ] - improve allow notifications button
 - [ ] - improve joker modal
 - [ ] - increase session duration
 - [ ] - card count joker bug
@@ -47,6 +48,7 @@ Navigate to http://localhost:3010
 - [ ] - display times in local on client
 - [ ] - nice move! even when move is invalid
 - [ ] - max players auto start
+- [ ] - indicate auto-pass in move history
 - [ ] - additional notifications
 - [ ] - private groups/games
 - [ ] - private leaderboard
