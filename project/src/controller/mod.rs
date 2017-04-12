@@ -1,6 +1,7 @@
 
 pub mod home_page;
-pub mod auth;
+pub mod fb_auth;
+pub mod google_auth;
 pub mod game;
 pub mod game_list;
 pub mod game_create;
@@ -16,4 +17,3 @@ pub mod about;
 pub mod remove_user;
 
 pub mod test_auth;
-

@@ -3,7 +3,7 @@ project/config/app_config.toml
 *.swp
 .deploy
 .DS_Store
-public/js/inplay.js
+project/public/js/
 pd.tar.gz
 demo-data.sql
 nohup.out
