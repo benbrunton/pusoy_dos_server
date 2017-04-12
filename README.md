@@ -35,9 +35,6 @@ Navigate to http://localhost:3010
 
 ## Roadmap
 
-- [ ] - increase session duration
-- [ ] - card count joker bug
-- [ ] - auto pass when logged in bug
 - [ ] - update number of decks after game creation
 - [ ] - show when user wins hand
 - [ ] - display number of decks on game list
@@ -56,6 +53,7 @@ Navigate to http://localhost:3010
 - [ ] - social sharing features
 - [ ] - additional stats
 - [ ] - end game screens
+- [ ] - leave games
 - [ ] - Five of a kind optional reversal
 - [ ] - vm security audit ( close some ports etc )
 - [ ] - optimise sessions

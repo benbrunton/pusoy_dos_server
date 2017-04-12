@@ -2,27 +2,43 @@
 {% block title %}Game {{ id }}{% endblock title %}
 {% block content %}
 <div class="game-lobby">
-    <h2>Game {{id}} - waiting to start</h2>
+    <h3 class="section-head">Game {{id}}</h3>
 
-    <div>
-        <p><strong>Players:</strong> {{ num_users }} </p>
+    <div class="option-section">
+        <h4 class="section-subhead">Info</h4>
+        <form method="POST" action="/game/{{id}}/update">
+            <p><strong>Players:</strong> {{ num_users }} </p>
+            <p>
+                <strong>Decks:</strong>
+                <select>
+                    <option value="1"{% if decks == 1 %} selected {% endif %}>1</option>
+                    <option value="2"{% if decks == 2 %} selected {% endif %}>2</option>
+                    <option value="3"{% if decks == 3 %} selected {% endif %}>3</option>
+                    <option value="4"{% if decks == 4 %} selected {% endif %}>4</option>
+                </select>
+            </p>
+            <p><input type="submit" class="pure-button" value="Update"></p>
+        </form>
     </div>
 
     <div class="player-list">
+        <h4 class="section-subhead">Players</h4>
 
         {% for user in users %}
-            <div>
+            <div class="player">
             {% if current_user == user.id %}
-                <i class="fa fa-user-circle-o"></i>
+                <div class="text-center left-icon">
+                    <i class="fa fa-user-circle-o"></i>
+                </div>
                 You
             {% else %}
                 <form method="POST" action="/game/{{id}}/remove/{{user.id}}">
-                    <i class="fa fa-user"></i>
+                    <div class="text-center left-icon">
+                        <button type="submit" class="pure-button small-btn text-danger">
+                            <i class="fa fa-times"></i>
+                        </button>
+                    </div>
                     {{ user.name }}
-
-                    <button type="submit" class="pure-button small-btn">
-                        <i class="fa fa-trash"></i>
-                    </button>
                 </form>
             {% endif %}
             </div>
@@ -35,7 +51,7 @@
 
         {% if  num_users > 1  %}
             <form action="/game/{{ id }}/begin" method="POST">
-                <input type="submit" value="Start Game">
+                <input type="submit" class="pure-button block-button cta-button" value="Start Game">
             </form>
         {% endif %}
 
