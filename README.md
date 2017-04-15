@@ -38,6 +38,7 @@ Navigate to http://localhost:3010
 - [ ] - update number of decks after game creation
 - [ ] - show when user wins hand
 - [ ] - display number of decks on game list
+- [ ] - more obvious feedback when game created
 - [ ] - display time left in time limit games
 - [ ] - display times in local on client
 - [ ] - nice move! even when move is invalid

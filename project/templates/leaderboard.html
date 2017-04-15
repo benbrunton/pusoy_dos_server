@@ -2,14 +2,14 @@
 {% block title %}Leaderboard{% endblock title %}
 {% block content %}
 
-<h2>Leaderboard</h2>
+<h3 class="section-head">Leaderboard</h3>
 
 {% if leaderboard %}
 <div class="leaderboard-container">
     <table class="pure-table pure-table-horizontal leaderboard">
         <thead>
             <tr>
-                <th>#</th>
+                <th class="min-wid">#</th>
                 <th>Name</th>
                 <th class="min-wid">P</th>
                 <th class="min-wid">W</th>
@@ -21,7 +21,7 @@
         <tbody>
                         {% for user in leaderboard %}
                             <tr>
-                                <td>{{ user.position }}</td>
+                                <td class="min-wid">{{ user.position }}</td>
                                 <td>{{ user.name }}</td>
                                 <td class="min-wid">{{ user.played }}</td>
                                 <td class="min-wid">{{ user.wins }}</td>

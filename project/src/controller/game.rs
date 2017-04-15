@@ -71,6 +71,8 @@ impl Game {
                 data.add("decks", &game_model.decks);
                 data.add("num_users", &users.len());
                 data.add("users", &users);
+                data.add("move_limit", &game_model.max_move_duration);
+                data.add("owner_id", &game_model.creator_id);
             },
             None => ()
         };

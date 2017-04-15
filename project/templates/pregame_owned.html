@@ -17,7 +17,8 @@
                     <option value="4"{% if decks == 4 %} selected {% endif %}>4</option>
                 </select>
             </p>
-            <p><input type="submit" class="pure-button" value="Update"></p>
+            <p><strong>Move limit:</strong> {{ move_limit }} </p>
+            <p class="text-center"><input type="submit" class="pure-button" value="Update"></p>
         </form>
     </div>
 
@@ -30,7 +31,7 @@
                 <div class="text-center left-icon">
                     <i class="fa fa-user-circle-o"></i>
                 </div>
-                You
+                <strong>You</strong>
             {% else %}
                 <form method="POST" action="/game/{{id}}/remove/{{user.id}}">
                     <div class="text-center left-icon">

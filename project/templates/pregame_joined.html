@@ -2,23 +2,42 @@
 {% block title %}Welcome{% endblock title %}
 {% block content %}
 <div class="game-lobby">
-    <h2>Game {{id}}</h2>
-    <p>Waiting for game to begin...</p>
-
-
-        <div>
+    <h3 class="section-head">Game {{id}}</h3>
+    <div class="option-section">
+        <h4 class="section-subhead">Info</h4>
             <p><strong>Players:</strong> {{ num_users }} </p>
-        </div>
+            <p>
+                <strong>Decks:</strong>
+                {{ decks }}
+            </p>
+            <p><strong>Move limit:</strong> {{ move_limit }} </p>
+    </div>
 
-        <div class="player-list">
+    <div class="player-list">
+        <h4 class="section-subhead">Current Players</h4>
+        {% for user in users %}
+            <div>
+                {% if current_user == user.id %}
+                    <div class="text-center left-icon">
+                        <i class="fa fa-user-circle-o"></i>
+                    </div>
+                    <strong>You</strong>
+                {% else %}
 
-            {% for user in users %}
-                <div><i class="fa fa-user"></i>
+                    <div class="text-center left-icon">
+                        <i class="fa fa-user"></i>
+                    </div>
                     {{ user.name }}
-                </div>
+                {% endif %}
 
-            {% endfor %}
+                {% if user.id == owner_id %}
+                [<em>creator</em>]
+                {% endif %}
 
-        </div>
+            </div>
+        {% endfor %}
+
+    </div>
+
 </div>
 {% endblock content %}

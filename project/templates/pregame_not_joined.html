@@ -3,26 +3,37 @@
 {% block content %}
 <div class="game-lobby">
 
-    <h2>Game {{id}} - accepting players </h2>
-
-    <div>
-        <p><strong>Players:</strong> {{ num_users }} </p>
+    <h3 class="section-head">Game {{id}}</h3>
+    <div class="option-section">
+        <h4 class="section-subhead">Info</h4>
+            <p><strong>Players:</strong> {{ num_users }} </p>
+            <p>
+                <strong>Decks:</strong>
+                {{ decks }}
+            </p>
+            <p><strong>Move limit:</strong> {{ move_limit }} </p>
     </div>
 
     <div class="player-list">
-
+        <h4 class="section-subhead">Current Players</h4>
         {% for user in users %}
-            <div><i class="fa fa-user"></i>
-                {{ user.name }}
-            </div>
+            <div>
+                <i class="fa fa-user"></i>
 
+                {{ user.name }}
+                {% if user.id == owner_id %}
+                [<em>creator</em>]
+                {% endif %}
+
+            </div>
         {% endfor %}
 
     </div>
 
     <div class="button-section">
         <form action="/game/{{ id }}/join" method="POST">
-            <input id="js-join-game" type="submit" value="Join">
+            <input id="js-join-game" class="block-button cta-button pure-button" 
+                    type="submit" value="Join">
         </form>
     </div>
 </div>

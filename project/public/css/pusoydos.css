@@ -345,6 +345,7 @@ a.action-button,
 }
 .leaderboard-container {
   overflow-x: auto;
+  margin-top: -10px;
 }
 .leaderboard {
   width: 100%;
@@ -352,6 +353,10 @@ a.action-button,
 .leaderboard .min-wid {
   padding: 0.5em 0.2em;
   text-align: center;
+}
+.leaderboard thead {
+  background-color: #c3d7df;
+  color: #6991ac;
 }
 .index .blurb {
   margin-top: 50px;
@@ -366,6 +371,7 @@ a.action-button,
 .section-subhead {
   padding: 8px 12px;
   background-color: #c3d7df;
+  color: #6991ac;
   margin: -10px;
   margin-bottom: 5px;
 }
