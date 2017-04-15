@@ -237,6 +237,16 @@ impl Game {
 
     }
 
+    pub fn update_decks(&self, id:u64, decks:u64) {
+        let _ = self.pool.prep_exec(r"UPDATE pusoy_dos.game 
+                                    SET decks = :decks
+                                    WHERE id = :id",
+                                    params!{
+                                        "id" => id,
+                                        "decks" => decks
+                                    });
+    }
+
     pub fn start_game(&self, id:u64) -> Result<(), &str>{
         let _ = self.pool.prep_exec(r"UPDATE pusoy_dos.game SET started = 1 WHERE id = :id",
             params!{ "id" => id });

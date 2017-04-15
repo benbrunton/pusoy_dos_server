@@ -2,7 +2,6 @@ use iron::prelude::*;
 use iron::{status, modifiers, Url};
 use iron::middleware::Handler;
 use iron::mime::Mime;
-use tera::{Tera, Context};
 use router::Router;
 
 use config::Config;
@@ -10,16 +9,15 @@ use data_access::game::Game as GameData;
 use helpers;
 
 pub struct RemoveUser {
-    tera: &'static Tera,
     hostname: String,
     game_data: GameData
 }
 
 impl RemoveUser {
 
-    pub fn new(config: &Config, tera:&'static Tera, game_data: GameData) -> RemoveUser {
+    pub fn new(config: &Config, game_data: GameData) -> RemoveUser {
         let hostname = config.get("hostname").unwrap();
-        RemoveUser{ tera: tera, hostname: hostname, game_data: game_data }
+        RemoveUser{ hostname: hostname, game_data: game_data }
     }
 
     fn remove_user(&self, user: u64, id:u64) -> Response {
