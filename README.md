@@ -33,39 +33,6 @@ Navigate to http://localhost:3010
 - [mysql](https://www.mysql.com/)
 - [docker](https://www.docker.com/)
 
-## Roadmap
-
-- [ ] - update number of decks after game creation
-- [ ] - show when user wins hand
-- [ ] - display number of decks on game list
-- [ ] - more obvious feedback when game created
-- [ ] - display time left in time limit games
-- [ ] - display times in local on client
-- [ ] - nice move! even when move is invalid
-- [ ] - max players auto start
-- [ ] - indicate auto-pass in move history
-- [ ] - additional notifications
-- [ ] - private groups/games
-- [ ] - private leaderboard
-- [ ] - user settings/profile
-- [ ] - csrf protection and other post validation
-- [ ] - collect email addresses
-- [ ] - additional auth providers - { twitter, github, reddit }
-- [ ] - social sharing features
-- [ ] - additional stats
-- [ ] - end game screens
-- [ ] - leave games
-- [ ] - Five of a kind optional reversal
-- [ ] - vm security audit ( close some ports etc )
-- [ ] - optimise sessions
-- [ ] - error pages
-- [ ] - deployment/pipeline improvements
-- [ ] - admin process
-- [ ] - client side move validation
-- [ ] - move assistance
-- [ ] - cookie consent
-- [ ] - return joker to hand as joker
-
 ## Contributing
 Contributions are encouraged and welcome via Pull Request.
 Hit me up via an issue for suggestions or help.
