@@ -1,5 +1,7 @@
 console.log('Pusoy Dos:: in play');
 
+var LOCAL_TIMEZONE = moment.tz.guess();
+
 var playerTemplate = `<div class="player">
                           <div class="user" :class="player.next ? 'next' : ''">
                             <span v-if="player.next" class="next-icon">
@@ -25,7 +27,7 @@ var playerTemplate = `<div class="player">
                             </span>
                           </div>
                         <div class="last-move" v-if="player.move">
-                            <small class="datetime">{{player.move_time}}</small>
+                            <small class="datetime">{{player.local_move_time}}</small>
                             <span class="move card-set">
 
                                 <table-card v-for="card in player.move" v-bind:card="card"></table-card>
@@ -248,6 +250,14 @@ function grab(url, prop){
 
                 // hack to display when order is reversed
                 app.reversed = player.reversed;
+
+                // 19:44 20/04/2017
+                var format = "HH:mm DD/MM/YYYY";
+                player.local_move_time = moment.tz(player.move_time, format, "Etc/UTC")
+                    .tz(LOCAL_TIMEZONE)
+                    .calendar();
+                console.log(player.move_time);
+                console.log(player.local_move_time);
 
             });
 
