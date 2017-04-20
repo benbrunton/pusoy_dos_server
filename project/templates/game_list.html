@@ -2,6 +2,33 @@
 {% block title %}Games{% endblock title %}
 {% block content %}
     <div class="game-panel">
+
+        <script>
+            (function(){
+                "use strict";
+                    var games = [
+                        {% for game in games %}
+                            {{game.id}},
+                        {% endfor %}
+                    ];
+
+                    games.forEach(function(game){
+                            var creds = {credentials: 'same-origin'};
+                            fetch(`/api/v1/time-limit/${game}`,  creds)
+                                .then(function(response){
+                                    return response.json();
+                                }).then(function(result){
+                                    if(result.status !== "null"){
+                                        var status = `Time Left: ${result.status}`;
+                                        document.querySelector(`#time-left-${result.game}`)
+                                            .innerHTML = status;
+                                    }
+                                });
+
+                    });
+
+            }());
+        </script>
         
         <div class="joined-games game-list">
             <h3><i class="fa fa-user"></i>&nbsp;&nbsp;My Games</h3>
@@ -22,6 +49,7 @@
                                     <div class="pure-g summary">
                                         <div class="pure-u-1-2">
 
+                                            <div>
 
                                                 {% if game.started %}
                                                 <span>
@@ -43,6 +71,12 @@
                                                     to start the game
                                                 </span>
                                                 {% endif %}
+                                            </div>
+                                            <div  class="time-left">
+                                                <p>
+                                                    <span id="time-left-{{game.id}}"></span>
+                                                </p>
+                                            </div>
 
                                         </div>
 
