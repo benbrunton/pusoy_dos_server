@@ -96,6 +96,7 @@ impl Game {
                             next_player_id: Some(current_id),
                             num_players: game_data.get("num_players").unwrap(),
                             max_move_duration: self.get_max_move_duration(max_move_duration),
+                            max_move_duration_mins: self.get_max_move_duration_mins(max_move_duration),
                             decks: game_data.get("decks").unwrap()
                         })
                     },
@@ -145,6 +146,7 @@ impl Game {
             next_player_id: None,
             num_players: 0,
             max_move_duration: self.get_max_move_duration(max_move_duration),
+            max_move_duration_mins: self.get_max_move_duration_mins(max_move_duration),
             decks: decks
          }
     }
@@ -388,10 +390,22 @@ impl Game {
                         next_player_id: Some(current_id),
                         num_players: row.take("num_players").unwrap_or(0),
                         max_move_duration: self.get_max_move_duration(max_move_duration),
+                        max_move_duration_mins: self.get_max_move_duration_mins(max_move_duration),
                         decks: row.take("decks").unwrap_or(0)
                     }
                 },
-                _ => GameModel{ id: 0, creator_id:0, creator_name:String::from(""), started: false, next_player_name: None, next_player_id: None, num_players: 0, max_move_duration: String::from(""), decks: 0}
+                _ => GameModel{ 
+                        id: 0, 
+                        creator_id:0, 
+                        creator_name:String::from(""), 
+                        started: false, 
+                        next_player_name: None, 
+                        next_player_id: None, 
+                        num_players: 0, 
+                        max_move_duration: String::from(""), 
+                        max_move_duration_mins: 0,
+                        decks: 0
+                    }
             }
         }).collect()
 
@@ -417,15 +431,7 @@ impl Game {
                 
                 result.map(|x| x.unwrap() ).map(|mut row| {
                     let move_duration = row.take("max_move_duration").unwrap_or(0);
-                    let duration = match move_duration{
-                        2 => 10,
-                        3 => 60,
-                        4 => 60 * 4,
-                        5 => 60 * 8,
-                        6 => 60 * 24,
-                        7 => 60 * 24 * 3,
-                        _ => 0
-                    };
+                    let duration = self.get_max_move_duration_mins(move_duration);
                     (row.take("id").unwrap_or(0), duration)
                 }).collect()
             }).unwrap()
@@ -441,6 +447,18 @@ impl Game {
            6 => "1 day".to_string(),
            7 => "3 days".to_string(),
            _ => "No limit".to_string() 
+        }
+    }
+
+    fn get_max_move_duration_mins(&self, code: u64) -> u64 {
+        match code{
+            2 => 10,
+            3 => 60,
+            4 => 60 * 4,
+            5 => 60 * 8,
+            6 => 60 * 24,
+            7 => 60 * 24 * 3,
+            _ => 0
         }
     }
 

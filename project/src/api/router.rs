@@ -8,7 +8,15 @@ use data_access::event::Event as EventData;
 
 use data_access::notification::Notification as NotificationData;
 
-use api::controller::{ players, last_move, my_cards, submit_move, game_events, update_notifications };
+use api::controller::{ 
+    players,
+    last_move,
+    my_cards,
+    submit_move,
+    game_events,
+    update_notifications,
+    time_limit
+};
 
 pub fn new(round_data:RoundData, user_data:UserData, game_data:GameData, event_data:EventData, notification_data:NotificationData) -> Router {
 
@@ -26,12 +34,14 @@ pub fn new(round_data:RoundData, user_data:UserData, game_data:GameData, event_d
     let game_events_controller = game_events::GameEvents::new(event_data.clone());
 
     let update_notifications_controller = update_notifications::UpdateNotifications::new(notification_data.clone());
+    let time_limit_controller = time_limit::TimeLimit::new(event_data.clone(), game_data.clone());
 
     router.get("/players/:id", players_controller, "api_players");
     router.get("/last-move/:id", last_move_controller, "api_last_move");
     router.get("/my-cards/:id", my_cards_controller, "api_my_cards");
     router.post("/submit-move/:id", submit_move_controller, "api_submit_move");
     router.get("/game-events/:id", game_events_controller, "api_game_events");
+    router.get("/time-limit/:id", time_limit_controller, "api_time_limit");
 
     router.post("/update-notifications", update_notifications_controller, "api_update_notifications");
     router
