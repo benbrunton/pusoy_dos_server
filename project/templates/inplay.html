@@ -5,11 +5,6 @@
     <h3 class="section-head">Game {{id}}</h3> 
     
     <div>
-        <div class="player-list">
-            <player v-for="player in playerList" v-bind:player="player"></player>
-        </div>
-
-
 
         <div class="status">
             <status v-bind:players="playerList"></status>
@@ -58,6 +53,13 @@
                 </div>
             </div>
         </div>
+
+        <div class="player-list">
+            <player v-for="player in playerList" v-bind:player="player"></player>
+        </div>
+
+
+
 
         <div v-if="jokerModal" class="joker-modal hide-on-load">
             <div class="modal-inner">
