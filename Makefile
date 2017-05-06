@@ -2,12 +2,19 @@
 docker-build:
 	docker build -t benbrunton/pusoy_dos .
 
+compile:
+	docker run --rm -v ${PWD}/project:/project benbrunton/pusoy_dos 
+
+
+docker-server-build:
+	docker build -t benbrunton/pd_server -f ./Dockerfile_run .
+
+docker-server-run:
+	docker run -d --name pd_server -P benbrunton/pd_server "./target/debug/pd_server"
+
 docker-release: 
 	cd project && make css js
 	docker exec -t pd_server cargo build --release
-
-docker-run:
-	docker run -v ${PWD}/project:/project -d -p 0.0.0.0:3010:3000 --name pd_server benbrunton/pusoy_dos 
 
 docker-stop:
 	docker stop pd_server
@@ -20,9 +27,6 @@ docker-rm:
 
 sh:
 	docker exec -it pd_server bash
-
-edit:
-	vim Makefile
 
 tail-logs:
 	docker logs -f pd_server

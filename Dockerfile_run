@@ -2,6 +2,8 @@ FROM debian:jessie
 MAINTAINER Ben Brunton "ben.b.brunton@gmail.com"
 
 ENV DEBIAN_FRONTEND=noninteractive
+ENV RUST_BACKTRACE=1
+ENV RUST_LOG=info
 
 EXPOSE 3000
 
@@ -10,16 +12,12 @@ RUN apt-get install -y curl \
                        file \
                        sudo \
                        gcc \
-                       libssl-dev \
-                       mysql-server \
-                       mysql-client
-RUN curl -sSf https://sh.rustup.rs | sh -s -- -y
+                       libssl-dev 
 
-SHELL ["/bin/bash", "-c"]
-
-
-ENV PATH="/root/.cargo/bin:${PATH}"
+COPY project/ /project
 
 WORKDIR /project
 
-CMD ["cargo", "build"]
+EXPOSE 3000
+
+CMD ["/project/target/release/pd_server"]
