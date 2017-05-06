@@ -1,9 +1,23 @@
 
-docker-build:
+docker-build-dev:
 	docker build -t benbrunton/pusoy_dos .
 
-compile:
-	docker run --rm -v ${PWD}/project:/project benbrunton/pusoy_dos 
+docker-run-dev: docker-stop-dev
+	docker rm pd_dev
+	docker run --name pd_dev -d -v ${PWD}/project:/project benbrunton/pusoy_dos
+
+docker-restart-dev:
+	docker restart pd_dev
+
+docker-stop-dev:
+	docker stop pd_dev
+
+run-pdserver:
+	docker exec -t pd_dev cargo run
+
+compile-client:
+	docker exec -t pd_dev stylus ./client/styles/pusoydos.styl --out public/css
+	docker exec -t pd_dev sh -c "cp ./client/js/* public/js/"
 
 
 docker-server-build:

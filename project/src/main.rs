@@ -71,7 +71,19 @@ fn main() {
 
     let config = Config::new();
 
-    let pool = mysql::Pool::new("mysql://root@localhost").unwrap();
+    let pool_result = mysql::Pool::new("mysql://root@localhost");
+    
+    match pool_result {
+        Err(err) => {
+            error!("{:?}", err);
+            error!("exiting!");
+            return;
+        },
+        _ => ()   
+    };
+
+    let pool = pool_result.unwrap();
+
     let user_data = data_access::user::User::new(pool.clone());
     let session_store = data_access::session::Session::new(pool.clone());
     let game_data = data_access::game::Game::new(pool.clone());

@@ -11,15 +11,21 @@ RUN apt-get install -y curl \
                        sudo \
                        gcc \
                        libssl-dev \
-                       mysql-server \
-                       mysql-client
+                       python-software-properties
+
 RUN curl -sSf https://sh.rustup.rs | sh -s -- -y
 
 SHELL ["/bin/bash", "-c"]
 
+RUN curl -sL https://deb.nodesource.com/setup_7.x | sudo bash -
+RUN apt-get install nodejs
+
+RUN npm install -g stylus
 
 ENV PATH="/root/.cargo/bin:${PATH}"
+ENV RUST_BACKTRACE=1
+ENV RUST_LOG=info
 
 WORKDIR /project
 
-CMD ["cargo", "build"]
+CMD ["tail", "-F", "-n0", "/etc/hosts"]
