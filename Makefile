@@ -32,6 +32,8 @@ compile-client:
 setup-db:
 	docker exec -t test-mysql sh /mysql/update_db.sh
 
+build-release:
+	docker exec -t pd-dev cargo build --release
 
 docker-server-build:
 	docker build -t benbrunton/pd_server -f ./Dockerfile_run .
@@ -39,7 +41,5 @@ docker-server-build:
 docker-server-run:
 	docker run -d --name pd_server -P benbrunton/pd_server "./target/debug/pd_server"
 
-docker-release: 
-	cd project && make css js
-	docker exec -t pd_server cargo build --release
+docker-release: compile-client build-release docker-server-build
 

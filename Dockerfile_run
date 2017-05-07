@@ -2,17 +2,12 @@ FROM debian:jessie
 MAINTAINER Ben Brunton "ben.b.brunton@gmail.com"
 
 ENV DEBIAN_FRONTEND=noninteractive
-ENV RUST_BACKTRACE=1
 ENV RUST_LOG=info
 
 EXPOSE 3000
 
 RUN apt-get update 
-RUN apt-get install -y curl \
-                       file \
-                       sudo \
-                       gcc \
-                       libssl-dev 
+RUN apt-get install -y libssl-dev 
 
 COPY project/ /project
 

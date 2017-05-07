@@ -3,6 +3,7 @@ use std::io::prelude::*;
 use std::fs::File;
 use std::collections::BTreeMap;
 use std::string::String;
+use std::env;
 
 use toml;
 
@@ -28,6 +29,12 @@ impl Config {
     }
 
     pub fn get(&self, key: &'static str) -> Option<String> {
+
+        let uppercase_key = key.to_string().to_uppercase();
+        match env::var(&uppercase_key) {
+            Ok(lang) => return Some(lang.to_string()),
+            Err(e) => ()
+        }; 
 
         match self.store.get(key){
             Some(val) => {
