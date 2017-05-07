@@ -1,0 +1,35 @@
+version: '3'
+services:
+  pd_dev:
+    tty: true
+    image: benbrunton/pusoy_dos
+    build: ..
+    container_name: pd-dev
+    environment:
+      RUST_LOG: info
+      RUST_BACKTRACE: 1
+    volumes:
+    - ../project:/project
+    stdin_open: true
+    ports:
+    - 3010:3000
+    links:
+    - mysql:mysql
+    networks:
+    - pd
+
+  mysql:
+    image: mysql
+    container_name: test-mysql
+    ports:
+      - 6603:3306
+    volumes:
+    - ../project/mysql:/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: "pusoy_dos"
+    networks:
+    - pd
+
+networks:
+  pd:
+    external: true

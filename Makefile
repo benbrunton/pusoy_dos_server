@@ -1,23 +1,36 @@
 
-docker-build-dev:
-	docker build -t benbrunton/pusoy_dos .
+ready-dev: setup docker-dev-up 
 
-docker-run-dev: docker-stop-dev
-	docker rm pd_dev
-	docker run --name pd_dev -d -v ${PWD}/project:/project benbrunton/pusoy_dos
+go: setup-db compile-client run-pdserver
 
-docker-restart-dev:
-	docker restart pd_dev
+setup:
+	docker network rm pd
+	docker network create pd
 
-docker-stop-dev:
-	docker stop pd_dev
+# dev server
+
+docker-dev-build:
+	docker-compose -f docker-services/dev.yml -p pd_dev build
+
+docker-dev-up:
+	docker-compose -f docker-services/dev.yml -p pd_dev up -d
+
+docker-dev-down:
+	docker-compose -f docker-services/dev.yml -p pd_dev down
 
 run-pdserver:
-	docker exec -t pd_dev cargo run
+	docker exec -t pd-dev cargo run
+
+kill-pdserver:
+	docker exec -t pd-dev killall pd_server
+
 
 compile-client:
-	docker exec -t pd_dev stylus ./client/styles/pusoydos.styl --out public/css
-	docker exec -t pd_dev sh -c "cp ./client/js/* public/js/"
+	docker exec -t pd-dev stylus ./client/styles/pusoydos.styl --out public/css
+	docker exec -t pd-dev sh -c "cp ./client/js/* public/js/"
+
+setup-db:
+	docker exec -t test-mysql sh /mysql/update_db.sh
 
 
 docker-server-build:
@@ -30,23 +43,3 @@ docker-release:
 	cd project && make css js
 	docker exec -t pd_server cargo build --release
 
-docker-stop:
-	docker stop pd_server
-
-docker-restart:
-	docker restart pd_server
-
-docker-rm:
-	docker rm pd_server
-
-sh:
-	docker exec -it pd_server bash
-
-tail-logs:
-	docker logs -f pd_server
-
-reset-db:
-	docker exec pd_server ./scripts/reset-db
-
-deploy: 
-	sh .deploy

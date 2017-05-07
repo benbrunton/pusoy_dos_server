@@ -11,6 +11,7 @@ RUN apt-get install -y curl \
                        sudo \
                        gcc \
                        libssl-dev \
+                       psmisc \
                        python-software-properties
 
 RUN curl -sSf https://sh.rustup.rs | sh -s -- -y

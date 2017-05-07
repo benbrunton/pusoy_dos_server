@@ -71,7 +71,18 @@ fn main() {
 
     let config = Config::new();
 
-    let pool_result = mysql::Pool::new("mysql://root@localhost");
+    let mysql_user = config.get("mysql_user").expect("no mysql user set");
+    let mysql_pw = config.get("mysql_pw").expect("no mysql pw set");
+    let mysql_host = config.get("mysql_host").expect("no mysql host set");
+    let mysql_port = config.get("mysql_port").expect("no mysql port set");
+
+    let mut builder = mysql::OptsBuilder::new();
+    builder.ip_or_hostname(Some(mysql_host))
+            .user(Some(mysql_user))
+            .pass(Some(mysql_pw))
+            .tcp_port(mysql_port.parse::<u16>().unwrap());
+
+    let pool_result = mysql::Pool::new(builder);
     
     match pool_result {
         Err(err) => {
@@ -192,8 +203,6 @@ fn main() {
     let ip = IpAddr::V4(Ipv4Addr::new(0, 0, 0, 0));
     let host = SocketAddr::new(ip, port.unwrap().parse::<u16>().unwrap());
     Iron::new(chain).http(host).unwrap();
-
-
 
 }
 
