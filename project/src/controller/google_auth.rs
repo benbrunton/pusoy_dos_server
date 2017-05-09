@@ -28,7 +28,7 @@ impl GoogleAuthController {
     pub fn new(config: &Config, user_data: UserData) -> GoogleAuthController {
         let google_secret = config.get("google_secret").expect("no google secret found");
         let google_app_id = config.get("google_app_id").expect("no google app id found");
-        let hostname = config.get("hostname").expect("no hostname found");
+        let hostname = config.get("pd_host").expect("no hostname found");
 
         GoogleAuthController {
             google_secret: google_secret,

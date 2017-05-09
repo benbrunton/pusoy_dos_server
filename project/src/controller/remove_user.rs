@@ -16,7 +16,7 @@ pub struct RemoveUser {
 impl RemoveUser {
 
     pub fn new(config: &Config, game_data: GameData) -> RemoveUser {
-        let hostname = config.get("hostname").unwrap();
+        let hostname = config.get("pd_host").unwrap();
         RemoveUser{ hostname: hostname, game_data: game_data }
     }
 

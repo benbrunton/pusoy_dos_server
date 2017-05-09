@@ -21,7 +21,7 @@ pub struct GameMove{
 impl GameMove{
 
     pub fn new(config:&Config, round_data: RoundData, game_data: GameData) -> GameMove {
-        let hostname = config.get("hostname").unwrap();
+        let hostname = config.get("pd_host").unwrap();
         GameMove{ hostname: hostname, round_data: round_data, game_data: game_data }
     }
 

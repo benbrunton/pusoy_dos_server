@@ -32,7 +32,10 @@ impl Config {
 
         let uppercase_key = key.to_string().to_uppercase();
         match env::var(&uppercase_key) {
-            Ok(lang) => return Some(lang.to_string()),
+            Ok(lang) => {
+                info!("{} = {}", uppercase_key, lang);    
+                return Some(lang.to_string())
+            },
             Err(e) => ()
         }; 
 

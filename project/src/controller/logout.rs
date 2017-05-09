@@ -13,7 +13,7 @@ impl LogoutController{
 
     pub fn new(config: &Config) -> LogoutController {
 
-        let hostname = config.get("hostname").unwrap();
+        let hostname = config.get("pd_host").unwrap();
 
         LogoutController{
             hostname: hostname

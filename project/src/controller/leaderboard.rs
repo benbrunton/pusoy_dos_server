@@ -15,7 +15,7 @@ pub struct Leaderboard {
 impl Leaderboard {
     pub fn new(config: &Config, tera:&'static Tera, leaderboard_data: LeaderboardData) -> Leaderboard {
 
-        let hostname = config.get("hostname").unwrap();
+        let hostname = config.get("pd_host").unwrap();
 
         Leaderboard{ 
             tera: tera,

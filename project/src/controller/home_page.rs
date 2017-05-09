@@ -18,7 +18,7 @@ pub struct HomePageController {
 impl HomePageController {
     pub fn new(config: &Config, tera: &'static Tera) -> HomePageController {
 
-        let hostname = config.get("hostname").unwrap();
+        let hostname = config.get("pd_host").unwrap();
         let fb_app_id = config.get("fb_app_id").unwrap();
         let google_app_id = config.get("google_app_id").unwrap();
         let dev_mode = match config.get("mode") {

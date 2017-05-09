@@ -30,7 +30,7 @@ pub struct Game {
 
 impl Game {
     pub fn new(config: &Config, tera:&'static Tera, game_data: GameData, user_data:UserData) -> Game {
-        let hostname = config.get("hostname").unwrap();
+        let hostname = config.get("pd_host").unwrap();
         Game{ tera: tera, hostname: hostname, game_data: game_data, user_data: user_data }
     }
 

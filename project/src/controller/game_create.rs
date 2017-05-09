@@ -16,7 +16,7 @@ pub struct GameCreate {
 
 impl GameCreate {
     pub fn new(config:&Config, game_data: GameData) -> GameCreate {
-        let hostname = config.get("hostname").unwrap();
+        let hostname = config.get("pd_host").unwrap();
         GameCreate{ hostname: hostname, game_data: game_data }
     }
 

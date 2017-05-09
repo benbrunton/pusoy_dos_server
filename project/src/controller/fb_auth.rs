@@ -23,7 +23,7 @@ impl FacebookAuthController {
     pub fn new(config: &Config, user_data: UserData) -> FacebookAuthController {
         let fb_secret = config.get("fb_secret").unwrap();
         let fb_app_id = config.get("fb_app_id").unwrap();
-        let hostname = config.get("hostname").unwrap();
+        let hostname = config.get("pd_host").expect("no pd_host found");
 
         FacebookAuthController {
             fb_secret: fb_secret,

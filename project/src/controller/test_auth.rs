@@ -17,7 +17,7 @@ impl TestAuthController {
     
     pub fn new(config: &Config, user_data: UserData) -> TestAuthController {
 
-        let hostname = config.get("hostname").unwrap();
+        let hostname = config.get("pd_host").unwrap();
 
         TestAuthController{
             hostname: hostname,

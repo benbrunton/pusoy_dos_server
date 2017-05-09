@@ -29,7 +29,7 @@ impl InPlay {
                 round_data: RoundData, 
                 user_data: UserData) -> InPlay {
 
-        let hostname = config.get("hostname").unwrap();
+        let hostname = config.get("pd_host").unwrap();
 
         InPlay{
             tera: tera,

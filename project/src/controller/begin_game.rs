@@ -17,7 +17,7 @@ pub struct BeginGame{
 
 impl BeginGame{
     pub fn new(config: &Config, game_data: GameData, round_data: RoundData) -> BeginGame {
-        let hostname = config.get("hostname").unwrap();
+        let hostname = config.get("pd_host").unwrap();
         BeginGame{
             game_data: game_data,
             round_data: round_data,
