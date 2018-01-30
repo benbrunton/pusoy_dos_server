@@ -1,11 +1,7 @@
 
-ready-dev: setup docker-dev-up 
+ready-dev: docker-dev-up 
 
 go: setup-db compile-client run-pdserver
-
-setup:
-	docker network rm pd
-	docker network create pd
 
 # dev server
 

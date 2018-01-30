@@ -15,8 +15,6 @@ services:
     - 3010:3000
     links:
     - mysql:mysql
-    networks:
-    - pd
 
   mysql:
     image: mysql
@@ -27,9 +25,3 @@ services:
     - ../project/mysql:/mysql
     environment:
       MYSQL_ROOT_PASSWORD: "pusoy_dos"
-    networks:
-    - pd
-
-networks:
-  pd:
-    external: true
