@@ -24,8 +24,6 @@ RUN apt-get install nodejs
 RUN npm install -g stylus
 
 ENV PATH="/root/.cargo/bin:${PATH}"
-ENV RUST_BACKTRACE=1
-ENV RUST_LOG=info
 
 WORKDIR /project
 

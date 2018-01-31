@@ -69,7 +69,7 @@ impl User {
                 "name" => user.name.clone(),
                 "id" => user.provider_id.clone(),
                 "type" => user.provider_type.clone(),
-                "creation_date" =>  format!("{}", utc.format("%Y-%m-%d][%H:%M:%S"))
+                "creation_date" =>  format!("{}", utc.format("%Y-%m-%d %H:%M:%S"))
             }).unwrap();
 
             UserModel{
@@ -77,7 +77,7 @@ impl User {
                 name: user.name.clone(),
                 provider_type: user.provider_type.clone(),
                 provider_id: user.provider_id.clone(),
-                creation_date: String::from(format!("{}", utc.format("%Y-%m-%d][%H:%M:%S")))
+                creation_date: String::from(format!("{}", utc.format("%Y-%m-%d %H:%M:%S")))
             }
     }
 

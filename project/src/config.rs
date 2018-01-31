@@ -15,12 +15,12 @@ impl Config {
 
     pub fn new() -> Config{
 
-        let mut f = File::open("config/app_config.toml").unwrap();
+        let mut f = File::open("config/app_config.toml").expect("unable to open app_config.toml");
         let mut s = String::new();
         let _ = f.read_to_string(&mut s);
 
         let mut parser = toml::Parser::new(&s);
-        let toml = parser.parse().unwrap();
+        let toml = parser.parse().expect("cannot parse the toml");
 
         Config {
             store : toml

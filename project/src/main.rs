@@ -67,7 +67,7 @@ lazy_static!{
 
 fn main() {
 
-    env_logger::init().unwrap();
+    env_logger::init().expect("failed to init logger");
 
     let config = Config::new();
 
@@ -80,7 +80,7 @@ fn main() {
     builder.ip_or_hostname(Some(mysql_host))
             .user(Some(mysql_user))
             .pass(Some(mysql_pw))
-            .tcp_port(mysql_port.parse::<u16>().unwrap());
+            .tcp_port(mysql_port.parse::<u16>().expect("failed to build mysql opts"));
 
     let pool_result = mysql::Pool::new(builder);
     
@@ -93,7 +93,7 @@ fn main() {
         _ => ()   
     };
 
-    let pool = pool_result.unwrap();
+    let pool = pool_result.expect("failed to unwrap mysql pool");
 
     let user_data = data_access::user::User::new(pool.clone());
     let session_store = data_access::session::Session::new(pool.clone());
@@ -190,7 +190,7 @@ fn main() {
     let tick = periodic_ms(60000);
 
     let handle = thread::spawn(move || loop {
-        tick.recv().unwrap();
+        tick.recv().expect("failed to receive tick period");
 
         move_limit_task::execute(game_data.clone(), event_data.clone(), round_data.clone());
     });
@@ -201,8 +201,11 @@ fn main() {
     // todo - a little error checking around this
     // will save a fair amount of debugging
     let ip = IpAddr::V4(Ipv4Addr::new(0, 0, 0, 0));
-    let host = SocketAddr::new(ip, port.unwrap().parse::<u16>().unwrap());
-    Iron::new(chain).http(host).unwrap();
+    let host = SocketAddr::new(
+        ip, 
+        port.expect("failed to get port").parse::<u16>().expect("failed to unwrap host")
+    );
+    Iron::new(chain).http(host).expect("failed to create Iron server");
 
 }
 

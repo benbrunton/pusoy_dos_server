@@ -28,7 +28,7 @@ impl Event {
                 "game" => game,
                 "user" => user,
                 "body" => event_body,
-                "creation_date" =>  format!("{}", utc.format("%Y-%m-%d][%H:%M:%S"))
+                "creation_date" =>  format!("{}", utc.format("%Y-%m-%d %H:%M:%S"))
             }).unwrap();
 
     }
@@ -91,7 +91,7 @@ impl Event {
                         name: user_name,
                         provider_id: format!("{}", provider_id),
                         provider_type: provider_type,
-                        creation_date: format!("{}", user_creation_date.format("%Y-%m-%d][%H:%M:%S"))
+                        creation_date: format!("{}", user_creation_date.format("%Y-%m-%d %H:%M:%S"))
                     };
 
 

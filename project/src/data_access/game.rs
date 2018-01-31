@@ -119,7 +119,7 @@ impl Game {
         info!("User {} created new game", user);
 
         let utc: DateTime<UTC> = UTC::now();
-        let creation_date = format!("{}", utc.format("%Y-%m-%d][%H:%M:%S"));
+        let creation_date = format!("{}", utc.format("%Y-%m-%d %H:%M:%S"));
 
         let query_result = self.pool.prep_exec(r"INSERT INTO pusoy_dos.game
                 ( creator, creation_date, max_move_duration, max_players, decks)
