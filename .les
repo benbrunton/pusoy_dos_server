@@ -1,0 +1,11 @@
+
+[hidden]
+    hidden = [".*"]
+    except = [".gitignore", ".les"]
+
+[colour]
+    [colour.green]
+    colour = ["*.md"]
+
+    [colour.grey]
+    colour = [".*"]
