@@ -26,6 +26,7 @@ impl CompleteGames {
         data.add("games", &games);
         data.add("num_games", &games.len());
         data.add("logged_in", &true);
+		data.add("id", &id);
 
         self.tera.render("complete-games.html", data)
     }
