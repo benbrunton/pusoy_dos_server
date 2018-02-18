@@ -42,7 +42,7 @@ mod api;
 
 use controller::{home_page, fb_auth, google_auth, game, game_list, game_create, new_game, test_auth,
                  logout, game_join, begin_game, inplay, game_move, post_game, leaderboard,
-                 remove_user, about, update_game};
+                 remove_user, about, update_game, complete_games};
 use config::Config;
 use util::session::SessionMiddleware;
 use util::nocache::NoCacheMiddleware;
@@ -124,6 +124,7 @@ fn main() {
     let leaderboard = leaderboard::Leaderboard::new(&config, &TERA, leaderboard_data.clone());
     let remove_user = remove_user::RemoveUser::new(&config, game_data.clone());
     let update_game = update_game::UpdateGame::new(&config, game_data.clone());
+    let complete_games = complete_games::CompleteGames::new(&config, &TERA,  game_data.clone());
 
     router.get("/", home_page_controller, "index");
     router.get("/fb-auth", facebook_auth_controller, "fb_auth_callback");
@@ -131,6 +132,7 @@ fn main() {
                google_auth_controller,
                "google_auth_callback");
     router.get("/games", game_list_controller, "game_list");
+    router.get("/complete-games", complete_games, "complete_games");
     router.get("/logout", logout_controller, "log_out");
     router.get("/new-game", new_game_controller, "new_game");
     router.post("/new-game", game_create_controller, "game_create");

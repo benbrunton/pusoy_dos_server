@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block title %}Games{% endblock title %}
+{% block content %}
+    <div class="game-panel">
+
+        <div class="complete-games game-list">
+            <h3>
+                <i class="fa fa-history"></i>&nbsp;&nbsp;Finished Games
+
+            </h3>
+            {% if num_games > 0  %}
+                <div class="pure-g">
+					{% for game in games %}
+					<div class="my-game pure-u-1 pure-u-md-1-2">
+						<div class="game-container">
+                                <a href="/game/{{ game.id }}">
+                                    <div class="id">
+                                        <small>{{ game.id }}</small>
+                                    </div>
+                                    <small>Created by {{game.creator_name}}</small>
+
+                                    <div class="pure-g summary">
+                                        <div class="pure-u-1-2">
+
+                                            <div>
+
+                                                <span>
+                                                    
+                                                    <strong>{{game.next_player_name}} lost</strong> 
+
+                                                    {%if id == game.next_player_id %}
+                                                        <i class="fa fa-thumbs-o-down"></i>
+                                                    {% endif %}
+
+                                                </span>
+
+                                            </div>
+
+                                        </div>
+
+                                        <div class="pure-u-1-2 data">
+                                            <div>
+                                                
+                                                <p>Players: {{game.num_players}}</p>
+
+                                                <div class="cta">
+
+                                                    <div class="pure-button action-button">
+                                                            View
+                                                    </div>
+                                                </div>
+                                                
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
+						</div>
+					</div>
+				  	{% endfor %}	
+                </div>
+            {% else %}
+                <p>No complete games</p>
+            {% endif %}
+        </div>
+
+
+    </div>
+{% endblock content %}
+

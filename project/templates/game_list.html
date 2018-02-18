@@ -31,7 +31,17 @@
         </script>
         
         <div class="joined-games game-list">
-            <h3><i class="fa fa-user"></i>&nbsp;&nbsp;My Games</h3>
+            <h3>
+                <i class="fa fa-user"></i>&nbsp;&nbsp;My Games
+
+            <small class="header-sub">
+                <a href="/complete-games">
+                    <i class="fa fa-history"></i>
+                    Finished Games
+                </a>
+            </small>
+
+            </h3>
             {% if num_games > 0  %}
                 <div class="pure-g">
 					{% for game in games %}
@@ -137,6 +147,7 @@
                 <i class="fa fa-plus"></i>&nbsp;&nbsp;
                 New Game
             </a>
+
         </div>
 
     </div>

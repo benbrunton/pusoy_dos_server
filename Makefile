@@ -20,6 +20,8 @@ run-pdserver:
 kill-pdserver:
 	docker exec -t pd-dev killall pd_server
 
+restart: kill-pdserver run-pdserver
+
 
 compile-client:
 	docker exec -t pd-dev stylus ./client/styles/pusoydos.styl --out public/css

@@ -387,3 +387,6 @@ a.action-button,
   display: inline-block;
   padding-right: 5px;
 }
+.header-sub {
+  float: right;
+}

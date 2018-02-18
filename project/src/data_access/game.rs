@@ -221,6 +221,30 @@ impl Game {
                     WHERE user_game.user IS NULL AND started = 0", user)
 
     }
+    
+    pub fn get_closed_games(&self, user:u64) -> Vec<GameModel> {
+        info!("Getting closed games for user {}", user);
+
+        self.get_game_list(r"SELECT game.id, 
+                                    creator, 
+                                    u1.name name, 
+                                    started, 
+                                    current_player, 
+                                    u2.name current_name,
+									user_game.user user,
+                                    decks,
+									complete,
+                                    c num_players,
+                                    game.max_move_duration
+							FROM pusoy_dos.user_game
+							JOIN pusoy_dos.game ON pusoy_dos.game.id = game
+							JOIN pusoy_dos.user u1 ON creator = u1.id
+							LEFT JOIN pusoy_dos.round r ON game.id = r.game
+							LEFT JOIN pusoy_dos.user u2 ON r.current_player = u2.id
+                            LEFT JOIN (SELECT game, COUNT(*) c FROM pusoy_dos.user_game GROUP BY game) a ON a.game = game.id
+                    WHERE user = :user AND complete = 1", user)
+    }
+
 
     pub fn get_players(&self, id:u64) -> Vec<u64>{
         info!("Getting users for game {}", id);
