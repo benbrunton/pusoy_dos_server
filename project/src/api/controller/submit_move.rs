@@ -23,6 +23,7 @@ use data_access::notification::Notification as NotificationData;
 use pusoy_dos::game::game::Game;
 use pusoy_dos::cards::types::*;
 use pusoy_dos::cards::card::{ Card, PlayerCard };
+use pusoy_dos::game::round::RoundDefinition;
 
 
 
@@ -90,36 +91,7 @@ impl SubmitMove {
                     let _ = self.game_data.complete_game(id);
                     //TODO Send game ended notification
                 } else {
-                    //TODO NOTIFY NEXT PLAYER IT IS HIS TURN
-                    let user_sub = self.notification_data.get_user_subscription(updated_round.current_player);
-                    match user_sub {
-                        Some(subscription) => {
-                            let client = Client::new();
-                            let mut body = BTreeMap::new();
-                            let player = match self.user_data.get_username_from_id(user_id) {
-                                Some(username) => username,
-                                _ => "".to_owned()
-                            };
-
-                            let cards_played = helpers::cards_played_summary(cards.clone());
-
-                            body.insert("subscription", subscription);
-                            body.insert("title", format!("Your move in game #{}", id));
-                            body.insert("body", format!("{} played {}", player, cards_played));
-                            body.insert("data", format!("{{ \"game\": {} }}", id));
-                            body.insert("tag", "moves".to_owned());
-
-                            let mut headers = Headers::new();
-                            headers.set_raw("content-type", vec!(b"application/json".to_vec()));
-                            let res = client.post("http://localhost:8888")
-                                .body(&json::encode(&body).unwrap())
-                                .headers(headers)
-                                .send();
-                        },
-                        _ => {
-                            //No sub do nothing
-                        }
-                    }
+                    self.notify_next_player(updated_round, user_id, cards, id);
                 }
             },
             _ => {
@@ -129,6 +101,45 @@ impl SubmitMove {
         }
 
         self.output_success()
+    }
+
+    fn notify_next_player(
+        &self,
+        updated_round: RoundDefinition,
+        user_id: u64,
+        cards: Vec<PlayerCard>,
+        id: u64
+    ) {
+        let user_sub = self.notification_data.get_user_subscription(updated_round.current_player);
+        match user_sub {
+            Some(subscription) => {
+                let client = Client::new();
+                let mut body = BTreeMap::new();
+                let player = match self.user_data.get_username_from_id(user_id) {
+                    Some(username) => username,
+                    _ => "".to_owned()
+                };
+
+                let cards_played = helpers::cards_played_summary(cards.clone());
+
+                body.insert("subscription", subscription);
+                body.insert("title", format!("Your move in game #{}", id));
+                body.insert("body", format!("{} played {}", player, cards_played));
+                body.insert("data", format!("{{ \"game\": {} }}", id));
+                body.insert("tag", "moves".to_owned());
+
+                let mut headers = Headers::new();
+                headers.set_raw("content-type", vec!(b"application/json".to_vec()));
+                let res = client.post("http://localhost:8888")
+                    .body(&json::encode(&body).unwrap())
+                    .headers(headers)
+                    .send();
+            },
+            _ => {
+                //No sub do nothing
+            }
+        }
+
     }
 
     fn output_success(&self) -> Response {
