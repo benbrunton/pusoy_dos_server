@@ -30,6 +30,9 @@ compile-client:
 setup-db:
 	docker exec -t test-mysql sh /mysql/update_db.sh
 
+demo-data:
+	docker exec -t test-mysql sh /mysql/demo-data.sh
+
 build-release:
 	docker exec -t pd-dev cargo build --release
 

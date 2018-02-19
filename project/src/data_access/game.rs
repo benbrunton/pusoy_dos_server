@@ -245,6 +245,30 @@ impl Game {
                     WHERE user = :user AND complete = 1", user)
     }
 
+    // this is knacked
+    pub fn get_all_closed_games(&self) -> Vec<GameModel> {
+        info!("Getting closed games");
+
+        self.get_general_game_list(r"SELECT game.id, 
+                                    creator, 
+                                    u1.name name, 
+                                    started, 
+                                    current_player, 
+                                    u2.name current_name,
+									user_game.user user,
+                                    decks,
+									complete,
+                                    c num_players,
+                                    game.max_move_duration
+							FROM pusoy_dos.user_game
+							JOIN pusoy_dos.game ON pusoy_dos.game.id = game
+							JOIN pusoy_dos.user u1 ON creator = u1.id
+							LEFT JOIN pusoy_dos.round r ON game.id = r.game
+                            LEFT JOIN pusoy_dos.user u2 ON pusoy_dos.user_game.user = u2.id
+                            LEFT JOIN (SELECT game, COUNT(*) c FROM pusoy_dos.user_game GROUP BY game) a ON a.game = game.id
+                    WHERE complete = 1")
+    }
+
 
     pub fn get_players(&self, id:u64) -> Vec<u64>{
         info!("Getting users for game {}", id);
@@ -371,11 +395,19 @@ impl Game {
     }
 
     fn get_game_list(&self, query:&str, user:u64) -> Vec<GameModel> {
+        self.create_game_list(query, Some(user))
+    }
 
-        let games = self.pool.prep_exec(query,
-                            params!{
-                                "user" => user
-                            }).unwrap();
+    fn get_general_game_list(&self, query: &str) -> Vec<GameModel> {
+        self.create_game_list(query, None)
+    }
+
+    fn create_game_list(&self, query:&str, user:Option<u64>) -> Vec<GameModel> {
+
+        let games = match user {
+            Some(u) => self.pool.prep_exec(query, params!{"user" => u}).unwrap(),
+            None    => self.pool.prep_exec(query, ()).unwrap()
+        };
 
         games.map(|result|{
 

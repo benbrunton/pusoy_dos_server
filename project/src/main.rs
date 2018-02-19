@@ -39,6 +39,7 @@ mod model;
 mod data_access;
 mod helpers;
 mod api;
+mod external;
 
 use controller::{home_page, fb_auth, google_auth, game, game_list, game_create, new_game, test_auth,
                  logout, game_join, begin_game, inplay, game_move, post_game, leaderboard,
@@ -164,8 +165,11 @@ fn main() {
                                       event_data.clone(),
                                       notification_data.clone());
 
+    let external_api_router = external::router::new(game_data.clone());
+
     let mut page_chain = Chain::new(router);
     let mut api_chain = Chain::new(api_router);
+    let mut external_api_chain = Chain::new(external_api_router);
 
     let session = SessionMiddleware::new(session_store);
     let no_cache = NoCacheMiddleware;
@@ -179,6 +183,7 @@ fn main() {
     let mut mount = Mount::new();
     mount.mount("/", page_chain)
         .mount("/api/v1/", api_chain)
+        .mount("/api/v2/", external_api_chain)
         .mount("/public/", Static::new(Path::new("public")))
         .mount("/sw.js", Static::new(Path::new("public/js/sw.js")));
 
