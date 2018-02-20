@@ -7,7 +7,7 @@ pub struct PartUser{
     pub provider_type: String
 }
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct User{
     pub id: u64,
     pub name: String,

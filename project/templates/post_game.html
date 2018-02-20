@@ -2,6 +2,48 @@
 {% block title %}Games{% endblock title %}
 {% block content %}
 
-<h2>game complete!</h2>
+<div class="game-history">
+    <h2>Game Complete!</h2>
+
+    <div class="event-list">
+        {% for event in events %}
+        <div class="event-item">
+            <small>{{event.time}}</small>
+            <strong>{{event.user_name}}</strong>
+            <div class="hand-holder card-set" data-hand-id="{{event.id}}"></div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+
+    (function(){
+
+        var handMap = {};
+        {% for event in events %}
+        handMap[{{event.id}}] = {{event.body}};
+        {% endfor %}
+
+        var handHolders = document.querySelectorAll('.hand-holder');
+
+        handHolders.forEach(renderHand);
+
+
+        function renderHand(el){
+            var handId = JSON.parse(el.getAttribute('data-hand-id'));
+            var hand = handMap[handId];
+
+
+            hand.forEach(function(card){
+                var newEl = document.createElement('span');
+                newEl.innerHTML = "" + card.rank + card.suitDisplay;
+                newEl.className = "card " + card.suit.toLowerCase() + " " + (card.joker ? "jtrue" : "jfalse");
+
+                el.appendChild(newEl);
+            });
+        }
+    }());
+</script>
 
 {% endblock content %}

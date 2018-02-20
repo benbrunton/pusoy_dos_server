@@ -72,6 +72,9 @@ a:visited {
 .index .login {
   text-align: center;
 }
+.game-history {
+  padding: 0 10px;
+}
 .hearts,
 .diamonds {
   color: #d75c37;
@@ -229,47 +232,6 @@ a.action-button,
   overflow-x: auto;
   height: 65px;
 }
-.inplay .card-set {
-  display: flex;
-  width: 500px;
-  height: 52px;
-  padding-top: 5px;
-  margin: 0 auto;
-}
-.inplay .card-set .card-container {
-  overflow: hidden;
-  cursor: pointer;
-}
-.inplay .card-set .card-container:last-child {
-  overflow: visible;
-}
-.inplay .card-set .card {
-  padding: 2px;
-  border: 1px solid #67727a;
-  border-radius: 3px;
-  background-color: #fff;
-  display: inline-block;
-  width: 30px;
-  height: 35px;
-  box-sizing: content-box;
-  text-align: left;
-  font-size: 0.7em;
-}
-.inplay .card-set .card p {
-  margin: 0;
-}
-.inplay .card-set .card-container.picked {
-  overflow: visible;
-  transform: scale(1.2);
-  z-index: 1;
-}
-.inplay .card-set .card-container.picked .card {
-  text-align: center;
-}
-.inplay .card-set .card-container.picked .card p {
-  display: inline-block;
-  padding: 7px 1px 1px 0;
-}
 .inplay .move-placeholder {
   padding: 9px 0 10px 0;
 }
@@ -389,4 +351,51 @@ a.action-button,
 }
 .header-sub {
   float: right;
+}
+.event-list {
+  font-size: 0.8em;
+}
+.event-list .event-item {
+  margin-bottom: 1px;
+}
+.card-set {
+  display: flex;
+  width: 500px;
+  height: 52px;
+  padding-top: 5px;
+  margin: 0 auto;
+}
+.card-set .card-container {
+  overflow: hidden;
+  cursor: pointer;
+}
+.card-set .card-container:last-child {
+  overflow: visible;
+}
+.card-set .card {
+  padding: 2px;
+  border: 1px solid #67727a;
+  border-radius: 3px;
+  background-color: #fff;
+  display: inline-block;
+  width: 30px;
+  height: 35px;
+  box-sizing: content-box;
+  text-align: left;
+  font-size: 0.7em;
+}
+.card-set .card p {
+  margin: 0;
+}
+.card-set .card-container.picked {
+  overflow: visible;
+  transform: scale(1.2);
+  z-index: 1;
+}
+.card-set .card-container.picked .card {
+  text-align: center;
+}
+.card-set .card-container.picked .card p {
+  display: inline-block;
+  padding: 7px 1px 1px 0;
 }

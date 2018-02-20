@@ -121,7 +121,7 @@ fn main() {
     let inplay_controller =
         inplay::InPlay::new(&config, &TERA, round_data.clone(), user_data.clone());
     let move_controller = game_move::GameMove::new(&config, round_data.clone(), game_data.clone());
-    let post_game_controller = post_game::PostGame::new(&TERA);
+    let post_game_controller = post_game::PostGame::new(&config, &TERA, event_data.clone());
     let leaderboard = leaderboard::Leaderboard::new(&config, &TERA, leaderboard_data.clone());
     let remove_user = remove_user::RemoveUser::new(&config, game_data.clone());
     let update_game = update_game::UpdateGame::new(&config, game_data.clone());

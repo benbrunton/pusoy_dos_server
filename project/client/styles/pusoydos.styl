@@ -79,6 +79,8 @@ a, a:visited
     .login
         text-align center 
 
+.game-history
+    padding 0 10px
 
 .hearts, .diamonds
     color cl-red
@@ -205,39 +207,6 @@ a.action-button, .action-button
     .my-cards-container
         overflow-x auto
         height 65px
-    .card-set
-        display flex
-        width 500px
-        height 52px
-        padding-top 5px 
-        margin 0 auto
-        .card-container
-            overflow hidden
-            cursor pointer
-        .card-container:last-child
-            overflow visible
-        .card
-            padding 2px
-            border 1px solid cl-gray
-            border-radius 3px
-            background-color cl-card-fore
-            display inline-block
-            width 30px
-            height 35px
-            box-sizing content-box
-            text-align left
-            font-size 0.7em
-            p
-                margin 0
-        .card-container.picked
-            overflow visible
-            transform scale(1.2)
-            z-index 1
-            .card
-                text-align center
-                p
-                    display inline-block
-                    padding 7px 1px 1px 0
     .move-placeholder
         padding 9px 0 10px 0
     .action
@@ -347,3 +316,42 @@ a.action-button, .action-button
 
 .header-sub
     float right
+
+.event-list
+    font-size 0.8em
+    .event-item
+        margin-bottom 1px
+.card-set
+    display flex
+    width 500px
+    height 52px
+    padding-top 5px 
+    margin 0 auto
+    .card-container
+        overflow hidden
+        cursor pointer
+    .card-container:last-child
+        overflow visible
+    .card
+        padding 2px
+        border 1px solid cl-gray
+        border-radius 3px
+        background-color cl-card-fore
+        display inline-block
+        width 30px
+        height 35px
+        box-sizing content-box
+        text-align left
+        font-size 0.7em
+        p
+            margin 0
+    .card-container.picked
+        overflow visible
+        transform scale(1.2)
+        z-index 1
+        .card
+            text-align center
+            p
+                display inline-block
+                padding 7px 1px 1px 0
+

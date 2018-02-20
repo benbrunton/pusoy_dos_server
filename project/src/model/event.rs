@@ -2,6 +2,9 @@ use chrono::prelude::*;
 use model::user::User;
 use std::collections::BTreeMap;
 
+use serde::{Serialize, Serializer};
+
+#[derive(Debug)]
 pub struct Event{
     id: Option<u64>,
     user: Option<User>,
@@ -18,9 +21,9 @@ impl Event{
                 datetime: DateTime<UTC>) ->  Event {
 
         Event{
-            id: None,
-            user: user,
-            game: game,
+            id,
+            user,
+            game,
             body: message,
             time: datetime
         }
@@ -61,3 +64,31 @@ impl Event{
         output
     }
 }
+
+impl Serialize for Event {
+
+	fn serialize<S>(&self, serializer: &mut S) -> Result<(), S::Error>
+        where S: Serializer
+    {
+
+        let mut state = try!(serializer.serialize_map(Some(2)));
+        
+		try!(serializer.serialize_map_key(&mut state, "id"));
+		try!(serializer.serialize_map_value(&mut state, self.id));
+
+		try!(serializer.serialize_map_key(&mut state, "user_name"));
+		try!(serializer.serialize_map_value(&mut state, self.user.to_owned().unwrap().name.clone()));
+        
+		try!(serializer.serialize_map_key(&mut state, "body"));
+		try!(serializer.serialize_map_value(&mut state, self.get_message()));
+
+		try!(serializer.serialize_map_key(&mut state, "time"));
+		try!(serializer.serialize_map_value(&mut state, format!("{}",
+            self.time.format("%Y-%m-%d %H:%M:%S"))));
+
+        serializer.serialize_map_end(state)
+
+    }
+}
+
+
