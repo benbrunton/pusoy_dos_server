@@ -18,10 +18,17 @@
         {% for user in users %}
             <div>
                 {% if current_user == user.id %}
-                    <div class="text-center left-icon">
-                        <i class="fa fa-user-circle-o"></i>
-                    </div>
-                    <strong>You</strong>
+                    <form method="POST" action="/game/{{id}}/remove/{{user.id}}">
+                        <div class="text-center left-icon">
+                            <i class="fa fa-user-circle-o"></i>
+                        </div>
+                        <strong>You</strong>
+
+                        <button type="submit" class="pure-button small-btn">
+                            <i class="fa fa-sign-out"></i>
+                        </button>
+                    </form>
+
                 {% else %}
 
                     <div class="text-center left-icon">
