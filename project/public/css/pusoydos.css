@@ -171,7 +171,7 @@ a.action-button,
   font-style: italic;
 }
 .inplay {
-  padding: 0 10px;
+  padding: 15px 10px 0;
   overflow-x: hidden;
 }
 .inplay .user {
@@ -207,10 +207,11 @@ a.action-button,
   display: inline;
 }
 .inplay .player .card-set .card {
-  transform: scale(0.8);
+  transform: scale(0.6) translateY(-12px);
 }
 .inplay .last-move {
   margin-left: 10px;
+  height: 30px;
 }
 .inplay .last-move .card.jtrue {
   background-color: #ccc;
@@ -225,7 +226,7 @@ a.action-button,
 .inplay .hand-header h4,
 .inplay .move-header h4,
 .inplay .table-header h4 {
-  padding: 12px;
+  padding: 8px;
   margin: 0;
 }
 .inplay .my-cards-container {

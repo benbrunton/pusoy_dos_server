@@ -22,6 +22,8 @@ impl RemoveUser {
 
     fn remove_user(&self, user: u64, id:u64) -> Response {
 
+        // TODO - validate that you have permission
+        // and that the game hasn't started
         self.game_data.remove_user(user, id);
 
         info!("user {} removed from game {}", user, id);
