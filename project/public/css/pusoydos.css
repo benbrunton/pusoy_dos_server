@@ -211,6 +211,7 @@ a.action-button,
 }
 .inplay .player .card-set .card {
   transform: scale(0.6) translateY(-12px);
+  margin-left: -12px;
 }
 .inplay .last-move {
   margin-left: 10px;
@@ -386,7 +387,10 @@ a.action-button,
   height: 35px;
   box-sizing: content-box;
   text-align: left;
-  font-size: 0.7em;
+  font-size: 0.8em;
+}
+.card-set .card .jtrue {
+  background-color: #ccc;
 }
 .card-set .card p {
   margin: 0;
@@ -449,4 +453,8 @@ a.action-button,
 #new-message {
   margin-top: 10px;
   width: calc(100% - 75px);
+}
+.datetime {
+  font-size: 0.7em;
+  margin-right: 12px;
 }
