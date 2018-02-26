@@ -151,9 +151,15 @@
                     li.className = 'list-group-item'
                     var message = JSON.parse(msg)
 
-                    li.innerHTML = `<small class="text-muted">${message.time}</small>
-                                    <strong>${message.user}</strong>
-                                    <span>${message.body}</span>`
+                    var user = document.createElement('strong');
+                    var messageSpan = document.createElement('span');
+
+                    user.innerText = message.user;
+                    messageSpan.innerText = message.body;
+
+                    li.innerHTML = `<small class="text-muted">${message.time}</small>`;
+                    li.appendChild(user);
+                    li.appendChild(messageSpan);
 
                     docFrag.appendChild(li)
 
