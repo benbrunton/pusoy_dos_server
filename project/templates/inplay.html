@@ -2,7 +2,7 @@
 {% block title %}Game {{ id }}{% endblock title %}
 {% block content %}
 <div id="inplay" class="inplay not-loaded">
-    <!--<h3 class="section-head">Game {{id}}</h3>-->
+    <h5 class="game-id">{{id}}</h5>
     
     <div>
 
@@ -11,11 +11,11 @@
         </div>
 
         <div class="table-header">
-            <h4>
+            <h5 class="inplay-header">
                 <span v-if="lastMove.length > 0">Move to beat</span>
                 <span v-else>Empty Table</span>
                 <span v-if="reversed" class="reversed">(order reversed)</span>
-            </h4>
+            </h5>
         </div>
 
         <div class="last-move card-set" v-if="lastMove.length > 0">
@@ -27,7 +27,7 @@
      
         <div v-if="myGo" class="move">
             <div class="move-header">
-                <h4>My Move</h4>
+                <h5 class="inplay-header">My Move</h5>
             </div>
             <h5 class="text-center move-placeholder" v-if="selectedCards.length < 1">
                 <i class="fa fa-circle-thin"></i>
@@ -45,7 +45,7 @@
 
         <div>
             <div class="hand-header">
-                <h4>My Hand</h4>
+                <h5 class="inplay-header">My Hand</h5>
             </div>
             <div class="my-cards-container">
                 <div class="my-cards card-set">
@@ -63,7 +63,7 @@
 
         <div v-if="jokerModal" class="joker-modal hide-on-load">
             <div class="modal-inner">
-               <h4>What would you like to play your joker as?</h4>
+               <h5>What would you like to play your joker as?</h5>
                 <div class="form-element">
                     <label>rank:</label>
                     <select id="rank" v-model="jokerRank" class="pure-input-1-2"> 
@@ -105,7 +105,7 @@
 <div>
 
     <div class="feed">
-        <h4>Chat - <small>BETA</small></h4>
+        <h5>Chat - <small>BETA</small></h5>
         <div id="message-feed" class="message-feed"></div>
         <form action="/" id="message-form">
         <input id="new-message" placeholder="Type a message"><input type="submit" id="post-message" value="Submit">

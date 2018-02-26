@@ -24,13 +24,13 @@ a:visited {
   color: #c3d7df;
 }
 .app-header .topbar {
-  border-bottom: 6px solid #d75c37;
+  border-bottom: 4px solid #d75c37;
 }
 .app-header .title {
   text-align: center;
 }
 .app-header .header-icon {
-  padding: 10px 0;
+  padding: 6px 0;
   text-align: center;
 }
 .app-header .nav {
@@ -40,6 +40,7 @@ a:visited {
 .app-header .nav .nav-inner {
   max-width: 850px;
   margin: 0 auto;
+  font-size: 0.85em;
 }
 .clearfix {
   clear: both;
@@ -51,7 +52,7 @@ a:visited {
   margin-top: 20px;
   padding: 15px;
   text-align: center;
-  border-top: 6px solid #6991ac;
+  border-top: 4px solid #6991ac;
   background-color: #c3d7df;
   color: #6991ac;
 }
@@ -99,7 +100,7 @@ a:visited {
   background-color: #6991ac;
   color: #f5f5f5;
   margin-top: 0;
-  border-bottom: 6px solid #d75c37;
+  border-bottom: 4px solid #d75c37;
 }
 .game-panel .my-game .cta {
   margin-top: 12px;
@@ -174,7 +175,7 @@ a.action-button,
   font-style: italic;
 }
 .inplay {
-  padding: 15px 10px 0;
+  padding: 6px;
   overflow-x: hidden;
 }
 .inplay .user {
@@ -197,7 +198,21 @@ a.action-button,
   background-color: #6991ac;
   color: #f5f5f5;
   margin: 10px -10px;
-  border-bottom: 6px solid #d75c37;
+  border-bottom: 4px solid #d75c37;
+}
+.inplay h5 {
+  margin: 0;
+}
+.inplay .game-id {
+  padding: 4px;
+  border-radius: 20px;
+  display: inline-block;
+  background-color: #6991ac;
+  color: #f5f5f5;
+  position: absolute;
+}
+.inplay .status {
+  margin-top: 4px;
 }
 .inplay .player-list {
   margin-bottom: 20px;
@@ -238,7 +253,8 @@ a.action-button,
   height: 65px;
 }
 .inplay .move-placeholder {
-  padding: 9px 0 10px 0;
+  padding: 16px 0 16px 0;
+  margin: 7px;
 }
 .inplay .action {
   text-align: center;
@@ -255,6 +271,10 @@ a.action-button,
 }
 .inplay .next-icon {
   color: #2a8600;
+}
+h5.inplay-header {
+  padding: 4px;
+  margin-left: 6px;
 }
 .open-game {
   padding: 12px 0;
@@ -333,7 +353,7 @@ a.action-button,
   background-color: #6991ac;
   color: #f5f5f5;
   margin: 10px -10px;
-  border-bottom: 6px solid #d75c37;
+  border-bottom: 4px solid #d75c37;
 }
 .section-subhead {
   padding: 8px 12px;
@@ -387,13 +407,14 @@ a.action-button,
   height: 35px;
   box-sizing: content-box;
   text-align: left;
-  font-size: 0.8em;
+  font-size: 0.7em;
 }
 .card-set .card .jtrue {
   background-color: #ccc;
 }
 .card-set .card p {
   margin: 0;
+  display: inline;
 }
 .card-set .card-container.picked {
   overflow: visible;
@@ -407,7 +428,7 @@ a.action-button,
   display: inline-block;
   padding: 7px 1px 1px 0;
 }
-.feed h4 {
+.feed h5 {
   margin: 2px 5px;
 }
 .message-feed {
