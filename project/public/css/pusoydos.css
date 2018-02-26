@@ -41,6 +41,9 @@ a:visited {
   max-width: 850px;
   margin: 0 auto;
 }
+.clearfix {
+  clear: both;
+}
 .app-content a:hover {
   text-decoration: underline;
 }
@@ -400,8 +403,50 @@ a.action-button,
   display: inline-block;
   padding: 7px 1px 1px 0;
 }
+.feed h4 {
+  margin: 2px 5px;
+}
 .message-feed {
   max-height: 180px;
-  padding: 10px 20px;
+  padding: 2px 5px 5px 2px;
   overflow-y: auto;
+  border-top: 1px solid #ccc;
+  border-bottom: 1px solid #ccc;
+  background-color: #fcfcfc;
+}
+.message-feed li {
+  list-style: none;
+  font-size: 0.7em;
+  border-bottom: 1px solid #eaeaea;
+  padding-bottom: 4px;
+  margin-top: 4px;
+}
+.message-feed li .container {
+  clear: both;
+}
+.message-feed li .left-col {
+  float: left;
+}
+.message-feed li .right-col {
+  float: right;
+}
+.message-feed li small {
+  display: block;
+}
+.message-feed li strong {
+  display: block;
+  background-color: #888;
+  padding: 2px;
+  color: #eee;
+}
+.message-feed li span {
+  text-align: right;
+}
+.message-feed li span,
+.message-feed li strong {
+  margin-left: 2px;
+}
+#new-message {
+  margin-top: 10px;
+  width: calc(100% - 75px);
 }

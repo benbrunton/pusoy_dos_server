@@ -47,6 +47,8 @@ a, a:visited
         .nav-inner
             max-width max-width
             margin 0 auto
+.clearfix
+    clear both
     
 
 .app-content
@@ -356,8 +358,41 @@ a.action-button, .action-button
                 display inline-block
                 padding 7px 1px 1px 0
 
-
+.feed
+    h4
+        margin 2px 5px
+        
 .message-feed
     max-height 180px
-    padding 10px 20px
+    padding 2px 5px 5px 2px
     overflow-y auto
+    border-top 1px solid #CCC
+    border-bottom 1px solid #CCC
+    background-color #FCFCFC
+    li
+        list-style none
+        font-size 0.7em
+        border-bottom 1px solid #eaeaea
+        padding-bottom 4px
+        margin-top 4px
+        .container
+            clear both
+        .left-col
+            float left
+        .right-col
+            float right
+        small
+            display block
+        strong
+            display block
+            background-color #888
+            padding 2px
+            color #EEE
+        span
+            text-align right
+        span, strong
+            margin-left 2px
+
+#new-message
+    margin-top 10px
+    width calc(100% - 75px)

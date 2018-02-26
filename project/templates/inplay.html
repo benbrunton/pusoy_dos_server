@@ -108,7 +108,7 @@
         <h4>Chat - <small>BETA</small></h4>
         <div id="message-feed" class="message-feed"></div>
         <form action="/" id="message-form">
-        <input id="new-message"><input type="submit" id="post-message" value="Submit">
+        <input id="new-message" placeholder="Type a message"><input type="submit" id="post-message" value="Submit">
         </form>
     </div>
 
@@ -151,15 +151,31 @@
                     li.className = 'list-group-item'
                     var message = JSON.parse(msg)
 
+                    var date = document.createElement('small');
                     var user = document.createElement('strong');
+                    var left_col = document.createElement('span');
                     var messageSpan = document.createElement('span');
 
+                    date.innerText = message.time;
                     user.innerText = message.user;
-                    messageSpan.innerText = message.body;
 
-                    li.innerHTML = `<small class="text-muted">${message.time}</small>`;
-                    li.appendChild(user);
-                    li.appendChild(messageSpan);
+                    left_col.appendChild(user);
+                    left_col.appendChild(date);
+                    left_col.className = "left-col";
+                    messageSpan.innerText = message.body;
+                    messageSpan.className = "right-col";
+
+                    var container = document.createElement('div');
+                    var clearfix = document.createElement('div');
+                    clearfix.className = 'clearfix';
+
+                    container.appendChild(left_col);
+                    container.appendChild(messageSpan);
+                    container.className = 'container';
+                    container.appendChild(clearfix);
+
+
+                    li.appendChild(container);
 
                     docFrag.appendChild(li)
 
