@@ -97,8 +97,21 @@
                 </button>
             </div>
         </div>
+
+
            
     </div>	
+</div>
+<div>
+
+    <div class="feed">
+        <h4>Chat - <small>BETA</small></h4>
+        <div id="message-feed" class="message-feed"></div>
+        <form action="/" id="message-form">
+        <input id="new-message"><input type="submit" id="post-message" value="Submit">
+        </form>
+    </div>
+
     <script>
         window.pd.gameId = "{{ id }}";
     </script>
@@ -106,6 +119,67 @@
     <script src="/public/vendor/vue/vue.min.js"></script>
     <script src="/public/vendor/moment/moment.min.js"></script>
     <script src="/public/vendor/moment/moment-timezone-with-data.js"></script>
-    <script src="/public/js/inplay.js"></script>   
+    <script src="/ws/socket.io/socket.io.js"></script>
+    <script>
+
+        var postButton = document.getElementById('post-message');
+        var messageInput = document.getElementById('new-message');
+        var messageFeed = document.getElementById('message-feed')
+        var messageForm = document.getElementById('message-form');
+
+
+        var socket = io('/', {path: '/ws/socket.io',
+            query: {
+                room: {{ id }},
+                user: '{{user_name}}' 
+            } 
+         });
+
+        socket.open();
+
+        socket.on('room-update', function(msgList){
+
+            console.log('room update:')
+            console.log(msgList)
+
+            var docFrag = new DocumentFragment()
+
+            msgList.forEach(function(msg){
+
+                try{
+                    var li =  document.createElement('li')
+                    li.className = 'list-group-item'
+                    var message = JSON.parse(msg)
+
+                    li.innerHTML = `<small class="text-muted">${message.time}</small>
+                                    <strong>${message.user}</strong>
+                                    <span>${message.body}</span>`
+
+                    docFrag.appendChild(li)
+
+                }catch(e){}
+            })
+
+            messageFeed.innerHTML = '';
+            messageFeed.appendChild(docFrag)
+
+        })
+
+
+        messageForm.addEventListener('submit', function(ev){
+            if(messageInput.value !== ''){
+                console.log('sending message');
+                socket.emit('new_message', messageInput.value);            
+                messageInput.value = '';
+
+            }
+            ev.preventDefault();
+        });
+
+
+    </script>
+
+    <script src="/public/js/inplay.js"></script>
+
 </div>
 {% endblock content %}

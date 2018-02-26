@@ -86,6 +86,7 @@ impl InPlay {
             }
         };
 
+
         let mut sorted_winners = round.winners.clone();
         sorted_winners.sort();
 
@@ -99,16 +100,21 @@ impl InPlay {
 
         let players = self.user_data.get_users_by_game(game_id);
         let mut next_player_name = "unknown";
+        let mut user_name = "unknown";
 
         for player in players.iter(){
             if player.id == next_player_id {
                 next_player_name = &player.name;
+            }
+            if player.id == user_id {
+                user_name = &player.name;
             }
         }
 
         let reversed = round.reversed;
 
         data.add("user_id", &user_id);
+        data.add("user_name", &user_name);
         data.add("logged_in", &true);
         data.add("current_user_winner", &current_user_winner);
         data.add("current_user_finished", &current_user_finished);

@@ -36,6 +36,10 @@ demo-data:
 build-release:
 	docker exec -t pd-dev cargo build --release
 
+reload-chat:
+	docker exec -t ws-dev forever restartall
+
+
 docker-server-build:
 	docker build -t benbrunton/pd_server -f ./Dockerfile_run .
 

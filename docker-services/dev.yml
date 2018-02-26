@@ -12,9 +12,7 @@ services:
     - ../project:/project
     stdin_open: true
     ports:
-    - 80:3000
-    links:
-    - mysql:mysql
+    - 3000:3000
 
   mysql:
     image: mysql
@@ -25,3 +23,26 @@ services:
     - ../project/mysql:/mysql
     environment:
       MYSQL_ROOT_PASSWORD: "pusoy_dos"
+
+  site-reverse-proxy:
+    image: nginx:alpine
+    tty: true
+    ports:
+    - 80:80
+    volumes:
+    - ../config/nginx.conf:/etc/nginx/nginx.conf
+
+  ws:
+    image: socket
+    build: ../chat
+    container_name: ws-dev
+    volumes:
+    - ../chat/app:/app
+
+  redis:
+    image: redis:3.2.11-alpine
+    volumes:
+      - ./redis_data:/data
+    restart: always
+
+
