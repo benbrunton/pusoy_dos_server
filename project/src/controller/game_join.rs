@@ -28,6 +28,15 @@ impl GameJoin {
 
         // join game - if successful redirect to game page
         // else error?
+        let game_model_option = self.game_data.get_game(game);
+        let error_message = format!("unable to unwrap game {}", game);
+        let game_model = game_model_option.expect(&error_message);
+
+        if game_model.started {
+            return Response::with((status::InternalServerError))
+        }
+        
+
         let _ = self.game_data.join_game(user, game);
         
         let game_url = format!("game/{}", game);
