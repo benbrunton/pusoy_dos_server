@@ -40,11 +40,5 @@ reload-chat:
 	docker exec -t ws-dev forever restartall
 
 
-docker-server-build:
-	docker build -t benbrunton/pd_server -f ./Dockerfile_run .
-
-docker-server-run:
-	docker run -d --name pd_server -P benbrunton/pd_server "./target/debug/pd_server"
-
-docker-release: compile-client build-release docker-server-build
+docker-release: compile-client build-release
 
