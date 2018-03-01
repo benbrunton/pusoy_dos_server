@@ -1,6 +1,6 @@
 [package]
 name = "pd_server"
-version = "0.1.0"
+version = "0.2.0"
 authors = ["Ben Brunton <ben.b.brunton@gmail.com>"]
 
 [dependencies]
