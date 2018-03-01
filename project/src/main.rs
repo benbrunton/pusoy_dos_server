@@ -194,7 +194,7 @@ fn main() {
 
 
     info!("setting up scheduled jobs..");
-    let tick = periodic_ms(30000);
+    let tick = periodic_ms(10000);
 
     let handle = thread::spawn(move || loop {
         tick.recv().expect("failed to receive tick period");
@@ -213,6 +213,7 @@ fn main() {
         port.expect("failed to get port").parse::<u16>().expect("failed to unwrap host")
     );
     Iron::new(chain).http(host).expect("failed to create Iron server");
+    info!("setup complete - we are go!");
 
 }
 
