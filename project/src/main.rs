@@ -194,7 +194,7 @@ fn main() {
 
 
     info!("setting up scheduled jobs..");
-    let tick = periodic_ms(60000);
+    let tick = periodic_ms(30000);
 
     let handle = thread::spawn(move || loop {
         tick.recv().expect("failed to receive tick period");

@@ -35,10 +35,13 @@ impl BeginGame{
                 if game.creator_id != user {
                     return;
                 }
+
+                if game.started {
+                    return;
+                }
             }
         }
 
-        // todo - validate that this user can begin the game
         let _ = self.game_data.start_game(game_id);        
         let users = self.game_data.get_players(game_id);
         let game = self.game_data.get_game(game_id).unwrap();

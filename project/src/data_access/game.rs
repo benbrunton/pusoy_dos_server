@@ -502,6 +502,7 @@ impl Game {
            5 => "8 hours".to_string(),
            6 => "1 day".to_string(),
            7 => "3 days".to_string(),
+           8 => "2 minutes".to_string(),
            _ => "No limit".to_string() 
         }
     }
@@ -514,6 +515,7 @@ impl Game {
             5 => 60 * 8,
             6 => 60 * 24,
             7 => 60 * 24 * 3,
+            8 => 2,
             _ => 0
         }
     }

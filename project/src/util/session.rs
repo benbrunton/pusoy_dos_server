@@ -124,6 +124,7 @@ impl <'a> SessionMiddleware{
 		res.status = r.status;
 		res.body = r.body;
 		res.headers = r.headers;
+        // TODO - only need to set if session doesn't exist in request
 		res.headers.set(
 			SetCookie(vec![
 				cookie
