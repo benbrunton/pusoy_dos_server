@@ -306,6 +306,7 @@ impl Game {
     }
 
     pub fn complete_game(&self, id:u64) -> Result<(), &str>{
+        
         let _ = self.pool.prep_exec(r"UPDATE pusoy_dos.game SET complete = 1 WHERE id = :id",
                 params!{ "id" => id });
 

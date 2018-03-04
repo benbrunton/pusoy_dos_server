@@ -12,7 +12,7 @@ app.post('/relay/:id', async (req, res) => {
     console.log(req.body);
 
     var sns = new AWS.SNS({region:'eu-west-1'});
-    var message = { id: req.params.id, result: req.body.players };
+    var message = { id: req.body.id, result: req.body.players };
 
     var params = {
       Message: JSON.stringify(message),
@@ -21,6 +21,7 @@ app.post('/relay/:id', async (req, res) => {
     sns.publish(params, function(err, data) {
         if (err){
             console.log(err, err.stack); // an error occurred
+            res.send({success: false});
         } else {
             console.log(data);           // successful response
             res.send({success: true})
