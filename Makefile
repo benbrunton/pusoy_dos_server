@@ -39,6 +39,5 @@ build-release:
 reload-chat:
 	docker exec -t ws-dev forever restartall
 
-
 docker-release: compile-client build-release
 

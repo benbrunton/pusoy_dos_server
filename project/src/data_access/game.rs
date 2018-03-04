@@ -21,15 +21,17 @@ struct GameWinners{
 
 #[derive(Clone)]
 pub struct Game{
-    pool: mysql::Pool 
+    pool: mysql::Pool,
+    stat_endpoint: String
 }
 
 impl Game {
 
-    pub fn new(pool: mysql::Pool) -> Game {
+    pub fn new(pool: mysql::Pool, stat_endpoint: String) -> Game {
         
         Game {
-            pool: pool
+            pool,
+            stat_endpoint
         }
     }
 
@@ -322,11 +324,21 @@ impl Game {
 
         let mut headers = Headers::new();
         headers.set_raw("content-type", vec!(b"application/json".to_vec()));
+
+        let headers2 = headers.clone();
         let client = Client::new();
         let _ = client.post("http://localhost:8080/stats/leaderboard")
             .body(&body)
             .headers(headers)
             .send();
+
+        let address = format!("http://{}:3080/relay/{}", self.stat_endpoint, id);
+        let client = Client::new();
+        let _ = client.post(&address)
+            .body(&body)
+            .headers(headers2)
+            .send();
+
     }
 
     fn get_winners(&self, id: u64) -> GameWinners {

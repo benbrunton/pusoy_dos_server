@@ -98,7 +98,9 @@ fn main() {
 
     let user_data = data_access::user::User::new(pool.clone());
     let session_store = data_access::session::Session::new(pool.clone());
-    let game_data = data_access::game::Game::new(pool.clone());
+    let config_stat_endpoint = &config.get("stat_endpoint");
+    let stat_endpoint = config_stat_endpoint.to_owned().unwrap();
+    let game_data = data_access::game::Game::new(pool.clone(), String::from(stat_endpoint));
     let round_data = data_access::round::Round::new(pool.clone());
     let leaderboard_data = data_access::leaderboard::Leaderboard::new(pool.clone());
     let event_data = data_access::event::Event::new(pool.clone());

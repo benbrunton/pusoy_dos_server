@@ -45,4 +45,13 @@ services:
       - ./redis_data:/data
     restart: always
 
-
+  relay:
+    image: relay
+    build: ../project/sns_relay
+    container_name: sns-dev
+    volumes:
+    - ../project/sns_relay/app:/app
+    environment:
+      AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
+      AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
+      TOPIC_ARN: $TOPIC_ARN
