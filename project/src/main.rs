@@ -43,7 +43,7 @@ mod external;
 
 use controller::{home_page, fb_auth, google_auth, game, game_list, game_create, new_game, test_auth,
                  logout, game_join, begin_game, inplay, game_move, post_game, leaderboard,
-                 remove_user, about, update_game, complete_games};
+                 remove_user, about, update_game, complete_games, privacy};
 use config::Config;
 use util::session::SessionMiddleware;
 use util::nocache::NoCacheMiddleware;
@@ -117,6 +117,7 @@ fn main() {
     let game_create_controller = game_create::GameCreate::new(&config, game_data.clone());
     let new_game_controller = new_game::NewGame::new(&TERA);
     let about = about::About::new(&TERA);
+    let privacy = privacy::Privacy::new(&TERA);
     let game_controller = game::Game::new(&config, &TERA, game_data.clone(), user_data.clone());
     let game_join = game_join::GameJoin::new(&config, game_data.clone());
     let begin_game = begin_game::BeginGame::new(&config, game_data.clone(), round_data.clone());
@@ -147,6 +148,7 @@ fn main() {
     router.post("/play/:id", move_controller, "move");
     router.get("/leaderboard", leaderboard, "leaderboard");
     router.get("/about", about, "about");
+    router.get("/privacy", privacy, "privacy");
     router.post("/game/:id/remove/:user", remove_user, "remove_user");
     router.post("/game/:id/update", update_game, "update_game");
 

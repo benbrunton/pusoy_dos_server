@@ -17,5 +17,6 @@ pub mod about;
 pub mod remove_user;
 pub mod update_game;
 pub mod complete_games;
+pub mod privacy;
 
 pub mod test_auth;
