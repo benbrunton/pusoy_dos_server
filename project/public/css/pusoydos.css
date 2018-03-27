@@ -479,3 +479,6 @@ h5.inplay-header {
   font-size: 0.7em;
   margin-right: 12px;
 }
+.fr {
+  float: right;
+}
