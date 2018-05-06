@@ -26,6 +26,12 @@ pub fn get_router(home_page_controller: HomePageController) -> Router {
 
     let (chain, pipelines) = single_pipeline(new_pipeline().add(middleware).build());
 
+    /*
+        .mount("/public/", Static::new(Path::new("public")))
+        .mount("/sw.js", Static::new(Path::new("public/js/sw.js")));
+    */
+
+
     build_router(chain, pipelines, |route| {
         route.get("/").to_new_handler(home_page_controller);
     })

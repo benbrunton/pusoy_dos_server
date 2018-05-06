@@ -51,11 +51,11 @@ impl HomePageController {
         Ok(redirect)
     }
 
-    fn not_logged_in(&self) -> IronResult<Response> {
+*/
+
+    fn not_logged_in(&self) -> TeraResult<String> {
         info!("user not logged in");
-        let content_type = "text/html".parse::<Mime>().unwrap();
-        let homepage = self.get_homepage().unwrap();
-        Ok(Response::with((content_type, status::Ok, homepage)))
+        self.get_homepage()
     }
 
     fn get_homepage(&self) -> TeraResult<String> {
@@ -69,7 +69,6 @@ impl HomePageController {
         data.add("dev_mode", &self.dev_mode);
         self.tera.render("index.html", data)
     }
-*/
 }
 
 
@@ -109,7 +108,7 @@ impl Handler for HomePageController {
 			&None => "Not Logged in".to_owned(),
 		};
 */
-        let body = "you".to_owned();
+        let body = self.not_logged_in().unwrap();
 
         let res = {
             create_response(
@@ -118,7 +117,7 @@ impl Handler for HomePageController {
                 Some((
 					body.as_bytes()
                         .to_vec(),
-                    mime::TEXT_PLAIN,
+                    mime::TEXT_HTML,
                 )),
             )
         };
