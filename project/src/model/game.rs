@@ -1,4 +1,4 @@
-use serde::{Serialize, Serializer};
+use serde::ser::{Serialize, Serializer, SerializeMap};
 
 #[derive(Debug)]
 pub struct Game{
@@ -21,35 +21,24 @@ impl Serialize for Game {
     {
 
         let started = if self.started { 1 } else { 0 };
-        let mut state = try!(serializer.serialize_map(Some(2)));
+        let mut map = try!(serializer.serialize_map(Some(2)));
 
         let next_name = match &self.next_player_name {
             &Some(ref n) => n.clone(),
             _       => String::from("none")
         };
-		try!(serializer.serialize_map_key(&mut state, "id"));
-		try!(serializer.serialize_map_value(&mut state, self.id));
-		try!(serializer.serialize_map_key(&mut state, "creator_id"));
-		try!(serializer.serialize_map_value(&mut state, self.creator_id));
-		try!(serializer.serialize_map_key(&mut state, "creator_name"));
-		try!(serializer.serialize_map_value(&mut state, &self.creator_name));
-        try!(serializer.serialize_map_key(&mut state, "started"));
-        try!(serializer.serialize_map_value(&mut state, started));
-        try!(serializer.serialize_map_key(&mut state, "next_player_name"));
-        try!(serializer.serialize_map_value(&mut state, &next_name));
-        try!(serializer.serialize_map_key(&mut state, "next_player_id"));
-        try!(serializer.serialize_map_value(&mut state, 
-                self.next_player_id.unwrap_or(0)));
-        try!(serializer.serialize_map_key(&mut state, "num_players"));
-        try!(serializer.serialize_map_value(&mut state, self.num_players));
-        try!(serializer.serialize_map_key(&mut state, "max_move_duration"));
-        try!(serializer.serialize_map_value(&mut state, &self.max_move_duration));
-        try!(serializer.serialize_map_key(&mut state, "max_move_duration_mins"));
-        try!(serializer.serialize_map_value(&mut state, &self.max_move_duration_mins));
+		try!(map.serialize_entry("id", &self.id));
+		try!(map.serialize_entry("creator_id", &self.creator_id));
+		try!(map.serialize_entry("creator_name", &self.creator_name));
+        try!(map.serialize_entry("started", &started));
+        try!(map.serialize_entry("next_player_name", &next_name));
+        try!(map.serialize_entry("next_player_id", 
+            &self.next_player_id.unwrap_or(0)));
+        try!(map.serialize_entry("num_players", &self.num_players));
+        try!(map.serialize_entry("max_move_duration", &self.max_move_duration));
+        try!(map.serialize_entry("max_move_duration_mins", &self.max_move_duration_mins));
+        try!(map.serialize_entry("decks", &self.decks));
 
-        try!(serializer.serialize_map_key(&mut state, "decks"));
-        try!(serializer.serialize_map_value(&mut state, self.decks));
-
-        serializer.serialize_map_end(state)
+        map.end()
     }
 }

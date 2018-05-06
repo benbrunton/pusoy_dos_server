@@ -1,4 +1,4 @@
-use serde::{Serialize, Serializer};
+use serde::ser::{Serialize, Serializer, SerializeMap};
 
 #[derive(Clone)]
 pub struct PartUser{
@@ -21,19 +21,13 @@ impl Serialize for User {
 	fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
         where S: Serializer
     {
-        let mut state = try!(serializer.serialize_map(Some(2)));
-		try!(serializer.serialize_map_key(&mut state, "id"));
-		try!(serializer.serialize_map_value(&mut state, self.id));
-		try!(serializer.serialize_map_key(&mut state, "name"));
-		try!(serializer.serialize_map_value(&mut state, &self.name));
-		try!(serializer.serialize_map_key(&mut state, "provider_id"));
-		try!(serializer.serialize_map_value(&mut state, &self.provider_id));
-        try!(serializer.serialize_map_key(&mut state, "provider_type"));
-        try!(serializer.serialize_map_value(&mut state, &self.provider_type));
-        try!(serializer.serialize_map_key(&mut state, "creation_date"));
-        try!(serializer.serialize_map_value(&mut state, &self.creation_date));
+        let mut map = try!(serializer.serialize_map(Some(2)));
+		try!(map.serialize_entry("id", &self.id));
+		try!(map.serialize_entry("name", &self.name));
+		try!(map.serialize_entry("provider_id", &self.provider_id));
+        try!(map.serialize_entry("provider_type", &self.provider_type));
+        try!(map.serialize_entry("creation_date", &self.creation_date));
 
-
-        serializer.serialize_map_end(state)
+        map.end()
     }
 }

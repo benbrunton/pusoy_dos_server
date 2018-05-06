@@ -1,4 +1,4 @@
-use serde::{Serialize, Serializer};
+use serde::ser::{Serialize, Serializer, SerializeMap};
 use chrono::prelude::*;
 use time::Duration;
 
@@ -14,10 +14,9 @@ impl Serialize for TimeLimit {
         where S: Serializer
     {
 
-        let mut state = try!(serializer.serialize_map(Some(2)));
+        let mut map = try!(serializer.serialize_map(Some(2)));
 
-        try!(serializer.serialize_map_key(&mut state, "game"));
-        try!(serializer.serialize_map_value(&mut state, &self.game));
+        try!(map.serialize_entry("game", &self.game));
         let status = match self.status{
             None => String::from("null"),
             Some(dt) => duration_to_string(dt)
@@ -27,12 +26,10 @@ impl Serialize for TimeLimit {
            None => 0,
            Some(dt) => dt.num_minutes()
         };
-        try!(serializer.serialize_map_key(&mut state, "status"));
-        try!(serializer.serialize_map_value(&mut state, status));
-        try!(serializer.serialize_map_key(&mut state, "minutes"));
-        try!(serializer.serialize_map_value(&mut state, mins));
+        try!(map.serialize_entry("status", &status));
+        try!(map.serialize_entry("minutes", &mins));
 
-        serializer.serialize_map_end(state)
+        map.end()
     }
 }
 

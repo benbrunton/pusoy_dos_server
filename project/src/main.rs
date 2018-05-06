@@ -8,6 +8,7 @@ extern crate gotham_derive;
 extern crate hyper;
 extern crate mime;
 extern crate futures;
+extern crate tokio_core;
 extern crate serde;
 #[macro_use]
 extern crate serde_derive;
@@ -76,7 +77,7 @@ pub fn main() {
     let event_data = data_access::event::Event::new(pool.clone());
 
     let port_option = config.get("port");
-    let port = port_option.expect("failed to get port").parse::<u8>()
+    let port = port_option.expect("failed to get port").parse::<u16>()
         .expect("failed to unwrap port");
 
     schedule::run(game_data, event_data, round_data);

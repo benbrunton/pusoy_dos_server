@@ -8,27 +8,28 @@ use gotham::router::Router;
 use gotham::router::builder::*;
 use gotham::state::{FromState, State};
 use gotham::middleware::session::{NewSessionMiddleware, SessionData};
-use gotham::handler::{Handler, HandlerFuture};
+use gotham::handler::{NewHandler, Handler, HandlerFuture};
 use futures::{future, Future};
 
 use config::Config;
 use helpers;
+use std::io;
 
-#[derive(Copy, Clone)]
-pub struct HomePageController <'a> {
-    hostname: &'a str,
+#[derive(Clone)]
+pub struct HomePageController {
+    hostname: String,
     tera: &'static Tera,
-    fb_app_id: &'a str,
-    google_app_id: &'a str,
+    fb_app_id: String,
+    google_app_id: String,
     dev_mode: bool,
 }
 
-impl <'a> HomePageController <'a> {
-    pub fn new(config: &Config, tera: &'static Tera) -> HomePageController <'a> {
+impl HomePageController {
+    pub fn new(config: &Config, tera: &'static Tera) -> HomePageController {
 
-        let hostname = &config.get("pd_host").unwrap();
-        let fb_app_id = &config.get("fb_app_id").unwrap();
-        let google_app_id = &config.get("google_app_id").unwrap();
+        let hostname = config.get("pd_host").unwrap();
+        let fb_app_id = config.get("fb_app_id").unwrap();
+        let google_app_id = config.get("google_app_id").unwrap();
         let dev_mode = match config.get("mode") {
             Some(mode) => mode == "dev",
             _ => false,
@@ -85,8 +86,15 @@ impl Handler for HomePageController {
     }
 }
 */
+impl NewHandler for HomePageController {
+    type Instance = Self;
 
-impl <'a> Handler for HomePageController <'a> {
+    fn new_handler(&self) -> io::Result<Self::Instance> {
+        Ok(self.clone())
+    }
+}
+
+impl Handler for HomePageController {
 
     fn handle(self, mut state: State) -> Box<HandlerFuture> {
 /*		let maybe_session = {
@@ -101,7 +109,7 @@ impl <'a> Handler for HomePageController <'a> {
 			&None => "Not Logged in".to_owned(),
 		};
 */
-let body = "you".to_owned();
+        let body = "you".to_owned();
 
         let res = {
             create_response(

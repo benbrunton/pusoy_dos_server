@@ -2,6 +2,9 @@ use std::str;
 use std::collections::HashMap;
 use model::game::Game as GameModel;
 use hyper::client::Client;
+use hyper::{Method, Request};
+use hyper::header::ContentType;
+use tokio_core::reactor::Core;
 use hyper::header::Headers;
 use chrono::prelude::*;
 use chrono::Utc;
@@ -323,24 +326,23 @@ impl Game {
         // to POST /stats/leaderboard
         
         info!("sending : {}", {&body});
+        let stat_endpoint1 = "http://localhost:8080/stats/leaderboard".parse()
+            .expect("unable to parse stats endpoint 1");
+        let stat_endpoint2 = format!("http://{}:3080/relay/{}", self.stat_endpoint, id).parse()
+            .expect("unable to parse stats endpoint 2");
 
-        let mut headers = Headers::new();
-        headers.set_raw("content-type", vec!(b"application/json".to_vec()));
+        let mut core = Core::new().expect("unable to unwrap core");
+        let client = Client::new(&core.handle());
+        let mut req = Request::new(Method::Post, stat_endpoint1);
+        req.headers_mut().set(ContentType::json());
+        req.set_body(body.clone());
 
-        let headers2 = headers.clone();
-        let client = Client::new();
-        let _ = client.post("http://localhost:8080/stats/leaderboard")
-            .body(&body)
-            .headers(headers)
-            .send();
+        let _ = client.request(req);
+        let mut req2 = Request::new(Method::Post, stat_endpoint2);
+        req2.headers_mut().set(ContentType::json());
+        req2.set_body(body.clone());
 
-        let address = format!("http://{}:3080/relay/{}", self.stat_endpoint, id);
-        let client = Client::new();
-        let _ = client.post(&address)
-            .body(&body)
-            .headers(headers2)
-            .send();
-
+        let _ = client.request(req2);
     }
 
     fn get_winners(&self, id: u64) -> GameWinners {
