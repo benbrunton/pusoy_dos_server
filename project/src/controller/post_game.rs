@@ -1,10 +1,5 @@
-use iron::prelude::*;
-use iron::status;
-use iron::middleware::Handler;
-use iron::mime::Mime;
 use tera::{Tera, Context};
 use config::Config;
-use router::Router;
 use helpers;
 
 use data_access::event::Event as EventData;
@@ -29,7 +24,7 @@ impl PostGame{
         }
     }
 
-    pub fn display(&self, user_id: u64, game_id: u64) -> Response {
+    pub fn display(&self, user_id: u64, game_id: u64)/* -> Response */{
         let content_type = "text/html".parse::<Mime>().unwrap();
 
         let mut events_vec = self.event_data.get_game_events(game_id);
@@ -42,11 +37,12 @@ impl PostGame{
         println!("events {:?}", events);
         let template = "post_game.html";
         let page = self.tera.render(template, data).expect("error rendering template");
-        Response::with((content_type, status::Ok, page))
+//        Response::with((content_type, status::Ok, page))
 
     }
 }
 
+/*
 impl Handler for PostGame {
 
     fn handle(&self, req: &mut Request) -> IronResult<Response> {
@@ -73,4 +69,4 @@ impl Handler for PostGame {
 
     }
 }
- 
+*/ 

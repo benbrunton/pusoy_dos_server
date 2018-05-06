@@ -16,7 +16,7 @@ pub struct Game{
 
 impl Serialize for Game {
 
-	fn serialize<S>(&self, serializer: &mut S) -> Result<(), S::Error>
+	fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
         where S: Serializer
     {
 

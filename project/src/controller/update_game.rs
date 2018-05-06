@@ -2,7 +2,6 @@ use iron::prelude::*;
 use iron::{status, modifiers, Url};
 use iron::middleware::Handler;
 use iron::mime::Mime;
-use router::Router;
 
 use std::collections::HashMap;
 use util::session::Session;
@@ -49,8 +48,8 @@ impl Handler for UpdateGame {
             self.get_hashmap(req)
         };
 
-        let router = req.extensions.get::<Router>().unwrap();
-        let ref query = router.find("id");
+//        let router = req.extensions.get::<Router>().unwrap();
+//        let ref query = router.find("id");
 
         let session_user_id = match req.extensions.get::<Session>() {
             Some(session) => session.user_id,
@@ -59,7 +58,7 @@ impl Handler for UpdateGame {
 
         let mut success = false;
         let full_url = match session_user_id {
-            Some(user_id) => {
+            /*Some(user_id) => {
                 match *query {
                     Some(id) => {
                         self.update_game(
@@ -68,8 +67,9 @@ impl Handler for UpdateGame {
                         String::from(format!("{}/game/{}", self.hostname, id))
                     },
                     _ => String::from(format!("{}/games", self.hostname))
-                }
+                } 
             },
+            */
             _ => String::from(format!("{}/games", self.hostname))
         };
 

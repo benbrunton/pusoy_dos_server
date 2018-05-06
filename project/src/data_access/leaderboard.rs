@@ -1,7 +1,6 @@
 use model::leaderboard::Leaderboard as LeaderboardModel;
 use mysql;
 use hyper::client::Client;
-use rustc_serialize::json::Json;
 use std::io::Read;
 
 #[derive(Clone)]

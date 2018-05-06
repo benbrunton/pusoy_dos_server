@@ -1,40 +1,48 @@
-use iron::prelude::*;
-use iron::status;
-use iron::middleware::Handler;
-use iron::mime::Mime;
+use hyper::{Response, StatusCode};
 use tera::{Tera, Context, TeraResult};
+use mime;
+use gotham::http::response::create_response;
+use gotham::pipeline::new_pipeline;
+use gotham::pipeline::single::single_pipeline;
+use gotham::router::Router;
+use gotham::router::builder::*;
+use gotham::state::{FromState, State};
+use gotham::middleware::session::{NewSessionMiddleware, SessionData};
+use gotham::handler::{Handler, HandlerFuture};
+use futures::{future, Future};
 
 use config::Config;
 use helpers;
 
-pub struct HomePageController {
-    hostname: String,
+#[derive(Copy, Clone)]
+pub struct HomePageController <'a> {
+    hostname: &'a str,
     tera: &'static Tera,
-    fb_app_id: String,
-    google_app_id: String,
+    fb_app_id: &'a str,
+    google_app_id: &'a str,
     dev_mode: bool,
 }
 
-impl HomePageController {
-    pub fn new(config: &Config, tera: &'static Tera) -> HomePageController {
+impl <'a> HomePageController <'a> {
+    pub fn new(config: &Config, tera: &'static Tera) -> HomePageController <'a> {
 
-        let hostname = config.get("pd_host").unwrap();
-        let fb_app_id = config.get("fb_app_id").unwrap();
-        let google_app_id = config.get("google_app_id").unwrap();
+        let hostname = &config.get("pd_host").unwrap();
+        let fb_app_id = &config.get("fb_app_id").unwrap();
+        let google_app_id = &config.get("google_app_id").unwrap();
         let dev_mode = match config.get("mode") {
             Some(mode) => mode == "dev",
             _ => false,
         };
 
         HomePageController {
-            hostname: hostname,
-            tera: tera,
-            fb_app_id: fb_app_id,
-            google_app_id: google_app_id,
-            dev_mode: dev_mode,
+            hostname,
+            tera,
+            fb_app_id,
+            google_app_id,
+            dev_mode,
         }
     }
-
+/*
     fn logged_in(&self) -> IronResult<Response> {
 
         info!("user logged in - redirecting");
@@ -60,9 +68,11 @@ impl HomePageController {
         data.add("dev_mode", &self.dev_mode);
         self.tera.render("index.html", data)
     }
+*/
 }
 
 
+/*
 impl Handler for HomePageController {
     fn handle(&self, req: &mut Request) -> IronResult<Response> {
 
@@ -72,5 +82,39 @@ impl Handler for HomePageController {
             Some(_) => self.logged_in(),
             _ => self.not_logged_in(),        
         }
+    }
+}
+*/
+
+impl <'a> Handler for HomePageController <'a> {
+
+    fn handle(self, mut state: State) -> Box<HandlerFuture> {
+/*		let maybe_session = {
+			let session_data: &Option<Session> = SessionData::<Option<Session>>::borrow_from(&state);
+			session_data.clone()
+		};
+*/
+
+/*
+		let body = match &maybe_session {
+			&Some(ref session_data) => "Logged in".to_owned(),
+			&None => "Not Logged in".to_owned(),
+		};
+*/
+let body = "you".to_owned();
+
+        let res = {
+            create_response(
+                &state,
+                StatusCode::Ok,
+                Some((
+					body.as_bytes()
+                        .to_vec(),
+                    mime::TEXT_PLAIN,
+                )),
+            )
+        };
+
+        Box::new(future::ok((state, res)))
     }
 }

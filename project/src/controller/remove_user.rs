@@ -1,9 +1,3 @@
-use iron::prelude::*;
-use iron::{status, modifiers, Url};
-use iron::middleware::Handler;
-use iron::mime::Mime;
-use router::Router;
-
 use config::Config;
 use data_access::game::Game as GameData;
 use helpers;
@@ -20,7 +14,7 @@ impl RemoveUser {
         RemoveUser{ hostname: hostname, game_data: game_data }
     }
 
-    fn remove_user(&self, user: u64, id:u64) -> Response {
+    fn remove_user(&self, user: u64, id:u64)/* -> Response */{
 
         // TODO - validate that you have permission
         // and that the game hasn't started
@@ -31,12 +25,13 @@ impl RemoveUser {
         let full_url = format!("{}/game/{}", self.hostname, id);
         let url =  Url::parse(&full_url).unwrap();
 
-        Response::with((status::Found, modifiers::Redirect(url)))
+//        Response::with((status::Found, modifiers::Redirect(url)))
     }
 
 
 }
 
+/*
 impl Handler for RemoveUser {
 
     fn handle(&self, req: &mut Request) -> IronResult<Response> {
@@ -69,3 +64,4 @@ impl Handler for RemoveUser {
     }
 
 }
+*/

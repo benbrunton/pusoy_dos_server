@@ -4,8 +4,8 @@ use iron::middleware::Handler;
 use hyper::client::Client;
 use config::Config;
 use std::io::Read;
-use rustc_serialize::json::Json;
 use std::collections::BTreeMap;
+use serde_json;
 
 use query;
 use data_access::user::User as UserData;
@@ -33,7 +33,7 @@ impl FacebookAuthController {
         }
     }
 
-    fn fetch_json(&self, url: String) -> Result<BTreeMap<String, Json>, String> {
+    fn fetch_json(&self, url: String) -> Result<BTreeMap<String, serde_json::Value>, String> {
 
         let client = Client::new();
 
@@ -54,7 +54,7 @@ impl FacebookAuthController {
         let mut buffer = String::new();
         let _ = r.read_to_string(&mut buffer);
 
-        let data = Json::from_str(&buffer).unwrap();
+        let data = serde_json::from_str(&buffer).unwrap();
 
         Ok(data.as_object().unwrap().clone())
 

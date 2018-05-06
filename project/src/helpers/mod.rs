@@ -1,16 +1,24 @@
 use std::fmt::Display;
-
+/*
 use iron::prelude::*;
 use iron::{status, modifiers, Url};
 use iron::mime::Mime;
+*/
 use tera::TeraResult;
-
 use pusoy_dos::game::player_move::{Move, Trick, TrickType, build_move};
 use pusoy_dos::cards::card::PlayerCard;
-use serde::{Serialize, Serializer};
+use serde::ser::{Serialize, Serializer, SerializeMap};
 
-use util::session::Session;
+use hyper::{Response, StatusCode};
+use gotham::http::response::create_response;
+use gotham::state::{FromState, State};
+use gotham::handler::{Handler, HandlerFuture};
+use futures::{future, Future};
+use mime;
 
+//use util::session::Session;
+
+/*
 pub fn get_user_id(req: &Request) -> Option<u64> {
 
     match req.extensions.get::<Session>() {
@@ -19,20 +27,52 @@ pub fn get_user_id(req: &Request) -> Option<u64> {
     }
 
 }
+*/
 
-pub fn redirect<S: Display>(hostname:&str, path:S) -> Response{
+pub fn redirect<S: Display>(mut state: State, hostname:&str, path:S) -> Box<HandlerFuture>{
 
+/*
     let full_url = format!("{}/{}", hostname, path);
     let url =  Url::parse(&full_url).unwrap();
 
     Response::with((status::Found, modifiers::Redirect(url)))
+*/
+        let res = {
+            create_response(
+                &state,
+                StatusCode::Ok,
+                Some((
+					"redirect".as_bytes()
+                        .to_vec(),
+                    mime::TEXT_PLAIN,
+                )),
+            )
+        };
+
+
+        Box::new(future::ok((state, res)))
 
 }
 
-pub fn render(result: TeraResult<String>) -> Response{
-
+pub fn render(mut state: State, result: TeraResult<String>) -> Box<HandlerFuture>{
+/*
     let content_type = "text/html".parse::<Mime>().unwrap();
     Response::with((content_type, status::Ok, result.unwrap()))
+*/
+    let res = {
+        create_response(
+            &state,
+            StatusCode::Ok,
+            Some((
+                "render".as_bytes()
+                    .to_vec(),
+                mime::TEXT_PLAIN,
+            )),
+        )
+    };
+
+    Box::new(future::ok((state, res)))
+
 }
 
 pub fn cards_played_summary(last_move: Vec<PlayerCard>) -> String {
@@ -93,7 +133,7 @@ impl DCard {
 
 impl Serialize for DCard {
 
-	fn serialize<S>(&self, serializer: &mut S) -> Result<(), S::Error>
+	fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
         where S: Serializer
     {
 
@@ -113,18 +153,13 @@ impl Serialize for DCard {
                                     true)
         };
 
-        let mut state = try!(serializer.serialize_map(Some(2)));
-		try!(serializer.serialize_map_key(&mut state, "suit_display"));
-		try!(serializer.serialize_map_value(&mut state, suit_display.clone()));
-        try!(serializer.serialize_map_key(&mut state, "suitDisplay"));
-		try!(serializer.serialize_map_value(&mut state, suit_display.clone()));
-		try!(serializer.serialize_map_key(&mut state, "suit"));
-		try!(serializer.serialize_map_value(&mut state, suit));
-		try!(serializer.serialize_map_key(&mut state, "rank"));
-		try!(serializer.serialize_map_value(&mut state, rank));
-        try!(serializer.serialize_map_key(&mut state, "joker"));
-		try!(serializer.serialize_map_value(&mut state, joker));
+        let mut map = try!(serializer.serialize_map(Some(2)));
+		try!(map.serialize_entry("suit_display", &suit_display));
+        try!(map.serialize_entry("suitDisplay", &suit_display));
+		try!(map.serialize_entry("suit", &suit));
+		try!(map.serialize_entry("rank", &rank));
+        try!(map.serialize_entry("joker", &joker));
 
-        serializer.serialize_map_end(state)
+        map.end()
     }
 }

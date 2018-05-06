@@ -5,10 +5,10 @@ use iron::middleware::Handler;
 use hyper::client::Client;
 use config::Config;
 use std::io::Read;
-use rustc_serialize::json::Json;
 use std::collections::BTreeMap;
 use time;
 use regex::Regex;
+use serde_json;
 
 use query;
 use data_access::user::User as UserData;
@@ -40,7 +40,7 @@ impl GoogleAuthController {
 
     /// Fetch a JSON document from `url` and return it as a key-value map, where value will
     /// typically be just a string
-    fn fetch_json(&self, url: String) -> Result<BTreeMap<String, Json>, String> {
+    fn fetch_json(&self, url: String) -> Result<BTreeMap<String, serde_json::Value>, String> {
 
         let client = Client::new();
 
@@ -61,7 +61,7 @@ impl GoogleAuthController {
         let mut buffer = String::new();
         let _ = r.read_to_string(&mut buffer);
 
-        let data = Json::from_str(&buffer).unwrap();
+        let data = serde_json::from_str(&buffer).unwrap();
 
         Ok(data.as_object().unwrap().clone())
 

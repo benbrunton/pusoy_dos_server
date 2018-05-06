@@ -3,7 +3,6 @@ use iron::status;
 use iron::middleware::Handler;
 use iron::mime::Mime;
 
-use rustc_serialize::json;
 use std::collections::BTreeMap;
 use serde_json;
 
@@ -24,7 +23,7 @@ impl UpdateNotifications {
         }
     }
 
-    pub fn update_push_sub(&self, user_id: u64, subscription: Option<serde_json::Value>) -> Response {
+    pub fn update_push_sub(&self, user_id: u64, subscription: Option<serde_json::value::Value>) -> Response {
         let sub = subscription.unwrap();
         let subs = sub.as_object().unwrap();
 
@@ -39,7 +38,7 @@ impl UpdateNotifications {
         Response::with((content_type, status::Ok, success))
     }
 
-    fn get_body(&self, req: &mut Request) -> Option<serde_json::Value> {
+    fn get_body(&self, req: &mut Request) -> Option<serde_json::value::Value> {
         match req.get::<bodyparser::Json>(){
             Ok(json) => Some(json.expect("unable to unwrap json")),
             _ => None

@@ -1,22 +1,24 @@
+mod home_page;
+/*
+mod fb_auth;
+mod google_auth;
+mod game;
+mod game_list;
+mod game_create;
+mod game_join;
+mod new_game;
+mod logout;
+mod begin_game;
+mod inplay;
+mod game_move;
+mod post_game;
+mod leaderboard;
+mod about;
+mod remove_user;
+mod update_game;
+mod complete_games;
+mod privacy;
+mod test_auth;
+*/
 
-pub mod home_page;
-pub mod fb_auth;
-pub mod google_auth;
-pub mod game;
-pub mod game_list;
-pub mod game_create;
-pub mod game_join;
-pub mod new_game;
-pub mod logout;
-pub mod begin_game;
-pub mod inplay;
-pub mod game_move;
-pub mod post_game;
-pub mod leaderboard;
-pub mod about;
-pub mod remove_user;
-pub mod update_game;
-pub mod complete_games;
-pub mod privacy;
-
-pub mod test_auth;
+pub use self::home_page::HomePageController;

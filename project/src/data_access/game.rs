@@ -1,19 +1,20 @@
 use std::str;
 use std::collections::HashMap;
 use model::game::Game as GameModel;
-use rustc_serialize::json;
 use hyper::client::Client;
 use hyper::header::Headers;
 use chrono::prelude::*;
+use chrono::Utc;
 use mysql;
+use serde_json;
 
-#[derive(RustcDecodable, RustcEncodable)]
+#[derive(Serialize, Deserialize)]
 struct Player{
     id: u64,
     name: String
 }
 
-#[derive(RustcDecodable, RustcEncodable)]
+#[derive(Serialize, Deserialize)]
 struct GameWinners{
     id: u64,
     players: Vec<Player>
@@ -120,7 +121,7 @@ impl Game {
     pub fn create_game(&self, user:u64, max_move_duration:u64, max_players:u64, decks:u64) -> GameModel {
         info!("User {} created new game", user);
 
-        let utc: DateTime<UTC> = UTC::now();
+        let utc: DateTime<Utc> = Utc::now();
         let creation_date = format!("{}", utc.format("%Y-%m-%d %H:%M:%S"));
 
         let query_result = self.pool.prep_exec(r"INSERT INTO pusoy_dos.game
@@ -318,7 +319,7 @@ impl Game {
     // and do some validation
     fn send_stat_update(&self, id:u64){
         let winners = self.get_winners(id);
-        let body = json::encode(&winners).unwrap();
+        let body = serde_json::to_string(&winners).unwrap();
         // to POST /stats/leaderboard
         
         info!("sending : {}", {&body});
@@ -378,7 +379,7 @@ impl Game {
                     let mut r = row.unwrap();
 					let winners_serialised = r.take::<String, &str>("winners")
                             .expect("unable to get winners from db");
-                    let mut winners:Vec<u16> = json::decode(&winners_serialised)
+                    let mut winners:Vec<u16> = serde_json::from_str(&winners_serialised)
                             .expect("unable to decode winners");
 
 					let loser =  r.take("current_player").expect("gotta be a current_player");

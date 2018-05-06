@@ -1,6 +1,3 @@
-use iron::prelude::*;
-use iron::middleware::Handler;
-use router::Router;
 use urlencoded::UrlEncodedBody;
 use std::collections::HashMap;
 
@@ -28,7 +25,7 @@ impl GameMove{
     fn execute(&self, 
                 user_id:u64, 
                 game_id:u64, 
-                hashmap:Option<HashMap<String, Vec<String>>>) -> Response {
+                hashmap:Option<HashMap<String, Vec<String>>>)/* -> Response */{
         let round_result = self.round_data.get(game_id);
         match round_result {
             None => {
@@ -187,6 +184,7 @@ impl GameMove{
 
 }
 
+/*
 impl Handler for GameMove {
 
 
@@ -218,5 +216,4 @@ impl Handler for GameMove {
     }
 
 }
-
-
+*/

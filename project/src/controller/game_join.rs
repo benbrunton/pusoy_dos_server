@@ -1,8 +1,3 @@
-use iron::prelude::*;
-use iron::{status, modifiers, Url};
-use iron::middleware::Handler;
-use router::Router;
-
 use data_access::game::Game as GameData;
 use util::session::Session;
 use config::Config;
@@ -24,7 +19,7 @@ impl GameJoin {
         }
     }
 
-    fn get_page_response(&self, user: u64, game: u64) -> Response {
+    fn get_page_response(&self, user: u64, game: u64)/* -> Response */{
 
         // join game - if successful redirect to game page
         // else error?
@@ -40,19 +35,21 @@ impl GameJoin {
         let _ = self.game_data.join_game(user, game);
         
         let game_url = format!("game/{}", game);
-        self.redirect(&game_url)
+        //self.redirect(&game_url)
     }
 
-    fn redirect(&self, path: &str) -> Response {
+/*    fn redirect(&self, path: &str) -> Response {
         let full_url = format!("{}/{}", self.hostname, path);
         let url =  Url::parse(&full_url).unwrap();
 
         Response::with((status::Found, modifiers::Redirect(url)))
 
     }
+*/
 
 }
 
+/*
 impl Handler for GameJoin {
 
     fn handle(&self, req: &mut Request) -> IronResult<Response> {
@@ -92,3 +89,4 @@ impl Handler for GameJoin {
     }
 
 }
+*/

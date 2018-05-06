@@ -4,7 +4,6 @@ use iron::middleware::Handler;
 use iron::mime::Mime;
 use router::Router;
 use std::collections::BTreeMap;
-use rustc_serialize::json;
 use chrono::prelude::*;
 use time::Duration;
 
