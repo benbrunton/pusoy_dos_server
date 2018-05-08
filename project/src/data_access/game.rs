@@ -5,7 +5,6 @@ use hyper::client::Client;
 use hyper::{Method, Request};
 use hyper::header::ContentType;
 use tokio_core::reactor::Core;
-use hyper::header::Headers;
 use chrono::prelude::*;
 use chrono::Utc;
 use mysql;

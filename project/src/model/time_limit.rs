@@ -1,5 +1,4 @@
 use serde::ser::{Serialize, Serializer, SerializeMap};
-use chrono::prelude::*;
 use time::Duration;
 
 #[derive(Debug)]

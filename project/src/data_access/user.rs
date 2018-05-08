@@ -1,4 +1,3 @@
-use time::Timespec;
 use chrono::prelude::*;
 
 use model::user::{PartUser, User as UserModel};

@@ -1,11 +1,22 @@
-use iron::prelude::*;
-use iron::{status, modifiers, Url};
-use iron::middleware::Handler;
+use hyper::{Response, StatusCode};
+use hyper::header::Location;
+use tera::{Tera, Context, TeraResult};
+use mime;
+use gotham::http::response::create_response;
+use gotham::pipeline::new_pipeline;
+use gotham::pipeline::single::single_pipeline;
+use gotham::router::Router;
+use gotham::router::builder::*;
+use gotham::state::{FromState, State};
+use gotham::middleware::session::{NewSessionMiddleware, SessionData};
+use gotham::handler::{NewHandler, Handler, HandlerFuture};
+use futures::{future, Future};
+
 use config::Config;
 
 use data_access::user::User as UserData;
 use model::user::PartUser;
-use util::session::Session;
+use model::Session;
 use rand;
 
 pub struct TestAuthController {
@@ -42,6 +53,7 @@ impl TestAuthController {
 
 }
 
+/*
 impl Handler for TestAuthController {
 
     fn handle(&self, req: &mut Request) -> IronResult<Response> { 
@@ -66,5 +78,43 @@ impl Handler for TestAuthController {
         self.success()
 
     }
+}
+*/
 
+impl NewHandler for TestAuthController {
+    type Instance = Self;
+
+    fn new_handler(&self) -> io::Result<Self::Instance> {
+        Ok(self.clone())
+    }
+}
+
+impl Handler for TestAuthController {
+
+    fn handle(self, mut state: State) -> Box<HandlerFuture> {
+		let maybe_session = {
+			let session_data: &Option<Session> = SessionData::<Option<Session>>::borrow_from(&state);
+			session_data.clone()
+		};
+
+        let (status, body, redirect) = self.get_response(maybe_session);
+
+        let mut res = {
+            create_response(
+                &state,
+                status,
+                body
+            )
+        };
+
+        match redirect {
+            Some(uri) => {
+                let mut headers = res.headers_mut();
+                headers.set(Location::new(uri));
+            },
+            _ => ()
+        }
+
+        Box::new(future::ok((state, res)))
+    }
 }

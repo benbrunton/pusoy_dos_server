@@ -2,8 +2,7 @@ use time::Timespec;
 use mysql;
 use model::event::Event as EventModel;
 use model::user::User as UserModel;
-use chrono::prelude::*;
-use chrono::{DateTime, TimeZone, NaiveDateTime, Utc};
+use chrono::{DateTime, NaiveDateTime, Utc};
 
 #[derive(Clone)]
 pub struct Event{

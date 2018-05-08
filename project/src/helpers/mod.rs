@@ -9,10 +9,10 @@ use pusoy_dos::game::player_move::{Move, Trick, TrickType, build_move};
 use pusoy_dos::cards::card::PlayerCard;
 use serde::ser::{Serialize, Serializer, SerializeMap};
 
-use hyper::{Response, StatusCode};
+use hyper::StatusCode;
 use gotham::http::response::create_response;
-use gotham::state::{FromState, State};
-use gotham::handler::{Handler, HandlerFuture};
+use gotham::state::State;
+use gotham::handler::HandlerFuture;
 use futures::{future, Future};
 use mime;
 

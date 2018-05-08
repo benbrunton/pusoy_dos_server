@@ -18,7 +18,11 @@ mod remove_user;
 mod update_game;
 mod complete_games;
 mod privacy;
-mod test_auth;
 */
+mod test_auth;
+mod controller;
+
 
 pub use self::home_page::HomePageController;
+pub use self::test_auth::TestAuthController;
+pub use self::controller::{Controller, ResponseType};

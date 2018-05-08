@@ -75,11 +75,12 @@ pub fn main() {
     let game_data = data_access::game::Game::new(pool.clone(), String::from(stat_endpoint));
     let round_data = data_access::round::Round::new(pool.clone());
     let event_data = data_access::event::Event::new(pool.clone());
+    let user_data = data_access::user::User::new(pool.clone());
 
     let port_option = config.get("port");
     let port = port_option.expect("failed to get port").parse::<u16>()
         .expect("failed to unwrap port");
 
     schedule::run(game_data, event_data, round_data);
-    server::run(port, &config, &TERA);
+    server::run(port, &config, &TERA, &user_data);
 }

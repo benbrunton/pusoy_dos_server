@@ -9,7 +9,10 @@ use gotham::router::builder::*;
 use gotham::state::{FromState, State};
 use gotham::middleware::session::{NewSessionMiddleware, SessionData};
 
-use controller::HomePageController;
+use controller::{
+    HomePageController,
+    TestAuthController
+};
 use model::Session;
 
 pub fn get_router(home_page_controller: HomePageController) -> Router {
@@ -25,12 +28,6 @@ pub fn get_router(home_page_controller: HomePageController) -> Router {
         .insecure(); // TODO: remove
 
     let (chain, pipelines) = single_pipeline(new_pipeline().add(middleware).build());
-
-    /*
-        .mount("/public/", Static::new(Path::new("public")))
-        .mount("/sw.js", Static::new(Path::new("public/js/sw.js")));
-    */
-
 
     build_router(chain, pipelines, |route| {
         route.get("/").to_new_handler(home_page_controller);

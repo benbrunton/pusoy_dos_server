@@ -1,4 +1,5 @@
 use hyper::{Response, StatusCode};
+use hyper::header::Location;
 use tera::{Tera, Context, TeraResult};
 use mime;
 use gotham::http::response::create_response;
@@ -12,8 +13,8 @@ use gotham::handler::{NewHandler, Handler, HandlerFuture};
 use futures::{future, Future};
 
 use config::Config;
-use helpers;
 use std::io;
+use model::Session;
 
 #[derive(Clone)]
 pub struct HomePageController {
@@ -41,6 +42,32 @@ impl HomePageController {
             fb_app_id,
             google_app_id,
             dev_mode,
+        }
+    }
+
+    fn get_response(
+        &self,
+        session:Option<Session>
+    ) -> (StatusCode, Option<(Vec<u8>, mime::Mime)>, Option<String>) {
+        if(self.is_logged_in(session)){
+            (StatusCode::Found, None, Some("/games".to_string()))
+        } else {
+            let body = self.not_logged_in().unwrap();
+            (StatusCode::Ok,
+            Some((
+                body.as_bytes()
+                    .to_vec(),
+                mime::TEXT_HTML,
+            )),
+            None)
+
+        }
+    }
+
+    fn is_logged_in(&self, session: Option<Session>) -> bool {
+        match session {
+            Some(sess) => sess.user_id != None,
+            None       => false
         }
     }
 /*
@@ -85,43 +112,4 @@ impl Handler for HomePageController {
     }
 }
 */
-impl NewHandler for HomePageController {
-    type Instance = Self;
 
-    fn new_handler(&self) -> io::Result<Self::Instance> {
-        Ok(self.clone())
-    }
-}
-
-impl Handler for HomePageController {
-
-    fn handle(self, mut state: State) -> Box<HandlerFuture> {
-/*		let maybe_session = {
-			let session_data: &Option<Session> = SessionData::<Option<Session>>::borrow_from(&state);
-			session_data.clone()
-		};
-*/
-
-/*
-		let body = match &maybe_session {
-			&Some(ref session_data) => "Logged in".to_owned(),
-			&None => "Not Logged in".to_owned(),
-		};
-*/
-        let body = self.not_logged_in().unwrap();
-
-        let res = {
-            create_response(
-                &state,
-                StatusCode::Ok,
-                Some((
-					body.as_bytes()
-                        .to_vec(),
-                    mime::TEXT_HTML,
-                )),
-            )
-        };
-
-        Box::new(future::ok((state, res)))
-    }
-}
