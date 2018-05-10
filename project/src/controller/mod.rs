@@ -1,5 +1,6 @@
 mod home_page;
 mod game_list;
+mod logout;
 /*
 mod fb_auth;
 mod google_auth;
@@ -8,7 +9,6 @@ mod game_list;
 mod game_create;
 mod game_join;
 mod new_game;
-mod logout;
 mod begin_game;
 mod inplay;
 mod game_move;
@@ -27,5 +27,6 @@ mod controller;
 pub use self::home_page::HomePageController;
 pub use self::game_list::GameListController;
 pub use self::test_auth::TestAuthController;
+pub use self::logout::LogoutController;
 
 pub use self::controller::{Controller, ResponseType};

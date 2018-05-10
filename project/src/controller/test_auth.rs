@@ -1,4 +1,3 @@
-use gotham::router::builder::*;
 use std::panic::RefUnwindSafe;
 
 use controller::{Controller, ResponseType};

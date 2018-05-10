@@ -1,5 +1,4 @@
 use tera::{Tera, Context, Result as TeraResult};
-use gotham::router::builder::*;
 use std::panic::RefUnwindSafe;
 
 use controller::{Controller, ResponseType};

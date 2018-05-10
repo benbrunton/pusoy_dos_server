@@ -1,9 +1,7 @@
-use iron::prelude::*;
-use iron::{status, modifiers, Url};
-use iron::middleware::Handler;
-
-use util::session::SessionInstruction;
 use config::Config;
+use std::panic::RefUnwindSafe;
+use controller::{Controller, ResponseType};
+use model::Session;
 
 pub struct LogoutController{
     hostname: String
@@ -20,19 +18,16 @@ impl LogoutController{
         }
     }
 
-}
-impl Handler for LogoutController {
-
-    fn handle(&self, req: &mut Request) -> IronResult<Response> {
-
-        let instruction = SessionInstruction::DELETE;
-        req.extensions.insert::<SessionInstruction>(instruction);
-        
-        let url =  Url::parse(&self.hostname).unwrap();
-
-        Ok(Response::with((status::Found, modifiers::Redirect(url))))
-
+    fn update_session(&self, session: &mut Option<Session>) {
+        *session = None;
     }
-
 }
- 
+
+impl Controller for LogoutController {
+    fn get_response(&self, session:&mut Option<Session>) -> ResponseType {
+        self.update_session(session);
+        ResponseType::Redirect("/".to_string())
+    }
+}
+
+impl RefUnwindSafe for LogoutController {}
