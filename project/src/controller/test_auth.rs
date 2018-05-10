@@ -1,16 +1,7 @@
-use hyper::{Response, StatusCode};
-use hyper::header::Location;
-use tera::{Tera, Context, TeraResult};
-use mime;
-use gotham::http::response::create_response;
-use gotham::pipeline::new_pipeline;
-use gotham::pipeline::single::single_pipeline;
-use gotham::router::Router;
 use gotham::router::builder::*;
-use gotham::state::{FromState, State};
-use gotham::middleware::session::{NewSessionMiddleware, SessionData};
-use gotham::handler::{NewHandler, Handler, HandlerFuture};
-use futures::{future, Future};
+use std::panic::RefUnwindSafe;
+
+use controller::{Controller, ResponseType};
 
 use config::Config;
 
@@ -19,6 +10,7 @@ use model::user::PartUser;
 use model::Session;
 use rand;
 
+#[derive(Clone)]
 pub struct TestAuthController {
     hostname: String,
     user_data: UserData
@@ -36,30 +28,12 @@ impl TestAuthController {
         }
     }
 
-    fn success(&self) -> IronResult<Response> {
-
-        let full_url = format!("{}/games", self.hostname);
-        let url =  Url::parse(&full_url).unwrap();
-
-        Ok(Response::with((status::Found, modifiers::Redirect(url))))
+    fn success(&self) -> ResponseType {
+        ResponseType::Redirect("/games".to_string())
     }
 
-    fn get_new_session(&self, req: &mut Request, user_id:u64) -> Session{
-        let session = req.extensions.get::<Session>().unwrap();
-        let new_session = session.set_user(user_id);
-        new_session
-    }
-
-
-}
-
-/*
-impl Handler for TestAuthController {
-
-    fn handle(&self, req: &mut Request) -> IronResult<Response> { 
-
+    fn create_user(&self) -> u64 {
         info!("TestAuthController handler");
-
         
         let unique_num = rand::random::<u8>();
         let name = format!("Testy McTestface_{}", unique_num);;
@@ -72,49 +46,24 @@ impl Handler for TestAuthController {
         };
 
         let new_user = self.user_data.create_if_new(user);
-        let session = self.get_new_session(req, new_user.id);
-        req.extensions.insert::<Session>(session);
+        new_user.id
+    }
 
+    fn update_session(&self, user_id: u64, session: &mut Option<Session>) {
+        *session = Some(Session {
+            user_id: Some(user_id as usize)
+        });
+    }
+
+
+}
+
+impl Controller for TestAuthController {
+    fn get_response(&self, session: &mut Option<Session>) -> ResponseType {
+        let user_id = self.create_user();
+        self.update_session(user_id, session);
         self.success()
-
-    }
-}
-*/
-
-impl NewHandler for TestAuthController {
-    type Instance = Self;
-
-    fn new_handler(&self) -> io::Result<Self::Instance> {
-        Ok(self.clone())
     }
 }
 
-impl Handler for TestAuthController {
-
-    fn handle(self, mut state: State) -> Box<HandlerFuture> {
-		let maybe_session = {
-			let session_data: &Option<Session> = SessionData::<Option<Session>>::borrow_from(&state);
-			session_data.clone()
-		};
-
-        let (status, body, redirect) = self.get_response(maybe_session);
-
-        let mut res = {
-            create_response(
-                &state,
-                status,
-                body
-            )
-        };
-
-        match redirect {
-            Some(uri) => {
-                let mut headers = res.headers_mut();
-                headers.set(Location::new(uri));
-            },
-            _ => ()
-        }
-
-        Box::new(future::ok((state, res)))
-    }
-}
+impl RefUnwindSafe for TestAuthController {}

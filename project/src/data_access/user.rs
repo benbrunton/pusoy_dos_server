@@ -59,7 +59,7 @@ impl User {
 
     fn insert_user(&self, user:PartUser) -> UserModel {
         info!("Creating new user : {}", user.name);
-        let utc: DateTime<UTC> = UTC::now();
+        let utc: DateTime<Utc> = Utc::now();
         let query_result = self.pool.prep_exec(r"INSERT INTO pusoy_dos.user
                 ( name, provider_id, provider_type, creation_date)
             VALUES

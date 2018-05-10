@@ -1,24 +1,25 @@
-use iron::prelude::*;
-use iron::middleware::Handler;
-use tera::{Tera, Context, TeraResult};
+use tera::{Tera, Context, Result as TeraResult};
 use std::cmp::Ordering;
+use std::panic::RefUnwindSafe;
 
 use data_access::game::Game as GameData;
 use config::Config;
 use helpers;
+use controller::{Controller, ResponseType};
+use model::Session;
 
-pub struct GameList {
+pub struct GameListController {
     tera: &'static Tera,
     game_data: GameData,
     hostname: String
 }
 
-impl GameList {
-    pub fn new(config: &Config, tera:&'static Tera, game_data: GameData) -> GameList {
+impl GameListController {
+    pub fn new(config: &Config, tera:&'static Tera, game_data: GameData) -> GameListController {
 
         let hostname = config.get("pd_host").unwrap();
 
-        GameList{ 
+        GameListController{ 
             tera: tera,
             game_data: game_data,
             hostname: hostname
@@ -27,8 +28,6 @@ impl GameList {
 
     fn get_page(&self, id:u64) -> TeraResult<String> {
 
-        // todo - base context that can be configured with
-        // common attributes - e.g. logged_in
         let mut data = Context::new(); 
         let mut games = self.game_data.get_valid_games(id);
         let num_games = games.len();
@@ -54,24 +53,21 @@ impl GameList {
 		data.add("id", &id);
         data.add("logged_in", &true);
 
-        self.tera.render("game_list.html", data)
+        self.tera.render("game_list.html", &data)
     }
 }
 
-impl Handler for GameList {
+impl Controller for GameListController {
 
-    fn handle(&self, req: &mut Request) -> IronResult<Response> {
-
-        let session_user_id = helpers::get_user_id(req);
-        let redirect_to_homepage = helpers::redirect(&self.hostname, "");
-
-        let resp = match session_user_id {
-            Some(id) => helpers::render(self.get_page(id)),
-            _        => redirect_to_homepage
-        };
-
-        Ok(resp)
-
+    fn get_response(&self, session:&mut Option<Session>) -> ResponseType {
+        if helpers::is_logged_in(session) {
+            let id = helpers::get_user_id(session).expect("no user id") as u64;
+            ResponseType::PageResponse(self.get_page(id).expect("unable to unwrap game list page"))
+        } else {
+           ResponseType::Redirect("/".to_string())
+        }
     }
 
 }
+
+impl RefUnwindSafe for GameListController {}

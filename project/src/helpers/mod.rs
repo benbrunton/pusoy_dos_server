@@ -1,10 +1,4 @@
 use std::fmt::Display;
-/*
-use iron::prelude::*;
-use iron::{status, modifiers, Url};
-use iron::mime::Mime;
-*/
-use tera::TeraResult;
 use pusoy_dos::game::player_move::{Move, Trick, TrickType, build_move};
 use pusoy_dos::cards::card::PlayerCard;
 use serde::ser::{Serialize, Serializer, SerializeMap};
@@ -15,65 +9,7 @@ use gotham::state::State;
 use gotham::handler::HandlerFuture;
 use futures::{future, Future};
 use mime;
-
-//use util::session::Session;
-
-/*
-pub fn get_user_id(req: &Request) -> Option<u64> {
-
-    match req.extensions.get::<Session>() {
-        Some(session) => session.user_id,
-        _             => None
-    }
-
-}
-*/
-
-pub fn redirect<S: Display>(mut state: State, hostname:&str, path:S) -> Box<HandlerFuture>{
-
-/*
-    let full_url = format!("{}/{}", hostname, path);
-    let url =  Url::parse(&full_url).unwrap();
-
-    Response::with((status::Found, modifiers::Redirect(url)))
-*/
-        let res = {
-            create_response(
-                &state,
-                StatusCode::Ok,
-                Some((
-					"redirect".as_bytes()
-                        .to_vec(),
-                    mime::TEXT_PLAIN,
-                )),
-            )
-        };
-
-
-        Box::new(future::ok((state, res)))
-
-}
-
-pub fn render(mut state: State, result: TeraResult<String>) -> Box<HandlerFuture>{
-/*
-    let content_type = "text/html".parse::<Mime>().unwrap();
-    Response::with((content_type, status::Ok, result.unwrap()))
-*/
-    let res = {
-        create_response(
-            &state,
-            StatusCode::Ok,
-            Some((
-                "render".as_bytes()
-                    .to_vec(),
-                mime::TEXT_PLAIN,
-            )),
-        )
-    };
-
-    Box::new(future::ok((state, res)))
-
-}
+use model::Session;
 
 pub fn cards_played_summary(last_move: Vec<PlayerCard>) -> String {
     match build_move(last_move).unwrap() {
@@ -163,3 +99,20 @@ impl Serialize for DCard {
         map.end()
     }
 }
+
+pub fn is_logged_in(session: &mut Option<Session>) -> bool {
+    let sess_clone = session.clone();
+    match sess_clone {
+        Some(sess) => sess.user_id != None,
+        None       => false
+    }
+}
+
+pub fn get_user_id(session: &mut Option<Session>) -> Option<usize> {
+    let sess_clone = session.clone();
+    match sess_clone {
+        Some(sess) => sess.user_id,
+        None       => None
+    }
+}
+

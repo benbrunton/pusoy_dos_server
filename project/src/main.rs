@@ -22,6 +22,7 @@ extern crate mysql;
 extern crate tera;
 #[macro_use]
 extern crate lazy_static;
+extern crate rand;
 
 
 mod server;
@@ -33,12 +34,13 @@ mod schedule;
 mod data_access;
 mod helpers;
 mod util;
+mod generic_handler;
 
 use tera::Tera;
 use config::Config;
 
 lazy_static!{
-    static ref TERA: Tera = Tera::new("templates/**/*");
+    static ref TERA: Tera = Tera::new("templates/**/*").expect("parsing error with templates");
 }
 
 pub fn main() {
@@ -81,6 +83,6 @@ pub fn main() {
     let port = port_option.expect("failed to get port").parse::<u16>()
         .expect("failed to unwrap port");
 
-    schedule::run(game_data, event_data, round_data);
-    server::run(port, &config, &TERA, &user_data);
+    schedule::run(game_data.clone(), event_data, round_data);
+    server::run(port, &config, &TERA, user_data, game_data.clone());
 }

@@ -1,34 +1,31 @@
-use hyper::{Response, StatusCode};
-use hyper::header::Location;
-use tera::{Tera, Context, TeraResult};
 use mime;
-use gotham::http::response::create_response;
-use gotham::pipeline::new_pipeline;
-use gotham::pipeline::single::single_pipeline;
-use gotham::router::Router;
-use gotham::router::builder::*;
+use hyper::header::Location;
+use hyper::StatusCode;
 use gotham::state::{FromState, State};
-use gotham::middleware::session::{NewSessionMiddleware, SessionData};
+use gotham::middleware::session::SessionData;
 use gotham::handler::{NewHandler, Handler, HandlerFuture};
-use futures::{future, Future};
+use gotham::http::response::create_response;
+use futures::future;
 
 use std::io;
 use model::Session;
 use controller::{Controller, ResponseType};
+use std::panic::RefUnwindSafe;
+use std::sync::Arc;
 
 #[derive(Clone)]
 pub struct GenericHandler {
-    controller: Controller
+    controller: Arc<(Controller + Sync + Send + RefUnwindSafe)>
 }
 
 impl GenericHandler {
-    pub fn new(controller: &Controller) -> GenericHandler {
+    pub fn new(controller: Arc<(Controller + Sync + Send + RefUnwindSafe)>) -> GenericHandler {
         GenericHandler {
             controller
         }
     }
 
-    fn get_response(&self, session:Option<Session>) -> ResponseType {
+    fn get_response(&self, session: &mut Option<Session>) -> ResponseType {
         self.controller.get_response(session)
     }
 
@@ -45,12 +42,12 @@ impl NewHandler for GenericHandler {
 impl Handler for GenericHandler {
 
     fn handle(self, mut state: State) -> Box<HandlerFuture> {
-		let maybe_session = {
-			let session_data: &Option<Session> = SessionData::<Option<Session>>::borrow_from(&state);
-			session_data.clone()
-		};
-
-        let full_response = self.get_response(maybe_session);
+        use controller::ResponseType::*;
+        let full_response = {
+            let session: &mut Option<Session> 
+                = SessionData::<Option<Session>>::borrow_mut_from(&mut state);
+            self.get_response(session)
+        };
 
         let res = match full_response {
             PageResponse(body) => {
@@ -60,6 +57,7 @@ impl Handler for GenericHandler {
                     Some((body.as_bytes()
                             .to_vec(),
                         mime::TEXT_HTML)),
+                )
 
             },
             Redirect(uri) => {
@@ -68,11 +66,13 @@ impl Handler for GenericHandler {
                     StatusCode::Found,
                     None
                 );
-                let mut headers = r.headers_mut();
-                headers.set(Location::new(uri));
+                {
+                    let mut headers = r.headers_mut();
+                    headers.set(Location::new(uri));
+                }
                 r
             }
-        }
+        };
 
         Box::new(future::ok((state, res)))
     }

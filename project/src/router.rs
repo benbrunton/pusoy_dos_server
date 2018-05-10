@@ -1,21 +1,17 @@
-use hyper::{Response, StatusCode};
-
-use mime;
-use gotham::http::response::create_response;
 use gotham::pipeline::new_pipeline;
 use gotham::pipeline::single::single_pipeline;
 use gotham::router::Router;
 use gotham::router::builder::*;
-use gotham::state::{FromState, State};
-use gotham::middleware::session::{NewSessionMiddleware, SessionData};
-
-use controller::{
-    HomePageController,
-    TestAuthController
-};
+use gotham::middleware::session::NewSessionMiddleware;
+use generic_handler::GenericHandler;
 use model::Session;
 
-pub fn get_router(home_page_controller: HomePageController) -> Router {
+pub fn get_router(
+    dev_mode: bool,
+    home_page_handler: GenericHandler,
+    test_auth_handler: GenericHandler,
+    game_list_handler: GenericHandler,
+) -> Router {
 
     // Install middleware which handles session creation before, and updating after, our handler is
     // called.
@@ -30,6 +26,11 @@ pub fn get_router(home_page_controller: HomePageController) -> Router {
     let (chain, pipelines) = single_pipeline(new_pipeline().add(middleware).build());
 
     build_router(chain, pipelines, |route| {
-        route.get("/").to_new_handler(home_page_controller);
+        route.get("/").to_new_handler(home_page_handler);
+        route.get("/games").to_new_handler(game_list_handler);
+        
+        if dev_mode {
+            route.get("/test_auth").to_new_handler(test_auth_handler);
+        }
     })
 }

@@ -1,6 +1,6 @@
-use serde::ser::{Serialize, Serializer, SerializeMap};
+use serde::ser::{Serialize, Serializer, SerializeStruct};
 
-#[derive(Debug)]
+#[derive(Debug, Deserialize)]
 pub struct Game{
     pub id: u64,
     pub creator_id: u64,
@@ -21,24 +21,24 @@ impl Serialize for Game {
     {
 
         let started = if self.started { 1 } else { 0 };
-        let mut map = try!(serializer.serialize_map(Some(2)));
+        let mut state = try!(serializer.serialize_struct("Game", 10));
 
         let next_name = match &self.next_player_name {
             &Some(ref n) => n.clone(),
             _       => String::from("none")
         };
-		try!(map.serialize_entry("id", &self.id));
-		try!(map.serialize_entry("creator_id", &self.creator_id));
-		try!(map.serialize_entry("creator_name", &self.creator_name));
-        try!(map.serialize_entry("started", &started));
-        try!(map.serialize_entry("next_player_name", &next_name));
-        try!(map.serialize_entry("next_player_id", 
+		try!(state.serialize_field("id", &self.id));
+		try!(state.serialize_field("creator_id", &self.creator_id));
+		try!(state.serialize_field("creator_name", &self.creator_name));
+        try!(state.serialize_field("started", &started));
+        try!(state.serialize_field("next_player_name", &next_name));
+        try!(state.serialize_field("next_player_id", 
             &self.next_player_id.unwrap_or(0)));
-        try!(map.serialize_entry("num_players", &self.num_players));
-        try!(map.serialize_entry("max_move_duration", &self.max_move_duration));
-        try!(map.serialize_entry("max_move_duration_mins", &self.max_move_duration_mins));
-        try!(map.serialize_entry("decks", &self.decks));
+        try!(state.serialize_field("num_players", &self.num_players));
+        try!(state.serialize_field("max_move_duration", &self.max_move_duration));
+        try!(state.serialize_field("max_move_duration_mins", &self.max_move_duration_mins));
+        try!(state.serialize_field("decks", &self.decks));
 
-        map.end()
+        state.end()
     }
 }

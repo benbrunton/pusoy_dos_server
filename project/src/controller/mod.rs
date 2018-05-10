@@ -1,4 +1,5 @@
 mod home_page;
+mod game_list;
 /*
 mod fb_auth;
 mod google_auth;
@@ -24,5 +25,7 @@ mod controller;
 
 
 pub use self::home_page::HomePageController;
+pub use self::game_list::GameListController;
 pub use self::test_auth::TestAuthController;
+
 pub use self::controller::{Controller, ResponseType};
