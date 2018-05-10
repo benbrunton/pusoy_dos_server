@@ -12,6 +12,7 @@ pub fn get_router(
     test_auth_handler: GenericHandler,
     game_list_handler: GenericHandler,
     logout_handler: GenericHandler,
+    new_game_handler: GenericHandler,
 ) -> Router {
 
     // Install middleware which handles session creation before, and updating after, our handler is
@@ -30,6 +31,7 @@ pub fn get_router(
         route.get("/").to_new_handler(home_page_handler);
         route.get("/games").to_new_handler(game_list_handler);
         route.get("/logout").to_new_handler(logout_handler);
+        route.get("/new-game").to_new_handler(new_game_handler);
         
         if dev_mode {
             route.get("/test_auth").to_new_handler(test_auth_handler);

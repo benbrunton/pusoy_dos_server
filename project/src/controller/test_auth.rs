@@ -50,7 +50,8 @@ impl TestAuthController {
 
     fn update_session(&self, user_id: u64, session: &mut Option<Session>) {
         *session = Some(Session {
-            user_id: Some(user_id as usize)
+            user_id: Some(user_id as usize),
+            csrf_token: None
         });
     }
 
