@@ -2,6 +2,7 @@ use tera::{Tera, Context, Result as TeraResult};
 use std::cmp::Ordering;
 use std::panic::RefUnwindSafe;
 
+use gotham::state::State;
 use data_access::game::Game as GameData;
 use config::Config;
 use helpers;
@@ -59,7 +60,7 @@ impl GameListController {
 
 impl Controller for GameListController {
 
-    fn get_response(&self, session:&mut Option<Session>) -> ResponseType {
+    fn get_response(&self, session:&mut Option<Session>, _: Option<String>) -> ResponseType {
         if helpers::is_logged_in(session) {
             let id = helpers::get_user_id(session).expect("no user id") as u64;
             ResponseType::PageResponse(self.get_page(id).expect("unable to unwrap game list page"))

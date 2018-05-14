@@ -1,9 +1,7 @@
 use std::panic::RefUnwindSafe;
-
+use gotham::state::State;
 use controller::{Controller, ResponseType};
-
 use config::Config;
-
 use data_access::user::User as UserData;
 use model::user::PartUser;
 use model::Session;
@@ -59,7 +57,7 @@ impl TestAuthController {
 }
 
 impl Controller for TestAuthController {
-    fn get_response(&self, session: &mut Option<Session>) -> ResponseType {
+    fn get_response(&self, session: &mut Option<Session>, _: Option<String>) -> ResponseType {
         let user_id = self.create_user();
         self.update_session(user_id, session);
         self.success()

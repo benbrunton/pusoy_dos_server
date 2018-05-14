@@ -1,4 +1,5 @@
 use tera::{Tera, Context, Result as TeraResult};
+use gotham::state::State;
 use model::Session;
 use std::panic::RefUnwindSafe;
 use csrf::{AesGcmCsrfProtection, CsrfProtection};
@@ -38,7 +39,7 @@ impl NewGameController {
 
 impl Controller for NewGameController {
 
-    fn get_response(&self, session:&mut Option<Session>) -> ResponseType {
+    fn get_response(&self, session:&mut Option<Session>, _: Option<String>) -> ResponseType {
         
         if helpers::is_logged_in(session) {
             let protect = AesGcmCsrfProtection::from_key(*b"01234567012345670123456701234567");

@@ -1,8 +1,7 @@
 use tera::{Tera, Context, Result as TeraResult};
 use std::panic::RefUnwindSafe;
-
+use gotham::state::State;
 use controller::{Controller, ResponseType};
-
 use config::Config;
 use model::Session;
 
@@ -63,7 +62,8 @@ impl HomePageController {
 impl Controller for HomePageController {
     fn get_response(
         &self,
-        session:&mut Option<Session>
+        session:&mut Option<Session>,
+        _: Option<String>
     ) -> ResponseType {
 		let sess = session.clone();
         if self.is_logged_in(sess) {

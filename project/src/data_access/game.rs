@@ -330,7 +330,7 @@ impl Game {
         let stat_endpoint2 = format!("http://{}:3080/relay/{}", self.stat_endpoint, id).parse()
             .expect("unable to parse stats endpoint 2");
 
-        let mut core = Core::new().expect("unable to unwrap core");
+        let core = Core::new().expect("unable to unwrap core");
         let client = Client::new(&core.handle());
         let mut req = Request::new(Method::Post, stat_endpoint1);
         req.headers_mut().set(ContentType::json());

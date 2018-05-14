@@ -1,11 +1,11 @@
 use mime;
 use hyper::header::Location;
-use hyper::StatusCode;
+use hyper::{StatusCode, Body, Response};
 use gotham::state::{FromState, State};
 use gotham::middleware::session::SessionData;
 use gotham::handler::{NewHandler, Handler, HandlerFuture};
 use gotham::http::response::create_response;
-use futures::future;
+use futures::{Stream, future, Future};
 
 use std::io;
 use model::Session;
@@ -25,31 +25,13 @@ impl GenericHandler {
         }
     }
 
-    fn get_response(&self, session: &mut Option<Session>) -> ResponseType {
-        self.controller.get_response(session)
+    fn get_response(&self, session: &mut Option<Session>, body: Option<String>) -> ResponseType {
+        self.controller.get_response(session, body)
     }
 
-}
-
-impl NewHandler for GenericHandler {
-    type Instance = Self;
-
-    fn new_handler(&self) -> io::Result<Self::Instance> {
-        Ok(self.clone())
-    }
-}
-
-impl Handler for GenericHandler {
-
-    fn handle(self, mut state: State) -> Box<HandlerFuture> {
+    fn create_handler_future(state: &mut State, full_response: ResponseType) -> Response {
         use controller::ResponseType::*;
-        let full_response = {
-            let session: &mut Option<Session> 
-                = SessionData::<Option<Session>>::borrow_mut_from(&mut state);
-            self.get_response(session)
-        };
-
-        let res = match full_response {
+        match full_response {
             PageResponse(body) => {
                 create_response(
                     &state,
@@ -72,8 +54,48 @@ impl Handler for GenericHandler {
                 }
                 r
             }
+        }
+    }
+}
+
+impl NewHandler for GenericHandler {
+    type Instance = Self;
+
+    fn new_handler(&self) -> io::Result<Self::Instance> {
+        Ok(self.clone())
+    }
+}
+
+impl Handler for GenericHandler {
+
+    fn handle(self, mut state: State) -> Box<HandlerFuture> {
+        let bod = {
+            Body::take_from(&mut state)
         };
 
-        Box::new(future::ok((state, res)))
+        let f = bod.concat2()
+            .then(move |full_body| {
+
+                let response_type = {
+                    let session: &mut Option<Session> 
+                        = SessionData::<Option<Session>>::borrow_mut_from(&mut state);
+                    
+                    match full_body {
+                        Ok(valid_body) => {
+                            let body_content = String::from_utf8(valid_body.to_vec()).unwrap();
+                            self.get_response(session, Some(body_content))
+                        }
+                        Err(_) => self.get_response(session, None),
+                    }
+                };
+
+
+                let res = {
+                    Self::create_handler_future(&mut state, response_type)
+                };
+                future::ok((state, res))
+            });
+
+        Box::new(f)
     }
 }

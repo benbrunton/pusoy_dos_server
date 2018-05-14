@@ -1,4 +1,5 @@
 use config::Config;
+use gotham::state::State;
 use std::panic::RefUnwindSafe;
 use controller::{Controller, ResponseType};
 use model::Session;
@@ -24,7 +25,7 @@ impl LogoutController{
 }
 
 impl Controller for LogoutController {
-    fn get_response(&self, session:&mut Option<Session>) -> ResponseType {
+    fn get_response(&self, session:&mut Option<Session>, _: Option<String>) -> ResponseType {
         self.update_session(session);
         ResponseType::Redirect("/".to_string())
     }
