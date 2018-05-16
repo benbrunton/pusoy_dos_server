@@ -10,10 +10,11 @@ use controller::{
     LogoutController,
     NewGameController,
     GameCreateController,
+    GameController,
 };
 use data_access::user::User;
 use data_access::game::Game;
-use generic_handler::GenericHandler;
+use handlers::{GenericHandler, PathHandler};
 use std::sync::Arc;
 
 pub fn run(
@@ -25,11 +26,12 @@ pub fn run(
     ) {
 
     let home_page_controller = HomePageController::new(&config, &tera);
-    let test_auth_controller = TestAuthController::new(&config, user_data);
+    let test_auth_controller = TestAuthController::new(&config, user_data.clone());
     let game_list_controller = GameListController::new(&config, &tera, game_data.clone());
     let logout_controller = LogoutController::new(&config);
     let new_game_controller = NewGameController::new(&tera);
     let game_create_controller = GameCreateController::new(game_data.clone());
+    let game_controller = GameController::new(&config, &tera, game_data.clone(), user_data.clone());
 
     let home_page_handler = GenericHandler::new(Arc::new(home_page_controller));
     let test_auth_handler = GenericHandler::new(Arc::new(test_auth_controller));
@@ -37,6 +39,7 @@ pub fn run(
     let logout_handler = GenericHandler::new(Arc::new(logout_controller));
     let new_game_handler = GenericHandler::new(Arc::new(new_game_controller));
     let game_create_handler = GenericHandler::new(Arc::new(game_create_controller));
+    let game_handler = PathHandler::new(Arc::new(game_controller));
 
     let dev_mode = match config.get("mode") {
         Some(mode) => mode == "dev",
@@ -51,6 +54,7 @@ pub fn run(
         logout_handler,
         new_game_handler,
         game_create_handler,
+        game_handler,
     );
     let addr = format!("0.0.0.0:{}", port);
     println!("Listening for requests at http://{}", addr);

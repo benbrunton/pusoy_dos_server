@@ -3,8 +3,9 @@ use gotham::pipeline::single::single_pipeline;
 use gotham::router::Router;
 use gotham::router::builder::*;
 use gotham::middleware::session::NewSessionMiddleware;
-use generic_handler::GenericHandler;
+use handlers::{GenericHandler, PathHandler};
 use model::Session;
+use helpers::PathExtractor;
 
 pub fn get_router(
     dev_mode: bool,
@@ -14,6 +15,7 @@ pub fn get_router(
     logout_handler: GenericHandler,
     new_game_handler: GenericHandler,
     game_create_handler: GenericHandler,
+    game_handler: PathHandler,
 ) -> Router {
 
     // Install middleware which handles session creation before, and updating after, our handler is
@@ -33,6 +35,9 @@ pub fn get_router(
         route.get("/games").to_new_handler(game_list_handler);
         route.get("/logout").to_new_handler(logout_handler);
         route.get("/new-game").to_new_handler(new_game_handler);
+        route.get("/game/:id:[0-9]+")
+            .with_path_extractor::<PathExtractor>()
+            .to_new_handler(game_handler);
 
         route.post("/new-game").to_new_handler(game_create_handler);
         

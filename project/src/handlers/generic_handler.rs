@@ -26,10 +26,10 @@ impl GenericHandler {
     }
 
     fn get_response(&self, session: &mut Option<Session>, body: Option<String>) -> ResponseType {
-        self.controller.get_response(session, body)
+        self.controller.get_response(session, body, None)
     }
 
-    fn create_handler_future(state: &mut State, full_response: ResponseType) -> Response {
+    pub fn create_handler_future(state: &mut State, full_response: ResponseType) -> Response {
         use controller::ResponseType::*;
         match full_response {
             PageResponse(body) => {
@@ -40,7 +40,6 @@ impl GenericHandler {
                             .to_vec(),
                         mime::TEXT_HTML)),
                 )
-
             },
             Redirect(uri) => {
                 let mut r = create_response(
@@ -80,15 +79,16 @@ impl Handler for GenericHandler {
                     let session: &mut Option<Session> 
                         = SessionData::<Option<Session>>::borrow_mut_from(&mut state);
                     
-                    match full_body {
+                    let req_body = match full_body {
                         Ok(valid_body) => {
                             let body_content = String::from_utf8(valid_body.to_vec()).unwrap();
-                            self.get_response(session, Some(body_content))
+                            Some(body_content)
                         }
-                        Err(_) => self.get_response(session, None),
-                    }
-                };
+                        Err(_) => None
+                    };
 
+                    self.get_response(session, req_body)
+                };
 
                 let res = {
                     Self::create_handler_future(&mut state, response_type)

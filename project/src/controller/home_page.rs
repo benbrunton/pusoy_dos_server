@@ -4,6 +4,7 @@ use gotham::state::State;
 use controller::{Controller, ResponseType};
 use config::Config;
 use model::Session;
+use helpers::PathExtractor;
 
 #[derive(Clone)]
 pub struct HomePageController {
@@ -63,7 +64,8 @@ impl Controller for HomePageController {
     fn get_response(
         &self,
         session:&mut Option<Session>,
-        _: Option<String>
+        _body: Option<String>,
+        _path: Option<PathExtractor>
     ) -> ResponseType {
 		let sess = session.clone();
         if self.is_logged_in(sess) {

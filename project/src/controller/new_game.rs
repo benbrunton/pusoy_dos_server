@@ -5,6 +5,7 @@ use std::panic::RefUnwindSafe;
 use csrf::{AesGcmCsrfProtection, CsrfProtection};
 
 use helpers;
+use helpers::PathExtractor;
 use controller::{Controller, ResponseType};
 
 pub struct NewGameController {
@@ -39,7 +40,12 @@ impl NewGameController {
 
 impl Controller for NewGameController {
 
-    fn get_response(&self, session:&mut Option<Session>, _: Option<String>) -> ResponseType {
+    fn get_response(
+        &self,
+        session:&mut Option<Session>,
+        _body: Option<String>,
+        _path: Option<PathExtractor>
+    ) -> ResponseType {
         
         if helpers::is_logged_in(session) {
             let protect = AesGcmCsrfProtection::from_key(*b"01234567012345670123456701234567");

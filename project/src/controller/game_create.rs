@@ -5,6 +5,7 @@ use model::Session;
 use data_access::game::Game as GameData;
 use controller::{Controller, ResponseType};
 use helpers;
+use helpers::PathExtractor;
 use gotham::state::State;
 use url::form_urlencoded::parse;
 use csrf::{AesGcmCsrfProtection, CsrfProtection};
@@ -23,9 +24,8 @@ impl GameCreateController {
         id: u64, 
         move_duration: u64,
         decks: u64,
-    ) -> Result<(), String>{
+    ) {
         self.game_data.create_game(id, move_duration, 4, decks);
-        Ok(())
     }
 
     fn get_session_token(&self, session: &mut Option<Session>) -> String {
@@ -36,7 +36,12 @@ impl GameCreateController {
 
 impl Controller for GameCreateController {
 
-    fn get_response(&self, session:&mut Option<Session>, body: Option<String>) -> ResponseType {
+    fn get_response(
+        &self,
+        session:&mut Option<Session>,
+        body: Option<String>,
+        _: Option<PathExtractor>
+    ) -> ResponseType {
         
         if helpers::is_logged_in(session) {
             let id = helpers::get_user_id(session)
@@ -68,7 +73,6 @@ impl Controller for GameCreateController {
                         }
                     }
                     
-                    info!("{:?}", token_bytes);
                     let decoded_token = BASE64.decode(&token_bytes).expect("token not base64");
                     let decoded_cookie = BASE64.decode(&session_token).expect("token not base64");
                     let parsed_token = protect.parse_token(&decoded_token)

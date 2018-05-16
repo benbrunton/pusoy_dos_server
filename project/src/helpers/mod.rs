@@ -109,3 +109,7 @@ pub fn get_user_id(session: &mut Option<Session>) -> Option<usize> {
     }
 }
 
+#[derive(Deserialize, StateData, StaticResponseExtender)]
+pub struct PathExtractor {
+    pub id: usize,
+}

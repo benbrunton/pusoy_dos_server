@@ -6,6 +6,7 @@ use data_access::user::User as UserData;
 use model::user::PartUser;
 use model::Session;
 use rand;
+use helpers::PathExtractor;
 
 #[derive(Clone)]
 pub struct TestAuthController {
@@ -57,7 +58,12 @@ impl TestAuthController {
 }
 
 impl Controller for TestAuthController {
-    fn get_response(&self, session: &mut Option<Session>, _: Option<String>) -> ResponseType {
+    fn get_response(
+        &self, 
+        session: &mut Option<Session>,
+        _body: Option<String>,
+        _path: Option<PathExtractor>
+    ) -> ResponseType {
         let user_id = self.create_user();
         self.update_session(user_id, session);
         self.success()

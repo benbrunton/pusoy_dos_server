@@ -3,6 +3,7 @@ use gotham::state::State;
 use std::panic::RefUnwindSafe;
 use controller::{Controller, ResponseType};
 use model::Session;
+use helpers::PathExtractor;
 
 pub struct LogoutController{
     hostname: String
@@ -25,7 +26,12 @@ impl LogoutController{
 }
 
 impl Controller for LogoutController {
-    fn get_response(&self, session:&mut Option<Session>, _: Option<String>) -> ResponseType {
+    fn get_response(
+        &self,
+        session:&mut Option<Session>,
+        _body: Option<String>,
+        _path: Option<PathExtractor>
+    ) -> ResponseType {
         self.update_session(session);
         ResponseType::Redirect("/".to_string())
     }

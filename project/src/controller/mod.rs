@@ -3,10 +3,10 @@ mod game_list;
 mod logout;
 mod new_game;
 mod game_create;
+mod game;
 /*
 mod fb_auth;
 mod google_auth;
-mod game;
 mod game_list;
 mod game_join;
 mod begin_game;
@@ -30,5 +30,6 @@ pub use self::test_auth::TestAuthController;
 pub use self::logout::LogoutController;
 pub use self::new_game::NewGameController;
 pub use self::game_create::GameCreateController;
+pub use self::game::GameController;
 
 pub use self::controller::{Controller, ResponseType};

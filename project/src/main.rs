@@ -37,7 +37,7 @@ mod schedule;
 mod data_access;
 mod helpers;
 mod util;
-mod generic_handler;
+mod handlers;
 
 use tera::Tera;
 use config::Config;
