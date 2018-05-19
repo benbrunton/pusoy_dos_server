@@ -16,6 +16,7 @@ pub fn get_router(
     new_game_handler: GenericHandler,
     game_create_handler: GenericHandler,
     game_handler: PathHandler,
+    game_join_handler: PathHandler,
 ) -> Router {
 
     // Install middleware which handles session creation before, and updating after, our handler is
@@ -40,6 +41,9 @@ pub fn get_router(
             .to_new_handler(game_handler);
 
         route.post("/new-game").to_new_handler(game_create_handler);
+        route.post("/game/:id:[0-9]+/join")
+            .with_path_extractor::<PathExtractor>()
+            .to_new_handler(game_join_handler);
         
         if dev_mode {
             route.get("/test_auth").to_new_handler(test_auth_handler);

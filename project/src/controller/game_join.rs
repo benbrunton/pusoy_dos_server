@@ -1,26 +1,29 @@
 use data_access::game::Game as GameData;
-use util::session::Session;
+use model::Session;
 use config::Config;
+use helpers;
+use helpers::PathExtractor;
 
+use tera::{Tera, Context, Result as TeraResult};
+use controller::{Controller, ResponseType};
+use std::panic::RefUnwindSafe;
 
-pub struct GameJoin{
+pub struct GameJoinController{
     game_data: GameData,
     hostname: String
 }
 
-impl GameJoin {
-    pub fn new(config: &Config, game_data: GameData) -> GameJoin {
-
+impl GameJoinController {
+    pub fn new(config: &Config, game_data: GameData) -> GameJoinController {
         let hostname = config.get("pd_host").unwrap();
 
-        GameJoin{
+        GameJoinController{
             game_data: game_data,
             hostname: hostname
         }
     }
 
-    fn get_page_response(&self, user: u64, game: u64)/* -> Response */{
-
+    fn get_page(&self, user: u64, game: u64) -> ResponseType {
         // join game - if successful redirect to game page
         // else error?
         let game_model_option = self.game_data.get_game(game);
@@ -28,65 +31,32 @@ impl GameJoin {
         let game_model = game_model_option.expect(&error_message);
 
         if game_model.started {
-            return Response::with((status::InternalServerError))
+            return ResponseType::ServerError;
         }
         
-
         let _ = self.game_data.join_game(user, game);
         
-        let game_url = format!("game/{}", game);
-        //self.redirect(&game_url)
+        let game_url = format!("/game/{}", game);
+        ResponseType::Redirect(game_url)
     }
-
-/*    fn redirect(&self, path: &str) -> Response {
-        let full_url = format!("{}/{}", self.hostname, path);
-        let url =  Url::parse(&full_url).unwrap();
-
-        Response::with((status::Found, modifiers::Redirect(url)))
-
-    }
-*/
-
 }
 
-/*
-impl Handler for GameJoin {
 
-    fn handle(&self, req: &mut Request) -> IronResult<Response> {
-
-        let ref query = req.extensions.get::<Router>().unwrap().find("id");
-        info!("joining game {:?}", query);
-
-        let session_user_id = match req.extensions.get::<Session>() {
-            Some(session) => session.user_id,
-            _             => None
-        };
-
-        let resp = match session_user_id {
-            Some(user_id) => {
-                match *query {
-                    Some(id) => self.get_page_response(user_id, id.parse::<u64>().unwrap_or(0)),
-                    _ => {
-                        let full_url = format!("{}/games", self.hostname);
-                        let url =  Url::parse(&full_url).unwrap();
-
-                        Response::with((status::Found, modifiers::Redirect(url)))
-                    }
-                }
-
-            },
-            _ => {
-                let full_url = format!("{}/games", self.hostname);
-                let url =  Url::parse(&full_url).unwrap();
-
-                Response::with((status::Found, modifiers::Redirect(url)))
-
-            }
-        };
-
-        Ok(resp)
-
+impl Controller for GameJoinController {
+    fn get_response(
+        &self,
+        session:&mut Option<Session>,
+        _body: Option<String>,
+        path: Option<PathExtractor>
+    ) -> ResponseType {
+        if helpers::is_logged_in(session) {
+            let id = helpers::get_user_id(session).expect("no user id") as u64;
+            let path_id = path.expect("no_path").id as u64;
+            self.get_page(id, path_id)
+        } else {
+           ResponseType::Redirect("/".to_string())
+        }
     }
-
 }
-*/
+
+impl RefUnwindSafe for GameJoinController {}

@@ -11,6 +11,7 @@ use controller::{
     NewGameController,
     GameCreateController,
     GameController,
+    GameJoinController,
 };
 use data_access::user::User;
 use data_access::game::Game;
@@ -32,6 +33,7 @@ pub fn run(
     let new_game_controller = NewGameController::new(&tera);
     let game_create_controller = GameCreateController::new(game_data.clone());
     let game_controller = GameController::new(&config, &tera, game_data.clone(), user_data.clone());
+    let game_join_controller = GameJoinController::new(&config, game_data.clone());
 
     let home_page_handler = GenericHandler::new(Arc::new(home_page_controller));
     let test_auth_handler = GenericHandler::new(Arc::new(test_auth_controller));
@@ -40,6 +42,7 @@ pub fn run(
     let new_game_handler = GenericHandler::new(Arc::new(new_game_controller));
     let game_create_handler = GenericHandler::new(Arc::new(game_create_controller));
     let game_handler = PathHandler::new(Arc::new(game_controller));
+    let game_join_handler = PathHandler::new(Arc::new(game_join_controller));
 
     let dev_mode = match config.get("mode") {
         Some(mode) => mode == "dev",
@@ -55,6 +58,7 @@ pub fn run(
         new_game_handler,
         game_create_handler,
         game_handler,
+        game_join_handler,
     );
     let addr = format!("0.0.0.0:{}", port);
     println!("Listening for requests at http://{}", addr);

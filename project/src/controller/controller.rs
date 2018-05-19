@@ -5,7 +5,8 @@ use helpers::PathExtractor;
 
 pub enum ResponseType {
     PageResponse(String),
-    Redirect(String)
+    Redirect(String),
+    ServerError,
 }
 
 pub trait Controller {

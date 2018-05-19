@@ -52,6 +52,13 @@ impl GenericHandler {
                     headers.set(Location::new(uri));
                 }
                 r
+            },
+            ServerError => {
+                create_response(
+                    &state,
+                    StatusCode::InternalServerError,
+                    None
+                )
             }
         }
     }

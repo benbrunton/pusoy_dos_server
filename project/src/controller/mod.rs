@@ -4,11 +4,10 @@ mod logout;
 mod new_game;
 mod game_create;
 mod game;
+mod game_join;
 /*
 mod fb_auth;
 mod google_auth;
-mod game_list;
-mod game_join;
 mod begin_game;
 mod inplay;
 mod game_move;
@@ -31,5 +30,6 @@ pub use self::logout::LogoutController;
 pub use self::new_game::NewGameController;
 pub use self::game_create::GameCreateController;
 pub use self::game::GameController;
+pub use self::game_join::GameJoinController;
 
 pub use self::controller::{Controller, ResponseType};
