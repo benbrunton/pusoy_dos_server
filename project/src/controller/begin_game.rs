@@ -5,6 +5,8 @@ use helpers;
 use tera::{Tera, Context, Result as TeraResult};
 use controller::{Controller, ResponseType};
 use std::panic::RefUnwindSafe;
+use model::Session;
+use helpers::PathExtractor;
 
 
 use pusoy_dos::game::game::Game as CardGame;
@@ -85,7 +87,9 @@ impl Controller for BeginGameController {
         if helpers::is_logged_in(session) {
             let id = helpers::get_user_id(session).expect("no user id") as u64;
             let path_id = path.expect("no_path").id as u64;
-            self.get_page(id, path_id)
+            self.begin_game(id, path_id);
+            let game_page = format!("/play/{}", path_id);
+            ResponseType::Redirect(game_page)
         } else {
            ResponseType::Redirect("/".to_string())
         }
