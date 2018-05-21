@@ -27,7 +27,6 @@ extern crate csrf;
 extern crate data_encoding;
 extern crate url;
 
-
 mod server;
 mod router;
 mod controller;
@@ -38,6 +37,7 @@ mod data_access;
 mod helpers;
 mod util;
 mod handlers;
+mod middleware;
 
 use tera::Tera;
 use config::Config;
