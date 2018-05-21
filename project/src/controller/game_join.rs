@@ -4,7 +4,6 @@ use config::Config;
 use helpers;
 use helpers::PathExtractor;
 
-use tera::{Tera, Context, Result as TeraResult};
 use controller::{Controller, ResponseType};
 use std::panic::RefUnwindSafe;
 
@@ -40,7 +39,6 @@ impl GameJoinController {
         ResponseType::Redirect(game_url)
     }
 }
-
 
 impl Controller for GameJoinController {
     fn get_response(

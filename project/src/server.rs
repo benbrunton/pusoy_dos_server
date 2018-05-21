@@ -12,9 +12,11 @@ use controller::{
     GameCreateController,
     GameController,
     GameJoinController,
+    BeginGameController,
 };
 use data_access::user::User;
 use data_access::game::Game;
+use data_access::round::Round;
 use handlers::{GenericHandler, PathHandler};
 use std::sync::Arc;
 
@@ -24,6 +26,7 @@ pub fn run(
     tera: &'static Tera, 
     user_data: User,
     game_data: Game,
+    round_data: Round,
     ) {
 
     let home_page_controller = HomePageController::new(&config, &tera);
@@ -34,6 +37,7 @@ pub fn run(
     let game_create_controller = GameCreateController::new(game_data.clone());
     let game_controller = GameController::new(&config, &tera, game_data.clone(), user_data.clone());
     let game_join_controller = GameJoinController::new(&config, game_data.clone());
+    let begin_game_controller = BeginGameController::new(&config, game_data.clone(), round_data.clone());
 
     let home_page_handler = GenericHandler::new(Arc::new(home_page_controller));
     let test_auth_handler = GenericHandler::new(Arc::new(test_auth_controller));
@@ -43,6 +47,7 @@ pub fn run(
     let game_create_handler = GenericHandler::new(Arc::new(game_create_controller));
     let game_handler = PathHandler::new(Arc::new(game_controller));
     let game_join_handler = PathHandler::new(Arc::new(game_join_controller));
+    let begin_game_handler = PathHandler::new(Arc::new(begin_game_controller));
 
     let dev_mode = match config.get("mode") {
         Some(mode) => mode == "dev",
@@ -59,6 +64,7 @@ pub fn run(
         game_create_handler,
         game_handler,
         game_join_handler,
+        begin_game_handler,
     );
     let addr = format!("0.0.0.0:{}", port);
     println!("Listening for requests at http://{}", addr);

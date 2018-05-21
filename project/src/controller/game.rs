@@ -1,9 +1,7 @@
 use tera::{Tera, Context, Result as TeraResult};
-use std::cmp::Ordering;
 use std::panic::RefUnwindSafe;
 
 use helpers::PathExtractor;
-use gotham::state::State;
 use config::Config;
 use data_access::game::Game as GameData;
 use model::game::Game as GameModel;

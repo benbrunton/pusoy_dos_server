@@ -2,7 +2,6 @@ use tera::{Tera, Context, Result as TeraResult};
 use std::cmp::Ordering;
 use std::panic::RefUnwindSafe;
 
-use gotham::state::State;
 use data_access::game::Game as GameData;
 use config::Config;
 use helpers;

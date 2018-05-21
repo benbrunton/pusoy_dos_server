@@ -1,6 +1,4 @@
 use model::Session;
-use gotham::state::State;
-use gotham::router::response::extender::StaticResponseExtender;
 use helpers::PathExtractor;
 
 pub enum ResponseType {

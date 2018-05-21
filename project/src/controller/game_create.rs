@@ -1,4 +1,3 @@
-use std::collections::HashMap;
 use std::panic::RefUnwindSafe;
 use data_encoding::BASE64;
 use model::Session;
@@ -6,7 +5,6 @@ use data_access::game::Game as GameData;
 use controller::{Controller, ResponseType};
 use helpers;
 use helpers::PathExtractor;
-use gotham::state::State;
 use url::form_urlencoded::parse;
 use csrf::{AesGcmCsrfProtection, CsrfProtection};
 

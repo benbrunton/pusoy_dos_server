@@ -1,6 +1,5 @@
 use tera::{Tera, Context, Result as TeraResult};
 use std::panic::RefUnwindSafe;
-use gotham::state::State;
 use controller::{Controller, ResponseType};
 use config::Config;
 use model::Session;

@@ -5,10 +5,10 @@ mod new_game;
 mod game_create;
 mod game;
 mod game_join;
+mod begin_game;
 /*
 mod fb_auth;
 mod google_auth;
-mod begin_game;
 mod inplay;
 mod game_move;
 mod post_game;
@@ -31,5 +31,6 @@ pub use self::new_game::NewGameController;
 pub use self::game_create::GameCreateController;
 pub use self::game::GameController;
 pub use self::game_join::GameJoinController;
+pub use self::begin_game::BeginGameController;
 
 pub use self::controller::{Controller, ResponseType};

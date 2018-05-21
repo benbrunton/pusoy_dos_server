@@ -1,5 +1,4 @@
 use std::panic::RefUnwindSafe;
-use gotham::state::State;
 use controller::{Controller, ResponseType};
 use config::Config;
 use data_access::user::User as UserData;

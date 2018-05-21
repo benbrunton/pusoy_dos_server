@@ -1,5 +1,4 @@
 use tera::{Tera, Context, Result as TeraResult};
-use gotham::state::State;
 use model::Session;
 use std::panic::RefUnwindSafe;
 use csrf::{AesGcmCsrfProtection, CsrfProtection};

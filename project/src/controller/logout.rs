@@ -1,5 +1,4 @@
 use config::Config;
-use gotham::state::State;
 use std::panic::RefUnwindSafe;
 use controller::{Controller, ResponseType};
 use model::Session;
