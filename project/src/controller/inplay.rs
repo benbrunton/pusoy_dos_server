@@ -1,37 +1,35 @@
-use iron::prelude::*;
-use iron::status;
-use iron::middleware::Handler;
-use iron::mime::Mime;
-use router::Router;
-
 use tera::{Tera, Context};
+use std::panic::RefUnwindSafe;
 use data_access::round::Round as RoundData;
 use data_access::user::User as UserData;
 use config::Config;
 use helpers;
+use helpers::PathExtractor;
 use pusoy_dos::game::game::Game;
 use pusoy_dos::game::player_move::{Move, Trick};
 use pusoy_dos::cards::card::PlayerCard;
 use serde::{Serialize, Serializer};
-use query;
+use serde::ser::SerializeMap;
+use controller::{ResponseType, Controller};
+use model::Session;
 
-pub struct InPlay{
+pub struct InPlayController{
     tera: &'static Tera,
     round_data: RoundData,
     hostname: String,
     user_data: UserData
 }
 
-impl InPlay {
+impl InPlayController {
     
     pub fn new(config: &Config, 
                 tera:&'static Tera, 
                 round_data: RoundData, 
-                user_data: UserData) -> InPlay {
+                user_data: UserData) -> InPlayController {
 
         let hostname = config.get("pd_host").unwrap();
 
-        InPlay{
+        InPlayController{
             tera: tera,
             round_data: round_data,
             hostname: hostname,
@@ -39,7 +37,7 @@ impl InPlay {
         }
     }
 
-    pub fn display(&self, user_id:u64, game_id:u64, valid_move:bool) -> Response {
+    pub fn get_page_response(&self, user_id:u64, game_id:u64) -> ResponseType {
 
         let template = "inplay.html";
         let mut data = Context::new();
@@ -48,7 +46,7 @@ impl InPlay {
         match round_result {
             None => {
                 info!("redirecting as no round found for game {}", game_id);
-                return helpers::redirect(&self.hostname, "games");  // think about an error page here?
+                return ResponseType::Redirect("/games".to_string());  // think about an error page here?
             },
             _ => ()
         }
@@ -61,7 +59,7 @@ impl InPlay {
         info!("round_def: {:?}", round_def);
         if round_def.players.len() < 2 {
             info!("GAME OVER FOR GAME: {}", game_id);
-            return helpers::redirect(&self.hostname, format!("game-complete/{}", game_id));
+            return ResponseType::Redirect(format!("game-complete/{}", game_id));
         }
 
         let next_player = game.get_next_player().expect("unable to get next player");
@@ -125,12 +123,10 @@ impl InPlay {
         data.add("cards", &cards);
         data.add("last_move", &display_last_move);
         data.add("players", &players);
-        data.add("valid_move", &valid_move);
         data.add("round_reversed", &reversed);
 
-        let content_type = "text/html".parse::<Mime>().unwrap();
-        let page = self.tera.render(template, data).unwrap();
-        Response::with((content_type, status::Ok, page))
+        let page = self.tera.render(template, &data).expect("unable to unwrap inplay page");
+        ResponseType::PageResponse(page)
     }
 
     fn convert_move_to_cards(&self, last_move:Move) -> Vec<DCard> {
@@ -157,37 +153,23 @@ impl InPlay {
     }
 }
 
-impl Handler for InPlay {
-
-    fn handle(&self, req: &mut Request) -> IronResult<Response> {
-
-        let ref query = req.extensions.get::<Router>().unwrap().find("id");
-        let error = query::get(req.url.to_string(), "error");
-
-        let valid_move = match error {
-            None => true,
-            _ => false
-        };
-
-        let session_user_id = helpers::get_user_id(req);
-        let redirect_to_homepage = helpers::redirect(&self.hostname, "");
-
-        let resp = match session_user_id {
-            Some(user_id) => {
-                match *query {
-                    Some(id) => {
-                        self.display(user_id, id.parse::<u64>().unwrap(), valid_move)
-                    },
-                    _ => redirect_to_homepage
-                }
-            },
-            _ => redirect_to_homepage
-        };
-
-        Ok(resp)
+impl Controller for InPlayController {
+    fn get_response(
+        &self,
+        session:&mut Option<Session>,
+        _body: Option<String>,
+        path: Option<PathExtractor>
+    ) -> ResponseType {
+        if helpers::is_logged_in(session) {
+            let id = helpers::get_user_id(session).expect("no user id") as u64;
+            let path_id = path.expect("no_path").id as u64;
+            self.get_page_response(id, path_id)
+        } else {
+           ResponseType::Redirect("/".to_string())
+        }
     }
-
 }
+
 
 // todo - move
 //
@@ -213,16 +195,14 @@ impl Serialize for DCard {
                                     true)
         };
 
-        let mut state = try!(serializer.serialize_map(Some(2)));
-		try!(serializer.serialize_map_key(&mut state, "suit_display"));
-		try!(serializer.serialize_map_value(&mut state, suit_display));
-		try!(serializer.serialize_map_key(&mut state, "suit"));
-		try!(serializer.serialize_map_value(&mut state, suit));
-		try!(serializer.serialize_map_key(&mut state, "rank"));
-		try!(serializer.serialize_map_value(&mut state, rank));
-        try!(serializer.serialize_map_key(&mut state, "joker"));
-		try!(serializer.serialize_map_value(&mut state, joker));
+        let mut state = try!(serializer.serialize_map(Some(4)));
+		try!(state.serialize_entry("suit_display", &suit_display));
+		try!(state.serialize_entry("suit", &suit));
+		try!(state.serialize_entry("rank", &rank));
+        try!(state.serialize_entry("joker", &joker));
 
-        serializer.serialize_map_end(state)
+        state.end()
     }
 }
+
+impl RefUnwindSafe for InPlayController {}

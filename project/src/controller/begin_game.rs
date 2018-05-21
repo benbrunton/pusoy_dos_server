@@ -2,7 +2,6 @@ use data_access::game::Game as GameData;
 use data_access::round::Round as RoundData;
 use config::Config;
 use helpers;
-use tera::{Tera, Context, Result as TeraResult};
 use controller::{Controller, ResponseType};
 use std::panic::RefUnwindSafe;
 use model::Session;

@@ -131,7 +131,7 @@ fn main() {
     let update_game = update_game::UpdateGame::new(&config, game_data.clone());
     let complete_games = complete_games::CompleteGames::new(&config, &TERA,  game_data.clone());
 
-    router.get("/", home_page_controller, "index");
+    router.get("/", home_page_controller, "index"); 
     router.get("/fb-auth", facebook_auth_controller, "fb_auth_callback");
     router.get("/google-auth",
                google_auth_controller,
@@ -188,9 +188,9 @@ fn main() {
     let mut mount = Mount::new();
     mount.mount("/", page_chain)
         .mount("/api/v1/", api_chain)
-        .mount("/api/v2/", external_api_chain)
-        .mount("/public/", Static::new(Path::new("public")))
-        .mount("/sw.js", Static::new(Path::new("public/js/sw.js")));
+        .mount("/api/v2/", external_api_chain) // not required
+        .mount("/public/", Static::new(Path::new("public"))) // handled with nginx
+        .mount("/sw.js", Static::new(Path::new("public/js/sw.js"))); // handled with nginx
 
 
     let mut chain = Chain::new(mount);
