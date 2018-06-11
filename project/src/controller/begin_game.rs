@@ -51,31 +51,6 @@ impl BeginGameController {
     }
 }
 
-/*
-impl Handler for BeginGame {
-    fn handle(&self, req: &mut Request) -> IronResult<Response> {
-        let ref query = req.extensions.get::<Router>().unwrap().find("id");
-
-        let session_user_id = helpers::get_user_id(req);
-        let redirect_to_homepage = helpers::redirect(&self.hostname, "");
-
-        let resp = match session_user_id {
-            Some(user_id) => {
-                match *query {
-                    Some(id) => {
-                        self.begin_game(user_id, id.parse::<u64>().unwrap());
-                        helpers::redirect(&self.hostname, format!("game/{}", id))
-                    },
-                    _ => redirect_to_homepage
-                }
-
-            },
-            _ => redirect_to_homepage
-        };
-        Ok(resp)
-    }
-}*/
-
 impl Controller for BeginGameController {
     fn get_response(
         &self,

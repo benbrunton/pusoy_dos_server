@@ -6,7 +6,7 @@ use std::time::SystemTime;
 use futures::Future;
 
 #[derive(NewMiddleware, Copy, Clone)]
-struct MiddlewareAddingResponseHeader;
+pub struct MiddlewareAddingResponseHeader;
 
 impl Middleware for MiddlewareAddingResponseHeader {
     fn call<Chain>(self, state: State, chain: Chain) -> Box<HandlerFuture>
