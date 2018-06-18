@@ -15,10 +15,12 @@ use controller::{
     BeginGameController,
     InPlayController,
     PlayersController,
+    LastMoveController,
 };
 use data_access::user::User;
 use data_access::game::Game;
 use data_access::round::Round;
+use data_access::event::Event;
 use handlers::{GenericHandler, PathHandler};
 use std::sync::Arc;
 
@@ -29,6 +31,7 @@ pub fn run(
     user_data: User,
     game_data: Game,
     round_data: Round,
+    event_data: Event
     ) {
 
     let home_page_controller = HomePageController::new(&config, &tera);
@@ -53,8 +56,12 @@ pub fn run(
 
     let players_controller = PlayersController::new(
         round_data.clone(),
-        user_data.clone()
+        user_data.clone(),
         event_data.clone()
+    );
+
+    let last_move_controller = LastMoveController::new(
+        round_data.clone(),
     );
 
     let home_page_handler = GenericHandler::new(Arc::new(home_page_controller));
@@ -68,6 +75,7 @@ pub fn run(
     let begin_game_handler = PathHandler::new(Arc::new(begin_game_controller));
     let inplay_handler = PathHandler::new(Arc::new(inplay_controller));
     let players_handler = PathHandler::new(Arc::new(players_controller));
+    let last_move_handler = PathHandler::new(Arc::new(last_move_controller));
 
     let dev_mode = match config.get("mode") {
         Some(mode) => mode == "dev",
@@ -87,6 +95,7 @@ pub fn run(
         begin_game_handler,
         inplay_handler,
         players_handler,
+        last_move_handler,
     );
     let addr = format!("0.0.0.0:{}", port);
     println!("Listening for requests at http://{}", addr);

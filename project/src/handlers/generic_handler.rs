@@ -53,6 +53,15 @@ impl GenericHandler {
                 }
                 r
             },
+            Json(body) => {
+                create_response(
+                    &state,
+                    StatusCode::Ok,
+                    Some((body.as_bytes()
+                            .to_vec(),
+                        mime::APPLICATION_JSON)),
+                )
+            },
             ServerError => {
                 create_response(
                     &state,

@@ -12,6 +12,7 @@ extern crate tokio_core;
 extern crate serde;
 #[macro_use]
 extern crate serde_derive;
+#[macro_use]
 extern crate serde_json;
 extern crate schedule_recv;
 #[macro_use]
@@ -86,6 +87,14 @@ pub fn main() {
     let port = port_option.expect("failed to get port").parse::<u16>()
         .expect("failed to unwrap port");
 
-    schedule::run(game_data.clone(), event_data, round_data.clone());
-    server::run(port, &config, &TERA, user_data, game_data.clone(), round_data.clone());
+    schedule::run(game_data.clone(), event_data.clone(), round_data.clone());
+    server::run(
+        port,
+        &config,
+        &TERA,
+        user_data,
+        game_data.clone(),
+        round_data.clone(),
+        event_data.clone()
+    );
 }

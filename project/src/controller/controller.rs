@@ -4,6 +4,7 @@ use helpers::PathExtractor;
 pub enum ResponseType {
     PageResponse(String),
     Redirect(String),
+    Json(String),
     ServerError,
 }
 

@@ -8,6 +8,7 @@ mod game_join;
 mod begin_game;
 mod inplay;
 mod players;
+mod last_move;
 /*
 mod fb_auth;
 mod google_auth;
@@ -35,5 +36,6 @@ pub use self::game_join::GameJoinController;
 pub use self::begin_game::BeginGameController;
 pub use self::inplay::InPlayController;
 pub use self::players::PlayersController;
+pub use self::last_move::LastMoveController;
 
 pub use self::controller::{Controller, ResponseType};

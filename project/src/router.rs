@@ -20,7 +20,8 @@ pub fn get_router(
     game_join_handler: PathHandler,
     begin_game_handler: PathHandler,
     inplay_handler: PathHandler,
-    players_handler: PathHandler
+    players_handler: PathHandler,
+    last_move_handler: PathHandler
 ) -> Router {
 
     // Install middleware which handles session creation before, and updating after, our handler is
@@ -58,9 +59,13 @@ pub fn get_router(
             .with_path_extractor::<PathExtractor>()
             .to_new_handler(begin_game_handler);
 
-        router.get("/api/v1/players/:id[0-9]+")
+        // json endpoints
+        route.get("/api/v1/players/:id:[0-9]+")
             .with_path_extractor::<PathExtractor>()
             .to_new_handler(players_handler);
+        route.get("/api/v1/last-move/:id:[0-9]+")
+            .with_path_extractor::<PathExtractor>()
+            .to_new_handler(last_move_handler);
 
         if dev_mode {
             route.get("/test_auth").to_new_handler(test_auth_handler);
