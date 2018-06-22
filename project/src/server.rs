@@ -16,11 +16,14 @@ use controller::{
     InPlayController,
     PlayersController,
     LastMoveController,
+    MyCardsController,
+    SubmitMoveController,
 };
 use data_access::user::User;
 use data_access::game::Game;
 use data_access::round::Round;
 use data_access::event::Event;
+use data_access::notification::Notification;
 use handlers::{GenericHandler, PathHandler};
 use std::sync::Arc;
 
@@ -31,7 +34,8 @@ pub fn run(
     user_data: User,
     game_data: Game,
     round_data: Round,
-    event_data: Event
+    event_data: Event,
+    notification_data: Notification,
     ) {
 
     let home_page_controller = HomePageController::new(&config, &tera);
@@ -64,6 +68,18 @@ pub fn run(
         round_data.clone(),
     );
 
+    let my_cards_controller = MyCardsController::new(
+        round_data.clone(),
+    );
+
+    let submit_move_controller = SubmitMoveController::new(
+        round_data.clone(),
+        game_data.clone(),
+        event_data.clone(),
+        user_data.clone(),
+        notification_data.clone(),
+    );
+
     let home_page_handler = GenericHandler::new(Arc::new(home_page_controller));
     let test_auth_handler = GenericHandler::new(Arc::new(test_auth_controller));
     let game_list_handler = GenericHandler::new(Arc::new(game_list_controller));
@@ -76,6 +92,8 @@ pub fn run(
     let inplay_handler = PathHandler::new(Arc::new(inplay_controller));
     let players_handler = PathHandler::new(Arc::new(players_controller));
     let last_move_handler = PathHandler::new(Arc::new(last_move_controller));
+    let my_cards_handler = PathHandler::new(Arc::new(my_cards_controller));
+    let submit_move_handler = PathHandler::new(Arc::new(submit_move_controller));
 
     let dev_mode = match config.get("mode") {
         Some(mode) => mode == "dev",
@@ -96,7 +114,10 @@ pub fn run(
         inplay_handler,
         players_handler,
         last_move_handler,
+        my_cards_handler,
+        submit_move_handler,
     );
+
     let addr = format!("0.0.0.0:{}", port);
     println!("Listening for requests at http://{}", addr);
     gotham::start(addr, router);

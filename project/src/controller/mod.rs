@@ -9,6 +9,8 @@ mod begin_game;
 mod inplay;
 mod players;
 mod last_move;
+mod my_cards;
+mod submit_move;
 /*
 mod fb_auth;
 mod google_auth;
@@ -24,7 +26,6 @@ mod privacy;
 mod test_auth;
 mod controller;
 
-
 pub use self::home_page::HomePageController;
 pub use self::game_list::GameListController;
 pub use self::test_auth::TestAuthController;
@@ -37,5 +38,7 @@ pub use self::begin_game::BeginGameController;
 pub use self::inplay::InPlayController;
 pub use self::players::PlayersController;
 pub use self::last_move::LastMoveController;
+pub use self::my_cards::MyCardsController;
+pub use self::submit_move::SubmitMoveController;
 
 pub use self::controller::{Controller, ResponseType};

@@ -21,7 +21,9 @@ pub fn get_router(
     begin_game_handler: PathHandler,
     inplay_handler: PathHandler,
     players_handler: PathHandler,
-    last_move_handler: PathHandler
+    last_move_handler: PathHandler,
+    my_cards_handler: PathHandler,
+    submit_move_handler: PathHandler,
 ) -> Router {
 
     // Install middleware which handles session creation before, and updating after, our handler is
@@ -66,6 +68,12 @@ pub fn get_router(
         route.get("/api/v1/last-move/:id:[0-9]+")
             .with_path_extractor::<PathExtractor>()
             .to_new_handler(last_move_handler);
+        route.get("/api/v1/my-cards/:id:[0-9]+")
+            .with_path_extractor::<PathExtractor>()
+            .to_new_handler(my_cards_handler);
+        route.post("/api/v1/submit-move/:id:[0-9]+")
+            .with_path_extractor::<PathExtractor>()
+            .to_new_handler(submit_move_handler);
 
         if dev_mode {
             route.get("/test_auth").to_new_handler(test_auth_handler);
