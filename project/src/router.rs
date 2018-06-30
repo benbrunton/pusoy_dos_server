@@ -25,6 +25,7 @@ pub fn get_router(
     my_cards_handler: PathHandler,
     submit_move_handler: PathHandler,
     time_limit_handler: PathHandler,
+    update_notifications_handler: GenericHandler,
 ) -> Router {
 
     // Install middleware which handles session creation before, and updating after, our handler is
@@ -78,7 +79,8 @@ pub fn get_router(
         route.get("/api/v1/time-limit/:id:[0-9]+")
             .with_path_extractor::<PathExtractor>()
             .to_new_handler(time_limit_handler);
-
+        route.post("/api/v1/update-notifications")
+            .to_new_handler(update_notifications_handler);
 
         if dev_mode {
             route.get("/test_auth").to_new_handler(test_auth_handler);

@@ -19,6 +19,7 @@ use controller::{
     MyCardsController,
     SubmitMoveController,
     TimeLimitController,
+    UpdateNotificationsController,
 };
 use data_access::user::User;
 use data_access::game::Game;
@@ -86,6 +87,10 @@ pub fn run(
         game_data.clone(),
     );
 
+    let update_notifications_controller = UpdateNotificationsController::new(
+        notification_data.clone(),
+    );
+
     let home_page_handler = GenericHandler::new(Arc::new(home_page_controller));
     let test_auth_handler = GenericHandler::new(Arc::new(test_auth_controller));
     let game_list_handler = GenericHandler::new(Arc::new(game_list_controller));
@@ -101,6 +106,7 @@ pub fn run(
     let my_cards_handler = PathHandler::new(Arc::new(my_cards_controller));
     let submit_move_handler = PathHandler::new(Arc::new(submit_move_controller));
     let time_limit_handler = PathHandler::new(Arc::new(time_limit_controller));
+    let update_notifications_handler = GenericHandler::new(Arc::new(update_notifications_controller));
 
     let dev_mode = match config.get("mode") {
         Some(mode) => mode == "dev",
@@ -124,6 +130,7 @@ pub fn run(
         my_cards_handler,
         submit_move_handler,
         time_limit_handler,
+        update_notifications_handler,
     );
 
     let addr = format!("0.0.0.0:{}", port);

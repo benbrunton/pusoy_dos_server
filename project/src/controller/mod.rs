@@ -12,6 +12,7 @@ mod last_move;
 mod my_cards;
 mod submit_move;
 mod time_limit;
+mod update_notifications;
 /*
 mod fb_auth;
 mod google_auth;
@@ -42,5 +43,6 @@ pub use self::last_move::LastMoveController;
 pub use self::my_cards::MyCardsController;
 pub use self::submit_move::SubmitMoveController;
 pub use self::time_limit::TimeLimitController;
+pub use self::update_notifications::UpdateNotificationsController;
 
 pub use self::controller::{Controller, ResponseType};
