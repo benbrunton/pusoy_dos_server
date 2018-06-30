@@ -52,7 +52,7 @@ impl GameController {
         let game_state = self.determine_state(user, &game, &users);
 
         if game_state == GameState::InGame {
-            return ResponseType::Redirect(format!("play/{}", id));
+            return ResponseType::Redirect(format!("/play/{}", id));
         }
 
         let body = self.render_page(game_state, &game, user, users)

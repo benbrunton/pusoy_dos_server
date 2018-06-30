@@ -23,7 +23,7 @@ run-pdserver-quiet:
 kill-pdserver:
 	docker exec -t pd-dev killall pd_server
 
-restart: kill-pdserver run-pdserver-quiet
+restart: kill-pdserver run-pdserver
 
 
 compile-client:

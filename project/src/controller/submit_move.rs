@@ -7,7 +7,6 @@ use controller::{Controller, ResponseType};
 use serde_json;
 use helpers::PathExtractor;
 use model::Session;
-use helpers::DCard;
 use helpers;
 use std::collections::BTreeMap;
 
@@ -70,6 +69,7 @@ impl SubmitMoveController {
         info!("game loaded");
 
 
+        info!("player_move: {:?}", json);
         let player_move = json.unwrap();
         let cards = self.get_cards(player_move, reversed);
         info!("{:?}", cards);
@@ -166,9 +166,12 @@ impl SubmitMoveController {
 */
 
     fn get_cards(&self, player_move:serde_json::Value, reversed: bool) -> Vec<PlayerCard> {
-            player_move
-                .as_array()
-                .unwrap()
+            let array = player_move
+                .as_array();
+
+            info!("{:?}", array);
+
+            array.unwrap()
                 .iter()
                 .map(|ref obj| {
 
@@ -238,7 +241,9 @@ impl Controller for SubmitMoveController {
             let id = helpers::get_user_id(session).expect("no user id") as u64;
             let path_id = path.expect("no_path").id as u64;
             let parsed_body = match body {
-                Some(result)    => Some(json!(result)),
+                Some(result)    => {
+                    Some(serde_json::from_str(&result).expect("unable to decode move"))
+                },
                 _               => None
             };
             let json = self.execute(id, path_id, parsed_body);
