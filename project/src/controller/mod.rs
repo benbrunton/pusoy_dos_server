@@ -11,6 +11,7 @@ mod players;
 mod last_move;
 mod my_cards;
 mod submit_move;
+mod time_limit;
 /*
 mod fb_auth;
 mod google_auth;
@@ -40,5 +41,6 @@ pub use self::players::PlayersController;
 pub use self::last_move::LastMoveController;
 pub use self::my_cards::MyCardsController;
 pub use self::submit_move::SubmitMoveController;
+pub use self::time_limit::TimeLimitController;
 
 pub use self::controller::{Controller, ResponseType};
