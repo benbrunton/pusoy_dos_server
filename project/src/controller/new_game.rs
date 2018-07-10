@@ -4,7 +4,7 @@ use std::panic::RefUnwindSafe;
 use csrf::{AesGcmCsrfProtection, CsrfProtection};
 
 use helpers;
-use helpers::PathExtractor;
+use helpers::{PathExtractor, QueryStringExtractor};
 use controller::{Controller, ResponseType};
 
 pub struct NewGameController {
@@ -43,7 +43,8 @@ impl Controller for NewGameController {
         &self,
         session:&mut Option<Session>,
         _body: Option<String>,
-        _path: Option<PathExtractor>
+        _path: Option<PathExtractor>,
+        _qs: Option<QueryStringExtractor>
     ) -> ResponseType {
         
         if helpers::is_logged_in(session) {

@@ -1,5 +1,5 @@
 use model::Session;
-use helpers::PathExtractor;
+use helpers::{PathExtractor, QueryStringExtractor};
 
 pub enum ResponseType {
     PageResponse(String),
@@ -14,5 +14,6 @@ pub trait Controller {
         session:&mut Option<Session>,
         body: Option<String>,
         path: Option<PathExtractor>,
+        qs: Option<QueryStringExtractor>,
     ) -> ResponseType;
 }

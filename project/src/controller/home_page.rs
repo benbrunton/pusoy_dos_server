@@ -3,7 +3,7 @@ use std::panic::RefUnwindSafe;
 use controller::{Controller, ResponseType};
 use config::Config;
 use model::Session;
-use helpers::PathExtractor;
+use helpers::{PathExtractor, QueryStringExtractor};
 
 #[derive(Clone)]
 pub struct HomePageController {
@@ -64,7 +64,8 @@ impl Controller for HomePageController {
         &self,
         session:&mut Option<Session>,
         _body: Option<String>,
-        _path: Option<PathExtractor>
+        _path: Option<PathExtractor>,
+        _qs: Option<QueryStringExtractor>
     ) -> ResponseType {
 		let sess = session.clone();
         if self.is_logged_in(sess) {

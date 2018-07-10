@@ -3,7 +3,7 @@ use std::collections::BTreeMap;
 use serde_json;
 
 use helpers;
-use helpers::PathExtractor;
+use helpers::{PathExtractor, QueryStringExtractor};
 use model::Session;
 use controller::{Controller, ResponseType};
 
@@ -39,7 +39,8 @@ impl Controller for UpdateNotificationsController {
         &self,
         session:&mut Option<Session>,
         body: Option<String>,
-        _: Option<PathExtractor>
+        _path: Option<PathExtractor>,
+        _qs: Option<QueryStringExtractor>,
     ) -> ResponseType {
         if helpers::is_logged_in(session) {
             let id = helpers::get_user_id(session).expect("no user id") as u64;

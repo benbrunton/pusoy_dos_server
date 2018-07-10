@@ -4,7 +4,7 @@ use chrono::prelude::*;
 use time::Duration;
 use tokio_core::reactor::Core;
 use controller::{Controller, ResponseType};
-use helpers::PathExtractor;
+use helpers::{PathExtractor, QueryStringExtractor};
 use model::Session;
 
 use data_access::event::Event as EventData;
@@ -92,7 +92,8 @@ impl Controller for TimeLimitController {
         &self,
         session:&mut Option<Session>,
         _: Option<String>,
-        path: Option<PathExtractor>
+        path: Option<PathExtractor>,
+        _qs: Option<QueryStringExtractor>
     ) -> ResponseType {
         if helpers::is_logged_in(session) {
             let id = helpers::get_user_id(session).expect("no user id") as u64;

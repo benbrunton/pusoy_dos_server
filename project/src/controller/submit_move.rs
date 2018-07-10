@@ -5,7 +5,7 @@ use hyper::header::ContentType;
 use tokio_core::reactor::Core;
 use controller::{Controller, ResponseType};
 use serde_json;
-use helpers::PathExtractor;
+use helpers::{PathExtractor, QueryStringExtractor};
 use model::Session;
 use helpers;
 use std::collections::BTreeMap;
@@ -235,7 +235,8 @@ impl Controller for SubmitMoveController {
         &self,
         session:&mut Option<Session>,
         body: Option<String>,
-        path: Option<PathExtractor>
+        path: Option<PathExtractor>,
+        _qs: Option<QueryStringExtractor>
     ) -> ResponseType {
         if helpers::is_logged_in(session) {
             let id = helpers::get_user_id(session).expect("no user id") as u64;

@@ -13,10 +13,9 @@ mod my_cards;
 mod submit_move;
 mod time_limit;
 mod update_notifications;
-/*
 mod fb_auth;
+/*
 mod google_auth;
-mod game_move;
 mod post_game;
 mod leaderboard;
 mod about;
@@ -44,5 +43,6 @@ pub use self::my_cards::MyCardsController;
 pub use self::submit_move::SubmitMoveController;
 pub use self::time_limit::TimeLimitController;
 pub use self::update_notifications::UpdateNotificationsController;
+pub use self::fb_auth::FacebookAuthController;
 
 pub use self::controller::{Controller, ResponseType};

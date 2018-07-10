@@ -2,7 +2,7 @@ use std::panic::RefUnwindSafe;
 use controller::{Controller, ResponseType};
 use serde_json;
 use serde_json::{Value, Map};
-use helpers::PathExtractor;
+use helpers::{PathExtractor, QueryStringExtractor};
 use model::Session;
 
 use helpers;
@@ -86,7 +86,8 @@ impl Controller for PlayersController {
         &self,
         session:&mut Option<Session>,
         _body: Option<String>,
-        path: Option<PathExtractor>
+        path: Option<PathExtractor>,
+        _qs: Option<QueryStringExtractor>
     ) -> ResponseType {
         if helpers::is_logged_in(session) {
             let id = helpers::get_user_id(session).expect("no user id") as u64;

@@ -5,7 +5,7 @@ use std::panic::RefUnwindSafe;
 use data_access::game::Game as GameData;
 use config::Config;
 use helpers;
-use helpers::PathExtractor;
+use helpers::{PathExtractor, QueryStringExtractor};
 use controller::{Controller, ResponseType};
 use model::Session;
 
@@ -64,7 +64,8 @@ impl Controller for GameListController {
         &self,
         session:&mut Option<Session>,
         _body: Option<String>,
-        _path: Option<PathExtractor>
+        _path: Option<PathExtractor>,
+        _qs: Option<QueryStringExtractor>
     ) -> ResponseType {
         if helpers::is_logged_in(session) {
             let id = helpers::get_user_id(session).expect("no user id") as u64;

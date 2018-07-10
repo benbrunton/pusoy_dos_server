@@ -1,16 +1,18 @@
-use iron::prelude::*;
-use iron::{status, modifiers, Url};
-use iron::middleware::Handler;
+use std::panic::RefUnwindSafe;
+use controller::{Controller, ResponseType};
+use tokio_core::reactor::Core;
 use hyper::client::Client;
+use hyper::{Method, Request};
 use config::Config;
 use std::io::Read;
 use std::collections::BTreeMap;
 use serde_json;
+use futures::{Future, Stream};
 
-use query;
+use helpers::{PathExtractor, QueryStringExtractor};
 use data_access::user::User as UserData;
 use model::user::PartUser;
-use util::session::Session;
+use model::Session;
 
 pub struct FacebookAuthController {
     fb_secret: String,
@@ -35,22 +37,25 @@ impl FacebookAuthController {
 
     fn fetch_json(&self, url: String) -> Result<BTreeMap<String, serde_json::Value>, String> {
 
-        let client = Client::new();
+        let core = Core::new().expect("unable to unwrap core");
+        let client = Client::new(&core.handle());
 
         info!("requesting json from : {:?}", url);
+        let parsed_url = url.parse().expect("unable to parse fb url");
 
-        let res = client.get(&url).send();
+        let res = client.get(parsed_url)
+            .and_then(|res| {
+				res.body().fold(Vec::new(), |mut v, chunk| {
+					v.extend(&chunk[..]);
+					future::ok::<_, ()>(v)
+				}).and_then(|chunks| {
+					let s = String::from_utf8(chunks).unwrap();
+					future::ok::<_, ()>(s)
+				})
+            });
 
-        match res {
-            Err(e) => {
-                let err = format!("Error requesting json: {:?}", e);
-                warn!("{}", &err);
-                return Err(err.clone());
-            }
-            _ => (),
-        }
 
-        let mut r = res.unwrap();
+        let mut r = core.run(res).unwrap();
         let mut buffer = String::new();
         let _ = r.read_to_string(&mut buffer);
 
@@ -60,20 +65,13 @@ impl FacebookAuthController {
 
     }
 
-    fn get_access_token(&self, req: &mut Request) -> Result<String, Result<Response, IronError>> {
+    fn get_access_token(&self, qs: &str) -> Result<String, ()> {
 
         let fb_secret = self.fb_secret.clone();
         let client_id = self.fb_app_id.clone();
         let hostname = self.hostname.clone();
         let redirect = format!("{}/fb-auth", hostname);
-        let code = query::get(req.url.to_string(), "code");
-
-        if code == None {
-            warn!("invalid_query_param - no code");
-            return Err(self.invalid_query_param());
-        }
-
-        let code = code.unwrap();
+        let code = qs;
 
         let fb_token_url = format!("https://graph.facebook.com/v2.7/oauth/access_token?client_id={}&redirect_uri={}&client_secret={}&code={}",
                                    client_id,
@@ -87,7 +85,7 @@ impl FacebookAuthController {
 
         match fb_token {
             Err(_) => {
-                return Err(self.facebook_error());
+                return Err(());
             }
             _ => (),
         }
@@ -95,7 +93,7 @@ impl FacebookAuthController {
         let fb_t = fb_token.unwrap();
         let access_token = fb_t.get("access_token")
             .unwrap()
-            .as_string()
+            .as_str()
             .unwrap();
 
         info!("got access token");
@@ -105,8 +103,7 @@ impl FacebookAuthController {
 
     fn get_profile(&self,
                    access_token: String)
-                   -> Result<BTreeMap<String, Json>, Result<Response, IronError>> {
-
+					-> Result<BTreeMap<String, serde_json::Value>, ()> {
 
         let profile_url = format!("https://graph.facebook.com/v2.7/me?access_token={}&fields=id,\
                                    name,email",
@@ -116,7 +113,7 @@ impl FacebookAuthController {
 
         match profile_response {
             Err(_) => {
-                return Err(self.facebook_error());
+                return Err(());
             }
             _ => (),
         }
@@ -125,40 +122,37 @@ impl FacebookAuthController {
 
     }
 
-    fn success(&self) -> IronResult<Response> {
+    fn success(&self) -> ResponseType {
 
         let full_url = format!("{}/games", self.hostname);
         let url = Url::parse(&full_url).unwrap();
 
-        Ok(Response::with((status::Found, modifiers::Redirect(url))))
+        ResponseType::Redirect(url)
     }
 
-    fn facebook_error(&self) -> IronResult<Response> {
-
-        Ok(Response::with((status::Ok, "there was an error with facebook")))
-    }
-
-    fn invalid_query_param(&self) -> IronResult<Response> {
-        Ok(Response::with((status::Ok, "not ok")))
-    }
-
-    fn get_new_session(&self, req: &mut Request, user_id: u64) -> Session {
-        let session = req.extensions.get::<Session>().unwrap();
-        let new_session = session.set_user(user_id);
-        new_session
+    fn update_session(&self, user_id: u64, session: &mut Option<Session>) {
+        *session = Some(Session {
+            user_id: Some(user_id as usize),
+            csrf_token: None
+        });
     }
 }
 
-impl Handler for FacebookAuthController {
-    fn handle(&self, req: &mut Request) -> IronResult<Response> {
-
-        info!("FacebookAuthController handler");
-
-        let access_token_response = self.get_access_token(req);
+impl Controller for FacebookAuthController {
+    fn get_response(
+        &self, 
+        session: &mut Option<Session>,
+        _body: Option<String>,
+        _path: Option<PathExtractor>,
+        qs: Option<QueryStringExtractor>
+    ) -> ResponseType {
+        // todo - pass query param, not request
+        let token = qs.unwrap().code;
+        let access_token_response = self.get_access_token(&token);
         info!("{:?}", access_token_response);
 
         match access_token_response {
-            Err(x) => return x,
+            Err(x) => return ResponseType::ServerError,
             _ => (),
         }
 
@@ -169,14 +163,21 @@ impl Handler for FacebookAuthController {
         let profile_response = self.get_profile(access_token);
 
         match profile_response {
-            Err(x) => return x,
+            Err(x) => return ResponseType::ServerError,
             _ => (),    
         }
 
         let profile = profile_response.unwrap();
 
-        let id = profile.get("id").unwrap().as_string().unwrap();
-        let name = profile.get("name").unwrap().as_string().unwrap();
+        let id = {
+			let i = profile.get("id");
+			serde_json::to_string(&i).unwrap()
+		};
+
+        let name = {
+			let n = profile.get("name");
+			serde_json::to_string(&n).unwrap()
+		};
 
         debug!("FACEBOOK RESPONSE");
         debug!("{:?}", profile);
@@ -191,9 +192,10 @@ impl Handler for FacebookAuthController {
         };
 
         let new_user = self.user_data.create_if_new(user);
-        let session = self.get_new_session(req, new_user.id);
-        req.extensions.insert::<Session>(session);
-
+ 
+        self.update_session(new_user.id, session);
         self.success()
     }
 }
+
+impl RefUnwindSafe for FacebookAuthController {}

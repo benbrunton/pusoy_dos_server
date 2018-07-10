@@ -10,7 +10,7 @@ use controller::{Controller, ResponseType};
 use std::panic::RefUnwindSafe;
 use std::sync::Arc;
 use handlers::GenericHandler;
-use helpers::PathExtractor;
+use helpers::{PathExtractor, QueryStringExtractor};
 
 #[derive(Clone)]
 pub struct PathHandler {
@@ -28,9 +28,10 @@ impl PathHandler {
         &self,
         session: &mut Option<Session>,
         body: Option<String>,
-        path: Option<PathExtractor>
+        path: Option<PathExtractor>,
+        qs: Option<QueryStringExtractor>
     ) -> ResponseType {
-        self.controller.get_response(session, body, path)
+        self.controller.get_response(session, body, path, qs)
     }
 }
 
@@ -58,6 +59,10 @@ impl Handler for PathHandler {
                         PathExtractor::take_from(&mut state)
                     };
 
+                    let qs = {
+                        QueryStringExtractor::take_from(&mut state)
+                    };
+
                     let session: &mut Option<Session> = {
                         SessionData::<Option<Session>>::borrow_mut_from(&mut state)
                     };
@@ -70,7 +75,7 @@ impl Handler for PathHandler {
                         Err(_) => None
                     };
 
-                    self.get_response(session, req_body, Some(path))
+                    self.get_response(session, req_body, Some(path), Some(qs))
                 };
 
                 let res = {

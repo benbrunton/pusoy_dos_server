@@ -5,7 +5,7 @@ use helpers;
 use controller::{Controller, ResponseType};
 use std::panic::RefUnwindSafe;
 use model::Session;
-use helpers::PathExtractor;
+use helpers::{PathExtractor, QueryStringExtractor};
 
 
 use pusoy_dos::game::game::Game as CardGame;
@@ -56,7 +56,8 @@ impl Controller for BeginGameController {
         &self,
         session:&mut Option<Session>,
         _body: Option<String>,
-        path: Option<PathExtractor>
+        path: Option<PathExtractor>,
+        _qs: Option<QueryStringExtractor>
     ) -> ResponseType {
         if helpers::is_logged_in(session) {
             let id = helpers::get_user_id(session).expect("no user id") as u64;

@@ -5,7 +5,7 @@ use gotham::router::builder::*;
 use gotham::middleware::session::NewSessionMiddleware;
 use handlers::{GenericHandler, PathHandler};
 use model::Session;
-use helpers::PathExtractor;
+use helpers::{QueryStringExtractor, PathExtractor};
 use middleware::MiddlewareAddingResponseHeader;
 
 pub fn get_router(
@@ -26,6 +26,7 @@ pub fn get_router(
     submit_move_handler: PathHandler,
     time_limit_handler: PathHandler,
     update_notifications_handler: GenericHandler,
+    fb_auth_handler: GenericHandler,
 ) -> Router {
 
     // Install middleware which handles session creation before, and updating after, our handler is
@@ -48,6 +49,9 @@ pub fn get_router(
         route.get("/games").to_new_handler(game_list_handler);
         route.get("/logout").to_new_handler(logout_handler);
         route.get("/new-game").to_new_handler(new_game_handler);
+        route.get("/fb-auth")
+            .with_query_string_extractor::<QueryStringExtractor>()
+            .to_new_handler(fb_auth_handler);
         route.get("/game/:id:[0-9]+")
             .with_path_extractor::<PathExtractor>()
             .to_new_handler(game_handler);

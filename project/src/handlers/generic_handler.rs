@@ -26,7 +26,7 @@ impl GenericHandler {
     }
 
     fn get_response(&self, session: &mut Option<Session>, body: Option<String>) -> ResponseType {
-        self.controller.get_response(session, body, None)
+        self.controller.get_response(session, body, None, None)
     }
 
     pub fn create_handler_future(state: &mut State, full_response: ResponseType) -> Response {

@@ -2,7 +2,7 @@ use config::Config;
 use std::panic::RefUnwindSafe;
 use controller::{Controller, ResponseType};
 use model::Session;
-use helpers::PathExtractor;
+use helpers::{PathExtractor, QueryStringExtractor};
 
 pub struct LogoutController{
     hostname: String
@@ -29,7 +29,8 @@ impl Controller for LogoutController {
         &self,
         session:&mut Option<Session>,
         _body: Option<String>,
-        _path: Option<PathExtractor>
+        _path: Option<PathExtractor>,
+        _qs: Option<QueryStringExtractor>
     ) -> ResponseType {
         self.update_session(session);
         ResponseType::Redirect("/".to_string())

@@ -4,7 +4,7 @@ use data_access::round::Round as RoundData;
 use data_access::user::User as UserData;
 use config::Config;
 use helpers;
-use helpers::PathExtractor;
+use helpers::{PathExtractor, QueryStringExtractor};
 use pusoy_dos::game::game::Game;
 use pusoy_dos::game::player_move::{Move, Trick};
 use pusoy_dos::cards::card::PlayerCard;
@@ -158,7 +158,8 @@ impl Controller for InPlayController {
         &self,
         session:&mut Option<Session>,
         _body: Option<String>,
-        path: Option<PathExtractor>
+        path: Option<PathExtractor>,
+        _qs: Option<QueryStringExtractor>
     ) -> ResponseType {
         if helpers::is_logged_in(session) {
             let id = helpers::get_user_id(session).expect("no user id") as u64;

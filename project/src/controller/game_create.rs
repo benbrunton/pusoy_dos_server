@@ -4,7 +4,7 @@ use model::Session;
 use data_access::game::Game as GameData;
 use controller::{Controller, ResponseType};
 use helpers;
-use helpers::PathExtractor;
+use helpers::{PathExtractor, QueryStringExtractor};
 use url::form_urlencoded::parse;
 use csrf::{AesGcmCsrfProtection, CsrfProtection};
 
@@ -38,7 +38,8 @@ impl Controller for GameCreateController {
         &self,
         session:&mut Option<Session>,
         body: Option<String>,
-        _: Option<PathExtractor>
+        _path: Option<PathExtractor>,
+        _qs: Option<QueryStringExtractor>
     ) -> ResponseType {
         
         if helpers::is_logged_in(session) {
