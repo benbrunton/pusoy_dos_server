@@ -8,6 +8,7 @@ use std::io::Read;
 use std::collections::BTreeMap;
 use serde_json;
 use futures::{Future, Stream};
+use futures::future;
 
 use helpers::{PathExtractor, QueryStringExtractor};
 use data_access::user::User as UserData;
@@ -37,7 +38,7 @@ impl FacebookAuthController {
 
     fn fetch_json(&self, url: String) -> Result<BTreeMap<String, serde_json::Value>, String> {
 
-        let core = Core::new().expect("unable to unwrap core");
+        let mut core = Core::new().expect("unable to unwrap core");
         let client = Client::new(&core.handle());
 
         info!("requesting json from : {:?}", url);
@@ -45,23 +46,21 @@ impl FacebookAuthController {
 
         let res = client.get(parsed_url)
             .and_then(|res| {
-				res.body().fold(Vec::new(), |mut v, chunk| {
-					v.extend(&chunk[..]);
-					future::ok::<_, ()>(v)
-				}).and_then(|chunks| {
-					let s = String::from_utf8(chunks).unwrap();
-					future::ok::<_, ()>(s)
+				res.body().concat2().map(|chunk| {
+                    let v = chunk.to_vec();
+                    String::from_utf8_lossy(&v).to_string()
 				})
             });
 
 
-        let mut r = core.run(res).unwrap();
-        let mut buffer = String::new();
+        let r = core.run(res).unwrap();
+/*        let mut buffer = String::new();
         let _ = r.read_to_string(&mut buffer);
+        */
 
-        let data = serde_json::from_str(&buffer).unwrap();
+        let data:BTreeMap<String, serde_json::Value> = serde_json::from_str(&r).unwrap();
 
-        Ok(data.as_object().unwrap().clone())
+        Ok(data)
 
     }
 
@@ -123,11 +122,7 @@ impl FacebookAuthController {
     }
 
     fn success(&self) -> ResponseType {
-
-        let full_url = format!("{}/games", self.hostname);
-        let url = Url::parse(&full_url).unwrap();
-
-        ResponseType::Redirect(url)
+        ResponseType::Redirect(String::from("/games"))
     }
 
     fn update_session(&self, user_id: u64, session: &mut Option<Session>) {
