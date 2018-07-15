@@ -13,7 +13,8 @@ RUN apt-get install -y curl \
                        make \
                        psmisc \
                        gnupg \
-                       software-properties-common
+                       software-properties-common \
+                       pkg-config
 
 RUN curl -sSf https://sh.rustup.rs | sh -s -- -y
 

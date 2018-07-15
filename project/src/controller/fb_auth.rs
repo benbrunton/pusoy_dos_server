@@ -3,12 +3,14 @@ use controller::{Controller, ResponseType};
 use tokio_core::reactor::Core;
 use hyper::client::Client;
 use hyper::{Method, Request};
+use hyper_tls::HttpsConnector;
 use config::Config;
 use std::io::Read;
 use std::collections::BTreeMap;
 use serde_json;
 use futures::{Future, Stream};
 use futures::future;
+use std::thread;
 
 use helpers::{PathExtractor, QueryStringExtractor};
 use data_access::user::User as UserData;
@@ -38,30 +40,31 @@ impl FacebookAuthController {
 
     fn fetch_json(&self, url: String) -> Result<BTreeMap<String, serde_json::Value>, String> {
 
-        let mut core = Core::new().expect("unable to unwrap core");
-        let client = Client::new(&core.handle());
+        let handle = thread::spawn(move || {
+            let mut core = Core::new().expect("unable to unwrap core");
+            let client = Client::configure()
+                            .connector(HttpsConnector::new(4, &core.handle()).unwrap())
+                            .build(&core.handle());
 
-        info!("requesting json from : {:?}", url);
-        let parsed_url = url.parse().expect("unable to parse fb url");
+            info!("requesting json from : {:?}", url);
+            let parsed_url = url.parse().expect("unable to parse fb url");
 
-        let res = client.get(parsed_url)
-            .and_then(|res| {
-				res.body().concat2().map(|chunk| {
-                    let v = chunk.to_vec();
-                    String::from_utf8_lossy(&v).to_string()
-				})
-            });
+            let res = client.get(parsed_url)
+                .and_then(|res| {
+                    res.body().concat2().map(|chunk| {
+                        let v = chunk.to_vec();
+                        String::from_utf8_lossy(&v).to_string()
+                    })
+                });
 
 
-        let r = core.run(res).unwrap();
-/*        let mut buffer = String::new();
-        let _ = r.read_to_string(&mut buffer);
-        */
+            let r = core.run(res).unwrap();
 
-        let data:BTreeMap<String, serde_json::Value> = serde_json::from_str(&r).unwrap();
+            let data:BTreeMap<String, serde_json::Value> = serde_json::from_str(&r).unwrap();
 
-        Ok(data)
-
+            Ok(data)
+        });
+        handle.join().unwrap()
     }
 
     fn get_access_token(&self, qs: &str) -> Result<String, ()> {

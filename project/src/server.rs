@@ -27,7 +27,7 @@ use data_access::game::Game;
 use data_access::round::Round;
 use data_access::event::Event;
 use data_access::notification::Notification;
-use handlers::{GenericHandler, PathHandler};
+use handlers::{GenericHandler, PathHandler, QueryStringHandler};
 use std::sync::Arc;
 
 pub fn run(
@@ -113,7 +113,7 @@ pub fn run(
     let submit_move_handler = PathHandler::new(Arc::new(submit_move_controller));
     let time_limit_handler = PathHandler::new(Arc::new(time_limit_controller));
     let update_notifications_handler = GenericHandler::new(Arc::new(update_notifications_controller));
-    let fb_auth_handler = GenericHandler::new(Arc::new(fb_auth_controller));
+    let fb_auth_handler = QueryStringHandler::new(Arc::new(fb_auth_controller));
 
     let dev_mode = match config.get("mode") {
         Some(mode) => mode == "dev",

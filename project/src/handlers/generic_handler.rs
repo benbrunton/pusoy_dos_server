@@ -25,7 +25,11 @@ impl GenericHandler {
         }
     }
 
-    fn get_response(&self, session: &mut Option<Session>, body: Option<String>) -> ResponseType {
+    fn get_response(
+        &self,
+        session: &mut Option<Session>,
+        body: Option<String>,
+    ) -> ResponseType {
         self.controller.get_response(session, body, None, None)
     }
 
@@ -92,9 +96,10 @@ impl Handler for GenericHandler {
             .then(move |full_body| {
 
                 let response_type = {
-                    let session: &mut Option<Session> 
-                        = SessionData::<Option<Session>>::borrow_mut_from(&mut state);
-                    
+                    let session: &mut Option<Session> = {
+                        SessionData::<Option<Session>>::borrow_mut_from(&mut state)
+                    };
+                   
                     let req_body = match full_body {
                         Ok(valid_body) => {
                             let body_content = String::from_utf8(valid_body.to_vec()).unwrap();

@@ -1,7 +1,10 @@
-use hyper::Body;
+use mime;
+use hyper::header::Location;
+use hyper::{StatusCode, Body, Response};
 use gotham::state::{FromState, State};
 use gotham::middleware::session::SessionData;
 use gotham::handler::{NewHandler, Handler, HandlerFuture};
+use gotham::http::response::create_response;
 use futures::{Stream, future, Future};
 
 use std::io;
@@ -9,17 +12,17 @@ use model::Session;
 use controller::{Controller, ResponseType};
 use std::panic::RefUnwindSafe;
 use std::sync::Arc;
+use helpers::QueryStringExtractor;
 use handlers::GenericHandler;
-use helpers::{PathExtractor, QueryStringExtractor};
 
 #[derive(Clone)]
-pub struct PathHandler {
+pub struct QueryStringHandler {
     controller: Arc<(Controller + Sync + Send + RefUnwindSafe)>
 }
 
-impl PathHandler {
-    pub fn new(controller: Arc<(Controller + Sync + Send + RefUnwindSafe)>) -> PathHandler {
-        PathHandler {
+impl QueryStringHandler {
+    pub fn new(controller: Arc<(Controller + Sync + Send + RefUnwindSafe)>) -> QueryStringHandler {
+        QueryStringHandler {
             controller
         }
     }
@@ -28,13 +31,14 @@ impl PathHandler {
         &self,
         session: &mut Option<Session>,
         body: Option<String>,
-        path: Option<PathExtractor>,
+        qs: Option<QueryStringExtractor>
     ) -> ResponseType {
-        self.controller.get_response(session, body, path, None)
+        self.controller.get_response(session, body, None, qs)
     }
+
 }
 
-impl NewHandler for PathHandler {
+impl NewHandler for QueryStringHandler {
     type Instance = Self;
 
     fn new_handler(&self) -> io::Result<Self::Instance> {
@@ -42,7 +46,7 @@ impl NewHandler for PathHandler {
     }
 }
 
-impl Handler for PathHandler {
+impl Handler for QueryStringHandler {
 
     fn handle(self, mut state: State) -> Box<HandlerFuture> {
         let bod = {
@@ -53,15 +57,14 @@ impl Handler for PathHandler {
             .then(move |full_body| {
 
                 let response_type = {
-                    
-                    let path = {
-                        PathExtractor::take_from(&mut state)
+                    let qs = {
+                        QueryStringExtractor::take_from(&mut state)
                     };
 
                     let session: &mut Option<Session> = {
                         SessionData::<Option<Session>>::borrow_mut_from(&mut state)
                     };
-
+                   
                     let req_body = match full_body {
                         Ok(valid_body) => {
                             let body_content = String::from_utf8(valid_body.to_vec()).unwrap();
@@ -70,7 +73,7 @@ impl Handler for PathHandler {
                         Err(_) => None
                     };
 
-                    self.get_response(session, req_body, Some(path))
+                    self.get_response(session, req_body, Some(qs))
                 };
 
                 let res = {

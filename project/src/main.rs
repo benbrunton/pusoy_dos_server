@@ -6,6 +6,7 @@ extern crate gotham;
 #[macro_use]
 extern crate gotham_derive;
 extern crate hyper;
+extern crate hyper_tls;
 extern crate mime;
 extern crate futures;
 extern crate tokio_core;

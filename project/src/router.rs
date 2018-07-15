@@ -3,7 +3,7 @@ use gotham::pipeline::single::single_pipeline;
 use gotham::router::Router;
 use gotham::router::builder::*;
 use gotham::middleware::session::NewSessionMiddleware;
-use handlers::{GenericHandler, PathHandler};
+use handlers::{QueryStringHandler, GenericHandler, PathHandler};
 use model::Session;
 use helpers::{QueryStringExtractor, PathExtractor};
 use middleware::MiddlewareAddingResponseHeader;
@@ -26,7 +26,7 @@ pub fn get_router(
     submit_move_handler: PathHandler,
     time_limit_handler: PathHandler,
     update_notifications_handler: GenericHandler,
-    fb_auth_handler: GenericHandler,
+    fb_auth_handler: QueryStringHandler,
 ) -> Router {
 
     // Install middleware which handles session creation before, and updating after, our handler is

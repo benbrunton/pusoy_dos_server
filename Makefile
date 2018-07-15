@@ -3,6 +3,9 @@ ready-dev: docker-dev-up
 
 go: setup-db compile-client run-pdserver
 
+sh:
+	docker exec -it pd-dev bash
+
 # dev server
 
 docker-dev-build:
