@@ -52,6 +52,11 @@ pub fn get_router(
         route.get("/fb-auth")
             .with_query_string_extractor::<QueryStringExtractor>()
             .to_new_handler(fb_auth_handler);
+        /* router.get("/google-auth")
+            .with_query_string_extractor::<QueryStringExtractor>()
+            .to_new_handler(google_auth_handler);
+        */
+
         route.get("/game/:id:[0-9]+")
             .with_path_extractor::<PathExtractor>()
             .to_new_handler(game_handler);
@@ -66,6 +71,8 @@ pub fn get_router(
         route.post("/game/:id:[0-9]+/begin")
             .with_path_extractor::<PathExtractor>()
             .to_new_handler(begin_game_handler);
+
+//        route.get("/about").to_new_handler(about_handler);
 
         // json endpoints
         route.get("/api/v1/players/:id:[0-9]+")

@@ -8,6 +8,15 @@ pub enum ResponseType {
     ServerError,
 }
 
+/*
+pub struct Request {
+    session: &mut Option<Session>,
+    body: Option<String>,
+    path: Option<PathExtractor>,
+    qs: Option<QueryStringExtractor>
+}
+*/
+
 pub trait Controller {
     fn get_response(
         &self,
