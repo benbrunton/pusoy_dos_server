@@ -21,6 +21,8 @@ use controller::{
     TimeLimitController,
     UpdateNotificationsController,
     FacebookAuthController,
+    AboutController,
+    PrivacyController,
 };
 use data_access::user::User;
 use data_access::game::Game;
@@ -97,6 +99,14 @@ pub fn run(
         user_data.clone(),
     );
 
+    let about_controller = AboutController::new(
+        &tera
+    );
+
+    let privacy_controller = PrivacyController::new(
+        &tera
+    );
+
     let home_page_handler = GenericHandler::new(Arc::new(home_page_controller));
     let test_auth_handler = GenericHandler::new(Arc::new(test_auth_controller));
     let game_list_handler = GenericHandler::new(Arc::new(game_list_controller));
@@ -114,6 +124,8 @@ pub fn run(
     let time_limit_handler = PathHandler::new(Arc::new(time_limit_controller));
     let update_notifications_handler = GenericHandler::new(Arc::new(update_notifications_controller));
     let fb_auth_handler = QueryStringHandler::new(Arc::new(fb_auth_controller));
+    let about_handler = GenericHandler::new(Arc::new(about_controller));
+    let privacy_handler = GenericHandler::new(Arc::new(privacy_controller));
 
     let dev_mode = match config.get("mode") {
         Some(mode) => mode == "dev",
@@ -139,6 +151,8 @@ pub fn run(
         time_limit_handler,
         update_notifications_handler,
         fb_auth_handler,
+        about_handler,
+        privacy_handler,
     );
 
     let addr = format!("0.0.0.0:{}", port);

@@ -27,6 +27,8 @@ pub fn get_router(
     time_limit_handler: PathHandler,
     update_notifications_handler: GenericHandler,
     fb_auth_handler: QueryStringHandler,
+    about_handler: GenericHandler,
+    privacy_handler: GenericHandler
 ) -> Router {
 
     // Install middleware which handles session creation before, and updating after, our handler is
@@ -72,7 +74,8 @@ pub fn get_router(
             .with_path_extractor::<PathExtractor>()
             .to_new_handler(begin_game_handler);
 
-//        route.get("/about").to_new_handler(about_handler);
+        route.get("/about").to_new_handler(about_handler);
+        route.get("/privacy").to_new_handler(privacy_handler);
 
         // json endpoints
         route.get("/api/v1/players/:id:[0-9]+")

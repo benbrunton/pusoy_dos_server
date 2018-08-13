@@ -1,41 +1,51 @@
-use iron::prelude::*;
-use iron::{status};
-use iron::middleware::Handler;
-use iron::mime::Mime;
-use tera::{Tera, Context, TeraResult};
+use tera::{Tera, Context, Result as TeraResult};
+use std::panic::RefUnwindSafe;
+use controller::{Controller, ResponseType};
+use config::Config;
+use model::Session;
+use helpers::{PathExtractor, QueryStringExtractor};
 
-use util::session::Session;
-use helpers;
-
-pub struct Privacy {
+#[derive(Clone)]
+pub struct PrivacyController {
     tera: &'static Tera
 }
 
-impl Privacy {
-    pub fn new(tera:&'static Tera) -> Privacy {
-        Privacy{ tera: tera }
+
+impl PrivacyController {
+    pub fn new(tera: &'static Tera) -> PrivacyController {
+
+        PrivacyController {
+            tera,
+        }
+    }
+
+    fn is_logged_in(&self, session: Option<Session>) -> bool {
+        match session {
+            Some(sess) => sess.user_id != None,
+            None       => false
+        }
     }
 
     fn get_page(&self, logged_in: bool) -> TeraResult<String> {
         let mut data = Context::new(); 
         data.add("logged_in", &logged_in);
-        self.tera.render("privacy.html", data)
-    }
-}
-
-impl Handler for Privacy {
-
-    fn handle(&self, req: &mut Request) -> IronResult<Response> {
-        let session_user_id = helpers::get_user_id(req);
-
-        let logged_in = match session_user_id {
-            Some(_) => true,
-            _ => false
-        };
-
-        info!("{:?}", req.extensions.get::<Session>());
-        let content_type = "text/html".parse::<Mime>().unwrap();
-        Ok(Response::with((content_type, status::Ok, self.get_page(logged_in).unwrap())))
+        self.tera.render("privacy.html", &data)
     }
 
 }
+
+impl Controller for PrivacyController {
+    fn get_response(
+        &self,
+        session:&mut Option<Session>,
+        _body: Option<String>,
+        _path: Option<PathExtractor>,
+        _qs: Option<QueryStringExtractor>
+    ) -> ResponseType {
+		let sess = session.clone();
+        let body = self.get_page(self.is_logged_in(sess)).unwrap();
+        ResponseType::PageResponse(body)
+    }
+}
+
+impl RefUnwindSafe for PrivacyController {}

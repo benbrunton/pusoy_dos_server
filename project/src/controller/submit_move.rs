@@ -21,8 +21,6 @@ use pusoy_dos::cards::types::*;
 use pusoy_dos::cards::card::{ Card, PlayerCard };
 use pusoy_dos::game::round::RoundDefinition;
 
-
-
 #[derive(Clone)]
 pub struct SubmitMoveController{
     round_data: RoundData,

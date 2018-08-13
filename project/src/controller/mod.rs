@@ -14,16 +14,18 @@ mod submit_move;
 mod time_limit;
 mod update_notifications;
 mod fb_auth;
+mod about;
+mod privacy;
+
 /*
 mod google_auth;
 mod post_game;
 mod leaderboard;
-mod about;
 mod remove_user;
 mod update_game;
 mod complete_games;
-mod privacy;
 */
+
 mod test_auth;
 mod controller;
 
@@ -44,5 +46,7 @@ pub use self::submit_move::SubmitMoveController;
 pub use self::time_limit::TimeLimitController;
 pub use self::update_notifications::UpdateNotificationsController;
 pub use self::fb_auth::FacebookAuthController;
+pub use self::about::AboutController;
+pub use self::privacy::PrivacyController;
 
 pub use self::controller::{Controller, ResponseType};
