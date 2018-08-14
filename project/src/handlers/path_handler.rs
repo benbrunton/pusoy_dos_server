@@ -10,7 +10,7 @@ use controller::{Controller, ResponseType};
 use std::panic::RefUnwindSafe;
 use std::sync::Arc;
 use handlers::GenericHandler;
-use helpers::{PathExtractor, QueryStringExtractor};
+use helpers::{PathExtractor};
 
 #[derive(Clone)]
 pub struct PathHandler {

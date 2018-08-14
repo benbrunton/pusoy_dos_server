@@ -28,7 +28,8 @@ pub fn get_router(
     update_notifications_handler: GenericHandler,
     fb_auth_handler: QueryStringHandler,
     about_handler: GenericHandler,
-    privacy_handler: GenericHandler
+    privacy_handler: GenericHandler,
+    post_game_handler: PathHandler,
 ) -> Router {
 
     // Install middleware which handles session creation before, and updating after, our handler is
@@ -65,6 +66,9 @@ pub fn get_router(
         route.get("/play/:id:[0-9]+")
             .with_path_extractor::<PathExtractor>()
             .to_new_handler(inplay_handler);
+        route.get("/game-complete/:id[0-9]+")
+            .with_path_extractor::<PathExtractor>()
+            .to_new_handler(post_game_handler);
 
         route.post("/new-game").to_new_handler(game_create_handler);
         route.post("/game/:id:[0-9]+/join")

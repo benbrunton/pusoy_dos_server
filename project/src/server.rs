@@ -23,6 +23,7 @@ use controller::{
     FacebookAuthController,
     AboutController,
     PrivacyController,
+    PostGameController,
 };
 use data_access::user::User;
 use data_access::game::Game;
@@ -107,6 +108,11 @@ pub fn run(
         &tera
     );
 
+    let post_game_controller = PostGameController::new(
+        &tera,
+        event_data.clone(),
+    );
+
     let home_page_handler = GenericHandler::new(Arc::new(home_page_controller));
     let test_auth_handler = GenericHandler::new(Arc::new(test_auth_controller));
     let game_list_handler = GenericHandler::new(Arc::new(game_list_controller));
@@ -126,6 +132,7 @@ pub fn run(
     let fb_auth_handler = QueryStringHandler::new(Arc::new(fb_auth_controller));
     let about_handler = GenericHandler::new(Arc::new(about_controller));
     let privacy_handler = GenericHandler::new(Arc::new(privacy_controller));
+    let post_game_handler = PathHandler::new(Arc::new(post_game_controller));
 
     let dev_mode = match config.get("mode") {
         Some(mode) => mode == "dev",
@@ -153,6 +160,7 @@ pub fn run(
         fb_auth_handler,
         about_handler,
         privacy_handler,
+        post_game_handler,
     );
 
     let addr = format!("0.0.0.0:{}", port);

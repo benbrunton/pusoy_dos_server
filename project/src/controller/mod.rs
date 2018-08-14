@@ -16,10 +16,10 @@ mod update_notifications;
 mod fb_auth;
 mod about;
 mod privacy;
+mod post_game;
 
 /*
 mod google_auth;
-mod post_game;
 mod leaderboard;
 mod remove_user;
 mod update_game;
@@ -48,5 +48,6 @@ pub use self::update_notifications::UpdateNotificationsController;
 pub use self::fb_auth::FacebookAuthController;
 pub use self::about::AboutController;
 pub use self::privacy::PrivacyController;
+pub use self::post_game::PostGameController;
 
 pub use self::controller::{Controller, ResponseType};

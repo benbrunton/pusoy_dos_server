@@ -1,10 +1,7 @@
-use mime;
-use hyper::header::Location;
-use hyper::{StatusCode, Body, Response};
+use hyper::{Body};
 use gotham::state::{FromState, State};
 use gotham::middleware::session::SessionData;
 use gotham::handler::{NewHandler, Handler, HandlerFuture};
-use gotham::http::response::create_response;
 use futures::{Stream, future, Future};
 
 use std::io;

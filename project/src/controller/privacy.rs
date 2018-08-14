@@ -1,7 +1,6 @@
 use tera::{Tera, Context, Result as TeraResult};
 use std::panic::RefUnwindSafe;
 use controller::{Controller, ResponseType};
-use config::Config;
 use model::Session;
 use helpers::{PathExtractor, QueryStringExtractor};
 

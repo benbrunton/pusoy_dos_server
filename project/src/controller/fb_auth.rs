@@ -2,14 +2,11 @@ use std::panic::RefUnwindSafe;
 use controller::{Controller, ResponseType};
 use tokio_core::reactor::Core;
 use hyper::client::Client;
-use hyper::{Method, Request};
 use hyper_tls::HttpsConnector;
 use config::Config;
-use std::io::Read;
 use std::collections::BTreeMap;
 use serde_json;
 use futures::{Future, Stream};
-use futures::future;
 use std::thread;
 
 use helpers::{PathExtractor, QueryStringExtractor};
