@@ -165,24 +165,34 @@ impl Controller for FacebookAuthController {
         let profile = profile_response.unwrap();
 
         let id = {
-			let i = profile.get("id");
-			serde_json::to_string(&i).unwrap()
+			let i = profile.get("id").unwrap();
+			//serde_json::to_string(&i).unwrap()
+            i.as_str().expect("unable to get provider_id")
 		};
 
         let name = {
-			let n = profile.get("name");
-			serde_json::to_string(&n).unwrap()
+			let n = profile.get("name").unwrap();
+//			serde_json::to_string(&n).unwrap()
+            n.as_str().expect("unable to get name")
 		};
 
-        debug!("FACEBOOK RESPONSE");
-        debug!("{:?}", profile);
+        let email = {
+            let n = profile.get("email").unwrap();
+//			serde_json::to_string(&n).unwrap()
+            n.as_str().expect("unable to get email")
+		};
+
+
+        info!("FACEBOOK RESPONSE");
+        info!("{:?}", profile);
 
         info!("{}", id);
         info!("{}", name);
+        info!("{}", email);
 
         let user = PartUser {
-            name: String::from(name),
-            provider_id: String::from(id),
+            name: name.to_string(),
+            provider_id: id.to_string(),
             provider_type: String::from("facebook"),
         };
 
