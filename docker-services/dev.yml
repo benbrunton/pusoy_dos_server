@@ -10,6 +10,7 @@ services:
       RUST_BACKTRACE: 1
     volumes:
     - ../project:/project
+    - ./.cargo-registry:/root/.cargo/registry
     stdin_open: true
     ports:
     - 3000:3000
