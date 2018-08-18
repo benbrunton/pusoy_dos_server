@@ -17,11 +17,11 @@ mod fb_auth;
 mod about;
 mod privacy;
 mod post_game;
+mod remove_user;
 
 /*
 mod google_auth;
 mod leaderboard;
-mod remove_user;
 mod update_game;
 mod complete_games;
 */
@@ -49,5 +49,6 @@ pub use self::fb_auth::FacebookAuthController;
 pub use self::about::AboutController;
 pub use self::privacy::PrivacyController;
 pub use self::post_game::PostGameController;
+pub use self::remove_user::RemoveUserController;
 
 pub use self::controller::{Controller, ResponseType};

@@ -24,6 +24,7 @@ use controller::{
     AboutController,
     PrivacyController,
     PostGameController,
+    RemoveUserController,
 };
 use data_access::user::User;
 use data_access::game::Game;
@@ -113,6 +114,10 @@ pub fn run(
         event_data.clone(),
     );
 
+    let remove_user_controller = RemoveUserController::new(
+        game_data.clone(),
+    );
+
     let home_page_handler = GenericHandler::new(Arc::new(home_page_controller));
     let test_auth_handler = GenericHandler::new(Arc::new(test_auth_controller));
     let game_list_handler = GenericHandler::new(Arc::new(game_list_controller));
@@ -133,6 +138,7 @@ pub fn run(
     let about_handler = GenericHandler::new(Arc::new(about_controller));
     let privacy_handler = GenericHandler::new(Arc::new(privacy_controller));
     let post_game_handler = PathHandler::new(Arc::new(post_game_controller));
+    let remove_user_handler = PathHandler::new(Arc::new(remove_user_controller));
 
     let dev_mode = match config.get("mode") {
         Some(mode) => mode == "dev",
@@ -161,6 +167,7 @@ pub fn run(
         about_handler,
         privacy_handler,
         post_game_handler,
+        remove_user_handler,
     );
 
     let addr = format!("0.0.0.0:{}", port);
