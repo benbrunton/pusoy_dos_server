@@ -1,30 +1,28 @@
-use iron::prelude::*;
-use iron::middleware::Handler;
-use tera::{Tera, Context, TeraResult};
+use tera::{Tera, Context, Result as TeraResult};
+use model::Session;
+use std::panic::RefUnwindSafe;
+
+use helpers;
+use helpers::{PathExtractor, QueryStringExtractor};
+use controller::{Controller, ResponseType};
 
 use data_access::leaderboard::Leaderboard as LeaderboardData;
-use config::Config;
-use helpers;
 
-pub struct Leaderboard {
+pub struct LeaderboardController {
     tera: &'static Tera,
-    hostname: String,
     leaderboard: LeaderboardData
 }
 
-impl Leaderboard {
-    pub fn new(config: &Config, tera:&'static Tera, leaderboard_data: LeaderboardData) -> Leaderboard {
+impl LeaderboardController {
+    pub fn new(tera:&'static Tera, leaderboard_data: LeaderboardData) -> LeaderboardController {
 
-        let hostname = config.get("pd_host").unwrap();
-
-        Leaderboard{ 
-            tera: tera,
-            hostname: hostname,
+        LeaderboardController{ 
+            tera,
             leaderboard: leaderboard_data
         }
     }
 
-    fn get_page(&self, _:u64) -> TeraResult<String> {
+    fn get_page(&self) -> TeraResult<String> {
 
         let lb_result = self.leaderboard.get_leaderboard();
         let mut data = Context::new(); 
@@ -39,24 +37,26 @@ impl Leaderboard {
 
         }
 
-        self.tera.render("leaderboard.html", data)
+        self.tera.render("leaderboard.html", &data)
     }
 }
 
-impl Handler for Leaderboard {
+impl Controller for LeaderboardController {
 
-    fn handle(&self, req: &mut Request) -> IronResult<Response> {
-
-        let session_user_id = helpers::get_user_id(req);
-        let redirect_to_homepage = helpers::redirect(&self.hostname, "");
-
-        let resp = match session_user_id {
-            Some(id) => helpers::render(self.get_page(id)),
-            _        => redirect_to_homepage
-        };
-
-        Ok(resp)
-
+    fn get_response(
+        &self,
+        session:&mut Option<Session>,
+        _body: Option<String>,
+        _path: Option<PathExtractor>,
+        _qs: Option<QueryStringExtractor>
+    ) -> ResponseType {
+        
+        if helpers::is_logged_in(session) {
+            ResponseType::PageResponse(self.get_page().expect("unable to unwrap leaderboard page"))
+        } else {
+            ResponseType::Redirect("/".to_string())
+        }
     }
-
 }
+
+impl RefUnwindSafe for LeaderboardController {}

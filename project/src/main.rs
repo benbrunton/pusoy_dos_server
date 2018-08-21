@@ -84,6 +84,7 @@ pub fn main() {
     let event_data = data_access::event::Event::new(pool.clone());
     let user_data = data_access::user::User::new(pool.clone());
     let notification_data = data_access::notification::Notification::new(pool.clone());
+    let leaderboard_data = data_access::leaderboard::Leaderboard::new(pool.clone());
 
     let port_option = config.get("port");
     let port = port_option.expect("failed to get port").parse::<u16>()
@@ -99,5 +100,6 @@ pub fn main() {
         round_data.clone(),
         event_data.clone(),
         notification_data.clone(),
+        leaderboard_data.clone(),
     );
 }

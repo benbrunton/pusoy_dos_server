@@ -2,6 +2,9 @@ use model::leaderboard::Leaderboard as LeaderboardModel;
 use mysql;
 use hyper::client::Client;
 use std::io::Read;
+use std::collections::BTreeMap;
+use serde_json;
+
 
 #[derive(Clone)]
 pub struct Leaderboard{
@@ -25,12 +28,12 @@ impl Leaderboard {
         match leaderboard_req {
             Ok(leaderboard) => {
                 let mut pos = 0;
-                let model_list = leaderboard.iter().map(|ref x| {
-                    let y = x.as_object().unwrap();
+                let model_list = leaderboard.iter().map(|ref y| {
+//                    let y = x.as_object().unwrap();
                     pos = pos + 1;
                     LeaderboardModel{
                         name: String::from(y.get("name").unwrap()
-                                .as_string().unwrap_or("unknown")),
+                                .as_str().unwrap_or("unknown")),
                         position: pos,
                         wins: y.get("wins").unwrap()
                                 .as_u64().unwrap_or(0),
@@ -52,8 +55,10 @@ impl Leaderboard {
 
     }
 
-    fn fetch_json(&self, url:String) -> Result<Vec<Json>, String>{
+    fn fetch_json(&self, url:String) -> Result<Vec<BTreeMap<String, serde_json::Value>>, String>{
+        Err(String::from("Unable to load leaderboard"))
 
+/*
         let client = Client::new();
 
         info!("requesting json from : {:?}", url);
@@ -76,6 +81,7 @@ impl Leaderboard {
         let data = Json::from_str(&buffer).unwrap();
 
         Ok(data.as_array().unwrap().clone())
+*/
 
     }
 

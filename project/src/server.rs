@@ -25,12 +25,14 @@ use controller::{
     PrivacyController,
     PostGameController,
     RemoveUserController,
+    LeaderboardController,
 };
 use data_access::user::User;
 use data_access::game::Game;
 use data_access::round::Round;
 use data_access::event::Event;
 use data_access::notification::Notification;
+use data_access::leaderboard::Leaderboard;
 use handlers::{GenericHandler, PathHandler, QueryStringHandler};
 use std::sync::Arc;
 
@@ -43,6 +45,7 @@ pub fn run(
     round_data: Round,
     event_data: Event,
     notification_data: Notification,
+    leaderboard_data: Leaderboard
     ) {
 
     let home_page_controller = HomePageController::new(&config, &tera);
@@ -118,6 +121,11 @@ pub fn run(
         game_data.clone(),
     );
 
+    let leaderboard_controller = LeaderboardController::new(
+        &tera,
+        leaderboard_data.clone(),
+    );
+
     let home_page_handler = GenericHandler::new(Arc::new(home_page_controller));
     let test_auth_handler = GenericHandler::new(Arc::new(test_auth_controller));
     let game_list_handler = GenericHandler::new(Arc::new(game_list_controller));
@@ -139,6 +147,7 @@ pub fn run(
     let privacy_handler = GenericHandler::new(Arc::new(privacy_controller));
     let post_game_handler = PathHandler::new(Arc::new(post_game_controller));
     let remove_user_handler = PathHandler::new(Arc::new(remove_user_controller));
+    let leaderboard_handler = GenericHandler::new(Arc::new(leaderboard_controller));
 
     let dev_mode = match config.get("mode") {
         Some(mode) => mode == "dev",
@@ -168,6 +177,7 @@ pub fn run(
         privacy_handler,
         post_game_handler,
         remove_user_handler,
+        leaderboard_handler,
     );
 
     let addr = format!("0.0.0.0:{}", port);
