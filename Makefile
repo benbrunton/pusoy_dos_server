@@ -3,6 +3,9 @@ ready-dev: docker-dev-up
 
 go: setup-db compile-client run-pdserver
 
+sh:
+	docker exec -it pd-dev bash
+
 # dev server
 
 docker-dev-build:
@@ -16,6 +19,9 @@ docker-dev-down:
 
 run-pdserver:
 	docker exec -t pd-dev cargo run
+
+run-pdserver-quiet:
+	docker exec --env RUST_LOG=warn -t pd-dev cargo run
 
 kill-pdserver:
 	docker exec -t pd-dev killall pd_server

@@ -1,6 +1,4 @@
-use serde::{Serialize, Serializer};
-
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Leaderboard{
     pub name: String,
 	pub position: u64,
@@ -10,24 +8,12 @@ pub struct Leaderboard{
     pub rating: f64
 }
 
+/*
 impl Serialize for Leaderboard {
 
-	fn serialize<S>(&self, serializer: &mut S) -> Result<(), S::Error>
+	fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
         where S: Serializer
     {
-
-/*
-        let started = if self.started { 1 } else { 0 };
-        let mut state = try!(serializer.serialize_map(Some(2)));
-		try!(serializer.serialize_map_key(&mut state, "id"));
-		try!(serializer.serialize_map_value(&mut state, self.id));
-		try!(serializer.serialize_map_key(&mut state, "creator_id"));
-		try!(serializer.serialize_map_value(&mut state, self.creator_id));
-		try!(serializer.serialize_map_key(&mut state, "creator_name"));
-		try!(serializer.serialize_map_value(&mut state, &self.creator_name));
-        try!(serializer.serialize_map_key(&mut state, "started"));
-        try!(serializer.serialize_map_value(&mut state, started));
-*/
 
         let rating = format!("{:.2}", self.rating);
 
@@ -49,3 +35,4 @@ impl Serialize for Leaderboard {
         serializer.serialize_map_end(state)
     }
 }
+*/

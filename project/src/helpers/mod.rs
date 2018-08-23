@@ -1,39 +1,8 @@
-use std::fmt::Display;
-
-use iron::prelude::*;
-use iron::{status, modifiers, Url};
-use iron::mime::Mime;
-use tera::TeraResult;
-
 use pusoy_dos::game::player_move::{Move, Trick, TrickType, build_move};
 use pusoy_dos::cards::card::PlayerCard;
-use serde::{Serialize, Serializer};
+use serde::ser::{Serialize, Serializer, SerializeMap};
 
-use util::session::Session;
-
-pub fn get_user_id(req: &Request) -> Option<u64> {
-
-    match req.extensions.get::<Session>() {
-        Some(session) => session.user_id,
-        _             => None
-    }
-
-}
-
-pub fn redirect<S: Display>(hostname:&str, path:S) -> Response{
-
-    let full_url = format!("{}/{}", hostname, path);
-    let url =  Url::parse(&full_url).unwrap();
-
-    Response::with((status::Found, modifiers::Redirect(url)))
-
-}
-
-pub fn render(result: TeraResult<String>) -> Response{
-
-    let content_type = "text/html".parse::<Mime>().unwrap();
-    Response::with((content_type, status::Ok, result.unwrap()))
-}
+use model::Session;
 
 pub fn cards_played_summary(last_move: Vec<PlayerCard>) -> String {
     match build_move(last_move).unwrap() {
@@ -93,7 +62,7 @@ impl DCard {
 
 impl Serialize for DCard {
 
-	fn serialize<S>(&self, serializer: &mut S) -> Result<(), S::Error>
+	fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
         where S: Serializer
     {
 
@@ -113,18 +82,40 @@ impl Serialize for DCard {
                                     true)
         };
 
-        let mut state = try!(serializer.serialize_map(Some(2)));
-		try!(serializer.serialize_map_key(&mut state, "suit_display"));
-		try!(serializer.serialize_map_value(&mut state, suit_display.clone()));
-        try!(serializer.serialize_map_key(&mut state, "suitDisplay"));
-		try!(serializer.serialize_map_value(&mut state, suit_display.clone()));
-		try!(serializer.serialize_map_key(&mut state, "suit"));
-		try!(serializer.serialize_map_value(&mut state, suit));
-		try!(serializer.serialize_map_key(&mut state, "rank"));
-		try!(serializer.serialize_map_value(&mut state, rank));
-        try!(serializer.serialize_map_key(&mut state, "joker"));
-		try!(serializer.serialize_map_value(&mut state, joker));
+        let mut map = try!(serializer.serialize_map(Some(2)));
+		try!(map.serialize_entry("suit_display", &suit_display));
+        try!(map.serialize_entry("suitDisplay", &suit_display));
+		try!(map.serialize_entry("suit", &suit));
+		try!(map.serialize_entry("rank", &rank));
+        try!(map.serialize_entry("joker", &joker));
 
-        serializer.serialize_map_end(state)
+        map.end()
     }
+}
+
+pub fn is_logged_in(session: &mut Option<Session>) -> bool {
+    let sess_clone = session.clone();
+    match sess_clone {
+        Some(sess) => sess.user_id != None,
+        None       => false
+    }
+}
+
+pub fn get_user_id(session: &mut Option<Session>) -> Option<usize> {
+    let sess_clone = session.clone();
+    match sess_clone {
+        Some(sess) => sess.user_id,
+        None       => None
+    }
+}
+
+#[derive(Deserialize, StateData, StaticResponseExtender)]
+pub struct PathExtractor {
+    pub id: usize,
+    pub user: Option<usize>,
+}
+
+#[derive(Deserialize, StateData, StaticResponseExtender)]
+pub struct QueryStringExtractor {
+    pub code: String,
 }

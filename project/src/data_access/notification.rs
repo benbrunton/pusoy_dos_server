@@ -24,7 +24,7 @@ impl Notification {
                 "subscription" => subscription
             }).unwrap();
 
-        info!("{:?}", a);
+        //info!("{:?}", a);
     }
 
     pub fn get_user_subscription(&self, user: u64) -> Option<String> {

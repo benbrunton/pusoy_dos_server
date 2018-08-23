@@ -1,12 +1,11 @@
-use iron::prelude::*;
-use iron::status;
-use iron::middleware::Handler;
-use iron::mime::Mime;
-use tera::{Tera, Context, TeraResult};
-
+use tera::{Tera, Context, Result as TeraResult};
+use std::panic::RefUnwindSafe;
+use controller::{Controller, ResponseType};
 use config::Config;
-use helpers;
+use model::Session;
+use helpers::{PathExtractor, QueryStringExtractor};
 
+#[derive(Clone)]
 pub struct HomePageController {
     hostname: String,
     tera: &'static Tera,
@@ -27,26 +26,24 @@ impl HomePageController {
         };
 
         HomePageController {
-            hostname: hostname,
-            tera: tera,
-            fb_app_id: fb_app_id,
-            google_app_id: google_app_id,
-            dev_mode: dev_mode,
+            hostname,
+            tera,
+            fb_app_id,
+            google_app_id,
+            dev_mode,
         }
     }
 
-    fn logged_in(&self) -> IronResult<Response> {
-
-        info!("user logged in - redirecting");
-        let redirect = helpers::redirect(&self.hostname, "games");
-        Ok(redirect)
+    fn is_logged_in(&self, session: Option<Session>) -> bool {
+        match session {
+            Some(sess) => sess.user_id != None,
+            None       => false
+        }
     }
 
-    fn not_logged_in(&self) -> IronResult<Response> {
+    fn not_logged_in(&self) -> TeraResult<String> {
         info!("user not logged in");
-        let content_type = "text/html".parse::<Mime>().unwrap();
-        let homepage = self.get_homepage().unwrap();
-        Ok(Response::with((content_type, status::Ok, homepage)))
+        self.get_homepage()
     }
 
     fn get_homepage(&self) -> TeraResult<String> {
@@ -58,19 +55,26 @@ impl HomePageController {
         data.add("fb_login", &fb);
         data.add("google_app_id", &self.google_app_id);
         data.add("dev_mode", &self.dev_mode);
-        self.tera.render("index.html", data)
+        self.tera.render("index.html", &data)
     }
 }
 
-
-impl Handler for HomePageController {
-    fn handle(&self, req: &mut Request) -> IronResult<Response> {
-
-        let session_user_id = helpers::get_user_id(req);
-
-        match session_user_id {
-            Some(_) => self.logged_in(),
-            _ => self.not_logged_in(),        
+impl Controller for HomePageController {
+    fn get_response(
+        &self,
+        session:&mut Option<Session>,
+        _body: Option<String>,
+        _path: Option<PathExtractor>,
+        _qs: Option<QueryStringExtractor>
+    ) -> ResponseType {
+		let sess = session.clone();
+        if self.is_logged_in(sess) {
+            ResponseType::Redirect("/games".to_string())
+        } else {
+            let body = self.not_logged_in().unwrap();
+            ResponseType::PageResponse(body)
         }
     }
 }
+
+impl RefUnwindSafe for HomePageController {}

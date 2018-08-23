@@ -7,7 +7,6 @@ use router::Router;
 use hyper::client::Client;
 use hyper::header::Headers;
 
-use rustc_serialize::json;
 use std::collections::BTreeMap;
 use serde_json;
 

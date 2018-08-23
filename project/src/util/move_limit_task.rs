@@ -12,7 +12,7 @@ pub fn execute(game_data: GameData, event_data: EventData, round_data:RoundData)
     info!("reviewing latest moves on open games");
     info!("number of open games with move limit: {:?}", games.len());
 
-    let utc: DateTime<UTC> = UTC::now();
+    let utc: DateTime<Utc> = Utc::now();
     info!("starting sweep at {}", utc);
         
     for &(id, duration) in games.iter() {
@@ -81,7 +81,7 @@ pub fn execute(game_data: GameData, event_data: EventData, round_data:RoundData)
            
     }
 
-    let utc_complete: DateTime<UTC> = UTC::now();
+    let utc_complete: DateTime<Utc> = Utc::now();
     info!("completed sweep of expired moves at {}", utc);
     let sweep_duration = utc_complete.signed_duration_since(utc).num_milliseconds();
     info!("sweep took {} ms", sweep_duration);

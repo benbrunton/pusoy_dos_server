@@ -2,7 +2,7 @@ use chrono::prelude::*;
 use model::user::User;
 use std::collections::BTreeMap;
 
-use serde::{Serialize, Serializer};
+use serde::ser::{Serialize, Serializer, SerializeMap};
 
 #[derive(Debug)]
 pub struct Event{
@@ -10,7 +10,7 @@ pub struct Event{
     user: Option<User>,
     game: Option<u64>,
     body: String,
-    time: DateTime<UTC>
+    time: DateTime<Utc>
 }
 
 impl Event{
@@ -18,7 +18,7 @@ impl Event{
                 user: Option<User>, 
                 game: Option<u64>, 
                 message: String, 
-                datetime: DateTime<UTC>) ->  Event {
+                datetime: DateTime<Utc>) ->  Event {
 
         Event{
             id,
@@ -67,26 +67,22 @@ impl Event{
 
 impl Serialize for Event {
 
-	fn serialize<S>(&self, serializer: &mut S) -> Result<(), S::Error>
+	fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
         where S: Serializer
     {
 
-        let mut state = try!(serializer.serialize_map(Some(2)));
+        let mut map = try!(serializer.serialize_map(Some(2)));
         
-		try!(serializer.serialize_map_key(&mut state, "id"));
-		try!(serializer.serialize_map_value(&mut state, self.id));
+		try!(map.serialize_entry("id", &self.id));
 
-		try!(serializer.serialize_map_key(&mut state, "user_name"));
-		try!(serializer.serialize_map_value(&mut state, self.user.to_owned().unwrap().name.clone()));
+		try!(map.serialize_entry("user_name", &self.user.to_owned().unwrap().name.clone()));
         
-		try!(serializer.serialize_map_key(&mut state, "body"));
-		try!(serializer.serialize_map_value(&mut state, self.get_message()));
+		try!(map.serialize_entry("body", &self.get_message()));
 
-		try!(serializer.serialize_map_key(&mut state, "time"));
-		try!(serializer.serialize_map_value(&mut state, format!("{}",
-            self.time.format("%Y-%m-%d %H:%M:%S"))));
+        let time = format!("{}", self.time.format("%Y-%m-%d %H:%M:%S"));
+		try!(map.serialize_entry("time", &time));
 
-        serializer.serialize_map_end(state)
+        map.end()
 
     }
 }

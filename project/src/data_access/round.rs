@@ -1,9 +1,9 @@
 use mysql;
-use rustc_serialize::json;
 
 use pusoy_dos::game::game::{ GameDefinition, Game };
 use pusoy_dos::game::player::Player;
 use pusoy_dos::game::round::Round as GameRound;
+use serde_json;
 
 #[derive(Clone)]
 pub struct Round{
@@ -45,12 +45,12 @@ impl Round {
                 )",
             params!{
                 "game" => id,
-                "hands" => json::encode(&game_def.players).unwrap(),
+                "hands" => serde_json::to_string(&game_def.players).unwrap(),
                 "current_player" => game.get_next_player().unwrap().get_id(),
-                "last_move" => json::encode(&round_def.last_move).unwrap(),
+                "last_move" => serde_json::to_string(&round_def.last_move).unwrap(),
                 "pass_count" => round_def.pass_count,
                 "first_round" => round_def.first_round,
-                "winners" => json::encode(&game_def.winners).expect("unable to encode winners"),
+                "winners" => serde_json::to_string(&game_def.winners).expect("unable to encode winners"),
                 "reversed" => if game_def.reversed { 1 } else { 0 }
             }).unwrap();
 
@@ -74,15 +74,15 @@ impl Round {
             WHERE game = :game",
             params!{
                 "game" => id,
-                "hands" => json::encode(&game_def.players)
+                "hands" => serde_json::to_string(&game_def.players)
                     .expect("unable to encode player hands"),
                 "current_player" => game.get_next_player()
                     .expect("unable to find current player").get_id(),
-                "last_move" => json::encode(&round_def.last_move)
+                "last_move" => serde_json::to_string(&round_def.last_move)
                     .expect("unable to encode last move"),
                 "pass_count" => round_def.pass_count,
                 "first_round" => round_def.first_round,
-                "winners" => json::encode(&game_def.winners)
+                "winners" => serde_json::to_string(&game_def.winners)
                     .expect("unable to encode winners"),
                 "reversed" => if game_def.reversed { 1 } else { 0 }
             }).expect("update round failed");
@@ -117,7 +117,7 @@ impl Round {
 
                         let last_move_serialised = game_data.get::<String, &str>("last_move")
                                 .expect("unable to get last move");
-                        let last_move = json::decode(&last_move_serialised)
+                        let last_move = serde_json::from_str(&last_move_serialised)
                                 .expect("unable to decode last move");
 
                         let first_round = game_data.get::<u8, &str>("first_round")
@@ -126,7 +126,7 @@ impl Round {
                         let players_serialised = game_data.get::<String, &str>("hands")
                                 .expect("unable to get player hands");
 
-                        let players:Vec<Player> = json::decode(&players_serialised)
+                        let players:Vec<Player> = serde_json::from_str(&players_serialised)
                                 .expect("unable to decode player hands");
 
                         let player_ids = players.iter()
@@ -151,7 +151,7 @@ impl Round {
 
                         let winners_serialised = game_data.get::<String, &str>("winners")
                                 .expect("unable to get winners from db");
-                        let winners = json::decode(&winners_serialised)
+                        let winners = serde_json::from_str(&winners_serialised)
                                 .expect("unable to decode winners");
 
                         Some(GameDefinition{

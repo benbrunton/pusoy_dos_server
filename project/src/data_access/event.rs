@@ -1,8 +1,8 @@
 use time::Timespec;
-use chrono::prelude::*;
 use mysql;
 use model::event::Event as EventModel;
 use model::user::User as UserModel;
+use chrono::{DateTime, NaiveDateTime, Utc};
 
 #[derive(Clone)]
 pub struct Event{
@@ -19,7 +19,7 @@ impl Event {
 
     // put an event in
     pub fn insert_game_event(&self, user: u64, game: u64, event_body: String){
-        let utc: DateTime<UTC> = UTC::now();
+        let utc: DateTime<Utc> = Utc::now();
         let a = self.pool.prep_exec(r"INSERT INTO pusoy_dos.event
                 ( game, user, body, creation_date )
             VALUES
@@ -70,9 +70,9 @@ impl Event {
                     debug!("getting timespec");
                     let user_ts: Timespec = row.take("user_date").unwrap();
                     debug!("creating datetime");
-                    let user_creation_date: DateTime<UTC> = DateTime::from_utc(
+                    let user_creation_date: DateTime<Utc> = DateTime::from_utc(
                             NaiveDateTime::from_timestamp(user_ts.sec, user_ts.nsec as u32),
-                            UTC);
+                            Utc);
 
                     debug!("getting message");
 				    let body = row.take("body").unwrap_or(String::from(""));
@@ -81,9 +81,9 @@ impl Event {
                     let ts: Timespec = row.take("creation_date").unwrap();
                     
                     debug!("creating event datetime");
-                    let stored_date: DateTime<UTC> = DateTime::from_utc(
+                    let stored_date: DateTime<Utc> = DateTime::from_utc(
                             NaiveDateTime::from_timestamp(ts.sec, ts.nsec as u32),
-                            UTC);
+                            Utc);
 
                     debug!("creating user model");
                     let user = UserModel{
@@ -104,7 +104,7 @@ impl Event {
                     )
                 },
                 _ => {
-                    let time: DateTime<UTC> = UTC::now();
+                    let time: DateTime<Utc> = Utc::now();
                     EventModel::new( 
                         None, 
                         None,
@@ -119,7 +119,7 @@ impl Event {
                                                     
     }
 
-    pub fn get_last_game_event(&self, game_id: u64) -> Option<DateTime<UTC>> {
+    pub fn get_last_game_event(&self, game_id: u64) -> Option<DateTime<Utc>> {
         info!("getting last event for game: {}", game_id);
         let mut result = self.pool.prep_exec(r"
                 SELECT event.creation_date
@@ -137,9 +137,9 @@ impl Event {
             None => None,
             Some(r) => {
                 let ts: Timespec = r.unwrap().get("creation_date").unwrap();
-                let stored_date: DateTime<UTC> = DateTime::from_utc(
+                let stored_date: DateTime<Utc> = DateTime::from_utc(
                         NaiveDateTime::from_timestamp(ts.sec, ts.nsec as u32),
-                        UTC);
+                        Utc);
 
                 Some(stored_date)
             }

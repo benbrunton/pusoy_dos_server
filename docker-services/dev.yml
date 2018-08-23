@@ -10,12 +10,13 @@ services:
       RUST_BACKTRACE: 1
     volumes:
     - ../project:/project
+    - ./.cargo-registry:/root/.cargo/registry
     stdin_open: true
     ports:
     - 3000:3000
 
   mysql:
-    image: mysql
+    image: mysql:5.6
     container_name: test-mysql
     ports:
       - 6603:3306
@@ -31,6 +32,7 @@ services:
     - 80:80
     volumes:
     - ../config/nginx.conf:/etc/nginx/nginx.conf
+    - ../project/public:/static_files/public
 
   ws:
     image: socket

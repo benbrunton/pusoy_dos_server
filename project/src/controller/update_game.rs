@@ -1,85 +1,63 @@
-use iron::prelude::*;
-use iron::{status, modifiers, Url};
-use iron::middleware::Handler;
-use iron::mime::Mime;
-use router::Router;
-
-use std::collections::HashMap;
-use util::session::Session;
-use urlencoded::UrlEncodedBody;
-use config::Config;
+use std::panic::RefUnwindSafe;
+use model::Session;
 use data_access::game::Game as GameData;
+use controller::{Controller, ResponseType};
 use helpers;
+use helpers::{PathExtractor, QueryStringExtractor};
+use url::form_urlencoded::parse;
 
-pub struct UpdateGame {
-    hostname: String,
+
+pub struct UpdateGameController {
     game_data: GameData
 }
 
-impl UpdateGame {
-    pub fn new(config: &Config, game_data: GameData) -> UpdateGame {
-        let hostname = config.get("pd_host").unwrap();
-        UpdateGame{ hostname: hostname, game_data: game_data }
+impl UpdateGameController {
+    pub fn new(game_data: GameData) -> UpdateGameController {
+        UpdateGameController{ game_data }
     }
 
-    fn update_game(&self, id: u64, hashmap:Option<HashMap<String, Vec<String>>>) {
-        // todo - check that user is creator of game
-        let params = hashmap.expect("unable to get params from POST");
-        let decks_raw = params.get("decks").expect("expected decks").get(0).unwrap();
-        let decks = decks_raw.parse::<u64>().expect("expected decks int");
-
+    fn update_game(&self, id: u64, decks: u64) {
         self.game_data.update_decks(id, decks);
     }
-
-    fn get_hashmap(&self, req: &mut Request) -> Option<HashMap<String, Vec<String>>> {
-
-        match req.get_ref::<UrlEncodedBody>(){
-            Ok(hashmap) => Some(hashmap.to_owned().to_owned()),
-            _ => None
-        }
-    }
-
 }
 
-impl Handler for UpdateGame {
+impl Controller for UpdateGameController {
 
-    fn handle(&self, req: &mut Request) -> IronResult<Response> {
-
-        let ref hashmap = {
-            self.get_hashmap(req)
-        };
-
-        let router = req.extensions.get::<Router>().unwrap();
-        let ref query = router.find("id");
-
-        let session_user_id = match req.extensions.get::<Session>() {
-            Some(session) => session.user_id,
-            _             => None
-        };
-
-        let mut success = false;
-        let full_url = match session_user_id {
-            Some(user_id) => {
-                match *query {
-                    Some(id) => {
-                        self.update_game(
-                            id.parse::<u64>().unwrap_or(0),
-                            hashmap.to_owned());
-                        String::from(format!("{}/game/{}", self.hostname, id))
-                    },
-                    _ => String::from(format!("{}/games", self.hostname))
-                }
-            },
-            _ => String::from(format!("{}/games", self.hostname))
-        };
-
+    fn get_response(
+        &self,
+        session:&mut Option<Session>,
+        body: Option<String>,
+        path: Option<PathExtractor>,
+        _qs: Option<QueryStringExtractor>
+    ) -> ResponseType {
         
-        let url =  Url::parse(&full_url).unwrap();
-        Ok(Response::with((status::Found, modifiers::Redirect(url))))
+        if helpers::is_logged_in(session) {
+            let id = path.expect("no_path").id as u64;
+            let mut decks = 0;
+            info!("{:?}", body);
+            match body {
+                Some(b) => {
+                    let parsed_body = parse(b.as_bytes());
+                    let pairs = parsed_body.into_owned();
+                    for (key, val) in pairs {
+                        match key.as_ref() {
+                            "decks" => {
+                                decks = val.parse::<u64>().unwrap().to_owned();
+                            },
+                            _ => ()
+                        }
+                    }
+                    self.update_game(id, decks);
+                    return ResponseType::Redirect(format!("/game/{}", id))
+                },
+                _ => ()
+            }
+            
+        }
 
-
+        ResponseType::Redirect("/".to_string())
     }
-
 }
 
+impl RefUnwindSafe for UpdateGameController {}
 

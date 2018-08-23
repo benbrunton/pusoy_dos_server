@@ -1,37 +1,28 @@
-use iron::prelude::*;
-use iron::status;
-use iron::middleware::Handler;
-use iron::mime::Mime;
 use tera::{Tera, Context};
-use config::Config;
-use router::Router;
-use helpers;
-
 use data_access::event::Event as EventData;
+use helpers;
+use helpers::{PathExtractor, QueryStringExtractor};
+use controller::{Controller, ResponseType};
+use model::Session;
+use std::panic::RefUnwindSafe;
 
 
-pub struct PostGame{
+pub struct PostGameController {
     tera: &'static Tera,
-    hostname: String,
     event_data: EventData
 }
 
-impl PostGame{
+impl PostGameController {
 
-    pub fn new(config: &Config, tera: &'static Tera, event_data: EventData) -> PostGame{
+    pub fn new(tera: &'static Tera, event_data: EventData) -> PostGameController {
         
-        let hostname = config.get("pd_host").unwrap();
-
-        PostGame{
+        PostGameController {
             tera,
-            hostname,
             event_data
         }
     }
 
-    pub fn display(&self, user_id: u64, game_id: u64) -> Response {
-        let content_type = "text/html".parse::<Mime>().unwrap();
-
+    pub fn get_page(&self, user_id: u64, game_id: u64) -> String {
         let mut events_vec = self.event_data.get_game_events(game_id);
         let mut events = events_vec.as_mut_slice();
         events.reverse();
@@ -39,38 +30,26 @@ impl PostGame{
         let mut data = Context::new();
         data.add("logged_in", &true);
         data.add("events", &events);
-        println!("events {:?}", events);
-        let template = "post_game.html";
-        let page = self.tera.render(template, data).expect("error rendering template");
-        Response::with((content_type, status::Ok, page))
-
+        self.tera.render("post_game.html", &data).expect("error rendering template")
     }
 }
 
-impl Handler for PostGame {
-
-    fn handle(&self, req: &mut Request) -> IronResult<Response> {
-
-        let ref query = req.extensions.get::<Router>().unwrap().find("id");
-
-        let session_user_id = helpers::get_user_id(req);
-        let redirect_to_homepage = helpers::redirect(&self.hostname, "");
-
-        let resp = match session_user_id {
-            Some(user_id) => {
-                match *query {
-                    Some(id) => {
-                        self.display(user_id, id.parse::<u64>().unwrap())
-                    },
-                    _ => redirect_to_homepage
-                }
-            },
-            _ => redirect_to_homepage
-        };
-
-        Ok(resp)
-
-
+impl Controller for PostGameController {
+    fn get_response(
+        &self,
+        session:&mut Option<Session>,
+        _body: Option<String>,
+        path: Option<PathExtractor>,
+        _qs: Option<QueryStringExtractor>
+    ) -> ResponseType {
+        if helpers::is_logged_in(session) {
+            let id = helpers::get_user_id(session).expect("no user id") as u64;
+            let path_id = path.expect("no_path").id as u64;
+            ResponseType::PageResponse(self.get_page(id, path_id))
+        } else {
+           ResponseType::Redirect("/".to_string())
+        }
     }
 }
- 
+
+impl RefUnwindSafe for PostGameController {}

@@ -1,73 +1,95 @@
-use iron::prelude::*;
-use iron::{status, modifiers, Url};
-use iron::middleware::Handler;
-
-use urlencoded::UrlEncodedBody;
-use std::collections::HashMap;
-
-use config::Config;
+use std::panic::RefUnwindSafe;
+use data_encoding::BASE64;
+use model::Session;
 use data_access::game::Game as GameData;
-use util::session::Session;
+use controller::{Controller, ResponseType};
+use helpers;
+use helpers::{PathExtractor, QueryStringExtractor};
+use url::form_urlencoded::parse;
+use csrf::{AesGcmCsrfProtection, CsrfProtection};
 
-pub struct GameCreate {
-    hostname: String,
+pub struct GameCreateController {
     game_data: GameData
 }
 
-impl GameCreate {
-    pub fn new(config:&Config, game_data: GameData) -> GameCreate {
-        let hostname = config.get("pd_host").unwrap();
-        GameCreate{ hostname: hostname, game_data: game_data }
+impl GameCreateController {
+    pub fn new(game_data: GameData) -> GameCreateController {
+        GameCreateController{ game_data }
     }
 
-    fn insert_new_game(&self, id: u64, 
-                hashmap:Option<HashMap<String, Vec<String>>>) -> Result<(), String>{
-
-        let params = hashmap.expect("unable to get params from POST");
-        let move_duration_raw = params.get("max-move-duration").expect("expected max_move_duration").get(0).unwrap();
-        let move_duration = move_duration_raw.parse::<u64>().expect("expected int");
-        let decks_raw = params.get("decks").expect("expected decks").get(0).unwrap();
-        let decks = decks_raw.parse::<u64>().expect("expected decks int");
+    fn insert_new_game(
+        &self,
+        id: u64, 
+        move_duration: u64,
+        decks: u64,
+    ) {
         self.game_data.create_game(id, move_duration, 4, decks);
-        Ok(())
     }
 
-
-    fn get_hashmap(&self, req: &mut Request) -> Option<HashMap<String, Vec<String>>> {
-
-        match req.get_ref::<UrlEncodedBody>(){
-            Ok(hashmap) => Some(hashmap.to_owned().to_owned()),
-            _ => None
-        }
+    fn get_session_token(&self, session: &mut Option<Session>) -> String {
+        let sess = session.clone().unwrap();
+        sess.csrf_token.expect("unable to find csrf token")
     }
-
 }
 
-impl Handler for GameCreate {
+impl Controller for GameCreateController {
 
-    fn handle(&self, req: &mut Request) -> IronResult<Response> {
-
-        let session_user_id = match req.extensions.get::<Session>() {
-            Some(session) => session.user_id,
-            _             => None
-        };
-
-        let ref hashmap = self.get_hashmap(req);
-
-        let mut success = false;
-        match session_user_id {
-            Some(id) => { 
-                let _ = self.insert_new_game(id, hashmap.to_owned());
-                success = true;
-            },
-            _ => ()        
+    fn get_response(
+        &self,
+        session:&mut Option<Session>,
+        body: Option<String>,
+        _path: Option<PathExtractor>,
+        _qs: Option<QueryStringExtractor>
+    ) -> ResponseType {
+        
+        if helpers::is_logged_in(session) {
+            let id = helpers::get_user_id(session)
+                .expect("unable to unwrap user id") as u64;
+            let protect = AesGcmCsrfProtection::from_key(*b"01234567012345670123456701234567");
+            let session_token = self.get_session_token(session)
+                .as_bytes()
+                .to_owned();
+            let mut token_bytes = "".as_bytes().to_owned();
+            let mut move_duration = 0;
+            let mut decks = 0;
+            info!("{:?}", body);
+            match body {
+                Some(b) => {
+                    let parsed_body = parse(b.as_bytes());
+                    let pairs = parsed_body.into_owned();
+                    for (key, val) in pairs {
+                        match key.as_ref() {
+                            "_csrf_token" => {
+                                token_bytes = val.as_bytes().to_owned();
+                            },
+                            "max-move-duration" => {
+                                move_duration = val.parse::<u64>().unwrap().to_owned();
+                            },
+                            "decks" => {
+                                decks = val.parse::<u64>().unwrap().to_owned();
+                            },
+                            _ => ()
+                        }
+                    }
+                    
+                    let decoded_token = BASE64.decode(&token_bytes).expect("token not base64");
+                    let decoded_cookie = BASE64.decode(&session_token).expect("token not base64");
+                    let parsed_token = protect.parse_token(&decoded_token)
+                        .expect("token not parsed");
+                    let parsed_cookie = protect.parse_cookie(&decoded_cookie)
+                        .expect("cookie not parsed");
+                    if protect.verify_token_pair(&parsed_token, &parsed_cookie) {
+                        self.insert_new_game(id, move_duration, decks);
+                        return ResponseType::Redirect("/games".to_string())
+                    }
+                },
+                _ => ()
+            }
+            
         }
 
-        let full_url = format!("{}/games?success={:?}", self.hostname, success);
-        let url =  Url::parse(&full_url).unwrap();
-
-        Ok(Response::with((status::Found, modifiers::Redirect(url))))
-
+        ResponseType::Redirect("/".to_string())
     }
-
 }
+
+impl RefUnwindSafe for GameCreateController {}

@@ -1,13 +1,13 @@
-use iron::prelude::*;
-use iron::{status, modifiers, Url};
-use iron::middleware::Handler;
+use std::panic::RefUnwindSafe;
+use controller::{Controller, ResponseType};
 use config::Config;
-
 use data_access::user::User as UserData;
 use model::user::PartUser;
-use util::session::Session;
+use model::Session;
 use rand;
+use helpers::{PathExtractor, QueryStringExtractor};
 
+#[derive(Clone)]
 pub struct TestAuthController {
     hostname: String,
     user_data: UserData
@@ -25,29 +25,12 @@ impl TestAuthController {
         }
     }
 
-    fn success(&self) -> IronResult<Response> {
-
-        let full_url = format!("{}/games", self.hostname);
-        let url =  Url::parse(&full_url).unwrap();
-
-        Ok(Response::with((status::Found, modifiers::Redirect(url))))
+    fn success(&self) -> ResponseType {
+        ResponseType::Redirect("/games".to_string())
     }
 
-    fn get_new_session(&self, req: &mut Request, user_id:u64) -> Session{
-        let session = req.extensions.get::<Session>().unwrap();
-        let new_session = session.set_user(user_id);
-        new_session
-    }
-
-
-}
-
-impl Handler for TestAuthController {
-
-    fn handle(&self, req: &mut Request) -> IronResult<Response> { 
-
+    fn create_user(&self) -> u64 {
         info!("TestAuthController handler");
-
         
         let unique_num = rand::random::<u8>();
         let name = format!("Testy McTestface_{}", unique_num);;
@@ -60,11 +43,31 @@ impl Handler for TestAuthController {
         };
 
         let new_user = self.user_data.create_if_new(user);
-        let session = self.get_new_session(req, new_user.id);
-        req.extensions.insert::<Session>(session);
-
-        self.success()
-
+        new_user.id
     }
 
+    fn update_session(&self, user_id: u64, session: &mut Option<Session>) {
+        *session = Some(Session {
+            user_id: Some(user_id as usize),
+            csrf_token: None
+        });
+    }
+
+
 }
+
+impl Controller for TestAuthController {
+    fn get_response(
+        &self, 
+        session: &mut Option<Session>,
+        _body: Option<String>,
+        _path: Option<PathExtractor>,
+        _qs: Option<QueryStringExtractor>
+    ) -> ResponseType {
+        let user_id = self.create_user();
+        self.update_session(user_id, session);
+        self.success()
+    }
+}
+
+impl RefUnwindSafe for TestAuthController {}
