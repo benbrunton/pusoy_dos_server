@@ -32,6 +32,7 @@ pub fn get_router(
     post_game_handler: PathHandler,
     remove_user_handler: PathHandler,
     leaderboard_handler: GenericHandler,
+    update_game_handler: PathHandler,
 ) -> Router {
 
     // Install middleware which handles session creation before, and updating after, our handler is
@@ -81,6 +82,9 @@ pub fn get_router(
             .with_path_extractor::<PathExtractor>()
             .to_new_handler(begin_game_handler);
 
+        route.post("/game/:id:[0-9]+/update")
+            .with_path_extractor::<PathExtractor>()
+            .to_new_handler(update_game_handler);
 
         route.post("/game/:id:[0-9]+/remove/:user:[0-9]+")
             .with_path_extractor::<PathExtractor>()

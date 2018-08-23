@@ -19,11 +19,11 @@ mod privacy;
 mod post_game;
 mod remove_user;
 mod leaderboard;
+mod update_game;
 
 /*
-mod google_auth;
-mod update_game;
 mod complete_games;
+mod google_auth;
 */
 
 mod test_auth;
@@ -51,5 +51,6 @@ pub use self::privacy::PrivacyController;
 pub use self::post_game::PostGameController;
 pub use self::remove_user::RemoveUserController;
 pub use self::leaderboard::LeaderboardController;
+pub use self::update_game::UpdateGameController;
 
 pub use self::controller::{Controller, ResponseType};
