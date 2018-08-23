@@ -27,6 +27,7 @@ use controller::{
     RemoveUserController,
     LeaderboardController,
     UpdateGameController,
+    CompleteGamesController,
 };
 use data_access::user::User;
 use data_access::game::Game;
@@ -131,6 +132,11 @@ pub fn run(
         game_data.clone(),
     );
 
+    let complete_games_controller = CompleteGamesController::new(
+        &tera,
+        game_data.clone(),
+    );
+
     let home_page_handler = GenericHandler::new(Arc::new(home_page_controller));
     let test_auth_handler = GenericHandler::new(Arc::new(test_auth_controller));
     let game_list_handler = GenericHandler::new(Arc::new(game_list_controller));
@@ -154,6 +160,7 @@ pub fn run(
     let remove_user_handler = PathHandler::new(Arc::new(remove_user_controller));
     let leaderboard_handler = GenericHandler::new(Arc::new(leaderboard_controller));
     let update_game_handler = PathHandler::new(Arc::new(update_game_controller));
+    let complete_games_handler = GenericHandler::new(Arc::new(complete_games_controller));
 
     let dev_mode = match config.get("mode") {
         Some(mode) => mode == "dev",
@@ -185,6 +192,7 @@ pub fn run(
         remove_user_handler,
         leaderboard_handler,
         update_game_handler,
+        complete_games_handler,
     );
 
     let addr = format!("0.0.0.0:{}", port);

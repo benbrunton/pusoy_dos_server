@@ -1,21 +1,19 @@
-use iron::prelude::*;
-use iron::middleware::Handler;
-use tera::{Tera, Context, TeraResult};
-
+use std::panic::RefUnwindSafe;
+use tera::{Tera, Context, Result as TeraResult};
 use data_access::game::Game as GameData;
-use config::Config;
 use helpers;
+use helpers::{PathExtractor, QueryStringExtractor};
+use controller::{Controller, ResponseType};
+use model::Session;
 
-pub struct CompleteGames {
+pub struct CompleteGamesController {
     tera: &'static Tera,
-    hostname: String,
     game_data: GameData
 }
 
-impl CompleteGames {
-    pub fn new(config: &Config, tera:&'static Tera, game_data: GameData) -> CompleteGames {
-        let hostname = config.get("pd_host").unwrap();
-        CompleteGames{ tera: tera, hostname: hostname, game_data: game_data }
+impl CompleteGamesController {
+    pub fn new(tera:&'static Tera, game_data: GameData) -> CompleteGamesController {
+        CompleteGamesController{ tera, game_data }
     }
 
     fn get_page(&self, id: u64) -> TeraResult<String> {
@@ -28,25 +26,28 @@ impl CompleteGames {
         data.add("logged_in", &true);
 		data.add("id", &id);
 
-        self.tera.render("complete-games.html", data)
+        self.tera.render("complete-games.html", &data)
     }
 
 }
 
-impl Handler for CompleteGames {
+impl Controller for CompleteGamesController {
 
-    fn handle(&self, req: &mut Request) -> IronResult<Response> {
-
-        let session_user_id = helpers::get_user_id(req);
-        let redirect_to_homepage = helpers::redirect(&self.hostname, "");
-
-        let resp = match session_user_id {
-            Some(id) => helpers::render(self.get_page(id)),
-            _        => redirect_to_homepage
-        };
-
-        Ok(resp)
-
+    fn get_response(
+        &self,
+        session:&mut Option<Session>,
+        _body: Option<String>,
+        _path: Option<PathExtractor>,
+        _qs: Option<QueryStringExtractor>
+    ) -> ResponseType {
+        if helpers::is_logged_in(session) {
+            let id = helpers::get_user_id(session).expect("no user id") as u64;
+            ResponseType::PageResponse(self.get_page(id).expect("unable to unwrap complete games page"))
+        } else {
+           ResponseType::Redirect("/".to_string())
+        }
     }
 
 }
+
+impl RefUnwindSafe for CompleteGamesController {}

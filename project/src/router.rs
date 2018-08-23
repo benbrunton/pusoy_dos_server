@@ -33,6 +33,7 @@ pub fn get_router(
     remove_user_handler: PathHandler,
     leaderboard_handler: GenericHandler,
     update_game_handler: PathHandler,
+    complete_games_handler: GenericHandler,
 ) -> Router {
 
     // Install middleware which handles session creation before, and updating after, our handler is
@@ -56,6 +57,7 @@ pub fn get_router(
         route.get("/logout").to_new_handler(logout_handler);
         route.get("/new-game").to_new_handler(new_game_handler);
         route.get("/leaderboard").to_new_handler(leaderboard_handler);
+        route.get("/complete-games").to_new_handler(complete_games_handler);
         route.get("/fb-auth")
             .with_query_string_extractor::<QueryStringExtractor>()
             .to_new_handler(fb_auth_handler);
