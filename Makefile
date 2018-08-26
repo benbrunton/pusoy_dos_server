@@ -1,4 +1,9 @@
 
+compile:
+	./scripts/compile.sh
+
+
+# legacy commands
 ready-dev: docker-dev-up 
 
 go: setup-db compile-client run-pdserver

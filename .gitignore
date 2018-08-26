@@ -10,3 +10,4 @@ nohup.out
 node_modules
 redis_data/
 .cargo-registry/
+cargo-registry/

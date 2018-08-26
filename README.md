@@ -4,6 +4,7 @@ A multiplayer [Pusoy Dos](https://en.wikipedia.org/wiki/Pusoy_dos) server writte
 ## Prerequisites
 - [Docker](https://www.docker.com)
 - [Docker Compose](https://docs.docker.com/compose/install/)
+- [MiniKube](https://kubernetes.io)
 
 ## Configure
 - Open project/config/app_config.tmpl, add any required secret keys, and save it as project/config/app_config.toml
@@ -18,7 +19,7 @@ Additional commands can be found in Makefile
 
 ## Tech
 - [rust](https://www.rust-lang.org)
- - [iron framework](http://ironframework.io/)
+ - [gotham framework](https://gotham.rs/)
  - [tera templates](https://github.com/Keats/tera)
 - [vue.js](https://vuejs.org)
 - [pure.css](http://purecss.io/)
