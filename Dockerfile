@@ -1,32 +1,14 @@
-FROM debian:stretch
-MAINTAINER Ben Brunton "ben.b.brunton@gmail.com"
+FROM alpine:3.7
 
-ENV DEBIAN_FRONTEND=noninteractive
 EXPOSE 3000
 
-RUN apt-get update 
-RUN apt-get install -y curl \
-                       file \
-                       sudo \
-                       gcc \
-                       libssl1.0-dev \
-                       make \
-                       psmisc \
-                       gnupg \
-                       software-properties-common \
-                       pkg-config
+ENV RUST_LOG="info"
+ENV RUST_BACKTRACE=1
 
-RUN curl -sSf https://sh.rustup.rs | sh -s -- -y
+COPY ./project/config app/config
+COPY ./project/target/x86_64-unknown-linux-musl/debug/pd_server app/pd_server
+COPY ./project/templates app/templates
 
-SHELL ["/bin/bash", "-c"]
+WORKDIR app
 
-RUN curl -sL https://deb.nodesource.com/setup_9.x | sudo -E bash -
-RUN apt-get install -y nodejs
-
-RUN npm install -g stylus
-
-ENV PATH="/root/.cargo/bin:${PATH}"
-
-WORKDIR /project
-
-CMD ["tail", "-F", "-n0", "/etc/hosts"]
+CMD ["./pd_server"]
